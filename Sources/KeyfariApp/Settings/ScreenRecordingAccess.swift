@@ -5,6 +5,14 @@ import ScreenVision
 
 @MainActor
 enum ScreenRecordingAccess {
+    /// Requests access once the app is otherwise ready to use.
+    /// If the user has already denied it, macOS does not show the prompt again;
+    /// the settings pane remains available through the explicit request button.
+    static func requestIfNeeded() {
+        guard !ScreenTextDetector.hasPermission else { return }
+        ScreenTextDetector.requestPermission()
+    }
+
     /// Asks for the permission and opens the place where it is granted.
     ///
     /// The system shows its own prompt only the first time an application asks. Every later

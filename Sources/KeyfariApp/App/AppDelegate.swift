@@ -197,6 +197,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         updatePermissionMenuItem(granted: true)
         modes.start()
         installDebugTrigger()
+        if store.effective.visionMode != .off {
+            ScreenRecordingAccess.requestIfNeeded()
+        }
         warmUpTextDetection()
     }
 }
