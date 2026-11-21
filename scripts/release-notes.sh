@@ -27,6 +27,7 @@ With Homebrew:
 
 \`\`\`sh
 brew tap hodgekou/keyfari https://github.com/hodgekou/keyfari
+brew trust hodgekou/keyfari
 brew install --cask keyfari
 \`\`\`
 

@@ -41,8 +41,11 @@ Download the latest disk image from the [releases page](https://github.com/hodge
 
 ```sh
 brew tap hodgekou/keyfari https://github.com/hodgekou/keyfari
+brew trust hodgekou/keyfari
 brew install --cask keyfari
 ```
+
+Recent versions of Homebrew ask you to trust a tap that is not theirs; on an older one, leave that line out.
 
 Keyfari is not signed with an Apple Developer ID, so macOS blocks it the first time. Open it once, then go to **System Settings > Privacy & Security** and choose **Open Anyway**. Because the signature is not stable, macOS also asks for the permissions again after each update.
 
