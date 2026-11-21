@@ -33,12 +33,25 @@ The regular labels appear at once; the detected ones follow in well under a seco
 
 Not yet: detection of icon-only buttons, automatic updates.
 
+More at [hodgekou.github.io/keyfari](https://hodgekou.github.io/keyfari/).
+
+## Install
+
+Download the latest disk image from the [releases page](https://github.com/hodgekou/keyfari/releases/latest), open it and drag Keyfari to Applications. Or use Homebrew:
+
+```sh
+brew tap hodgekou/keyfari https://github.com/hodgekou/keyfari
+brew install --cask keyfari
+```
+
+Keyfari is not signed with an Apple Developer ID, so macOS blocks it the first time. Open it once, then go to **System Settings > Privacy & Security** and choose **Open Anyway**. Because the signature is not stable, macOS also asks for the permissions again after each update.
+
 ## Requirements
 
-- macOS 14 or later
-- Swift 6 toolchain. The Command Line Tools are enough; Xcode is optional.
+- macOS 14 or later, Apple silicon or Intel
+- To build from source: a Swift 6 toolchain. The Command Line Tools are enough; Xcode is optional.
 
-## Build and run
+## Build from source
 
 ```sh
 scripts/bundle.sh          # builds build/Keyfari.app (debug)
@@ -67,7 +80,9 @@ Keyfari has no telemetry and makes no network requests. Screenshots taken for te
 | `Sources/KeyfariApp` | The executable: `App` (lifecycle, menu bar), `Modes` (hint, search, scroll), `Settings` (settings window). |
 | `Tests/KeyfariCoreTests` | Unit tests, one file per suite. |
 | `Resources` | `Info.plist` and the application icon. |
-| `scripts` | Building, testing, linting and drawing the icon. |
+| `scripts` | Building, testing, linting, packaging and drawing the icon. |
+| `site` | The landing page, published to GitHub Pages. |
+| `Casks` | The Homebrew cask. |
 
 ## Development
 

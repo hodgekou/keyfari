@@ -60,6 +60,13 @@ swift scripts/make-icon.swift /tmp/AppIcon.iconset
 iconutil -c icns /tmp/AppIcon.iconset -o Resources/AppIcon.icns
 ```
 
+## Releasing
+
+1. Add a section for the new version to `CHANGELOG.md` and commit it to `main`.
+2. Tag that commit and push the tag: `git tag v0.2.0 && git push origin v0.2.0`.
+
+The `Release` workflow then builds a universal app, packs it into a disk image, publishes a GitHub release with that section as its notes, and points `Casks/keyfari.rb` at the new image.
+
 ## Licence
 
 By contributing you agree that your contribution is licensed under GPL-3.0, like the rest of the project.
