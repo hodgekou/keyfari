@@ -2,8 +2,6 @@
 
 Keyboard-driven navigation for macOS. Press a shortcut, and every button, link and menu item gets a short label; type the label to click it. Scroll with `H J K L`. No mouse needed.
 
-Keyfari is a rewrite of [Vimac](https://github.com/nchudleigh/vimac) by Dexter Leng, which stopped receiving code changes in April 2021. It is not affiliated with Vimac or its author.
-
 ## Text detection
 
 Some windows expose little or nothing to the accessibility tree: canvas-drawn interfaces, games, remote desktops, pictures of an interface. Keyfari can read the window's pixels with Apple's Vision framework, on the device, and label the text it finds.
@@ -45,9 +43,11 @@ brew trust hodgekou/keyfari
 brew install --cask keyfari
 ```
 
-Recent versions of Homebrew ask you to trust a tap that is not theirs; on an older one, leave that line out.
+Homebrew may ask you to trust this tap. If your Homebrew version does not support `brew trust`, omit that command.
 
 Keyfari is not signed with an Apple Developer ID, so macOS blocks it the first time. Open it once, then go to **System Settings > Privacy & Security** and choose **Open Anyway**. Because the signature is not stable, macOS also asks for the permissions again after each update.
+
+On first launch, grant **Accessibility** permission so Keyfari can read other apps' interfaces and send clicks. On-screen text detection also requires **Screen Recording** permission; it stays idle until you grant it.
 
 ## Requirements
 
@@ -63,7 +63,7 @@ open build/Keyfari.app
 
 Pass `release` for an optimised build.
 
-Keyfari appears in the menu bar. On first launch it asks for the **Accessibility** permission, which it needs to read the interface of other applications and to send clicks. On-screen text detection also needs the **Screen Recording** permission; it stays idle until that is granted.
+Keyfari appears in the menu bar.
 
 The bundle is signed ad hoc by default, so macOS asks for the permissions again after every rebuild. Set `KEYFARI_SIGN_IDENTITY` to a code signing identity from your keychain to keep them.
 
