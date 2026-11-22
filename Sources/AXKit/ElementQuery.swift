@@ -117,7 +117,7 @@ public struct AXElementQuery: ElementQuerying {
         let application = AXElement.application(pid: center.processIdentifier)
         application.setMessagingTimeout(seconds: 0.1)
 
-        let displays = displayBounds()
+        let displays = activeDisplayBounds()
         var result: [ElementSnapshot] = []
         for window in AXDecode.elements(try? application.value(of: kAXWindowsAttribute)) {
             let traversal = TreeTraversal(budget: 300)
@@ -132,7 +132,7 @@ public struct AXElementQuery: ElementQuerying {
     }
 
     /// Bounds of the active displays, in the coordinates accessibility uses.
-    private static func displayBounds() -> [CGRect] {
+    public static func activeDisplayBounds() -> [CGRect] {
         var count: UInt32 = 0
         CGGetActiveDisplayList(0, nil, &count)
         var displays = [CGDirectDisplayID](repeating: 0, count: Int(count))

@@ -246,7 +246,6 @@ public enum Localizer {
             japanese: "この Mac 上でウインドウの画面を読み取り、アプリが公開していないテキストにラベルを付けます。保存や送信は一切行いません。"
         ),
         "Screen Recording permission": Entry(chinese: "屏幕录制权限", japanese: "画面収録の許可"),
-        "Status": Entry(chinese: "状态", japanese: "状態"),
         "Turn it on in System Settings, then restart Keyfari": Entry(
             chinese: "在系统设置里打开开关,然后重启 Keyfari", japanese: "システム設定でオンにしてから、Keyfari を再起動してください"),
         "Restart": Entry(chinese: "重启", japanese: "再起動"),

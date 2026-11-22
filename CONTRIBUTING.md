@@ -10,16 +10,26 @@ You need macOS 14 or later and a Swift 6 toolchain. The Command Line Tools are e
 scripts/bundle.sh          # build build/Keyfari.app
 scripts/test.sh            # run the unit tests
 scripts/lint.sh            # check formatting and style
+scripts/check-repo.sh      # check licence headers, translations, documented paths and versions
 ```
 
 `scripts/test.sh` exists because the Command Line Tools keep the Swift Testing macro plugin outside the compiler's default search path. With Xcode installed, plain `swift test` works too.
 
 ## Before you open a pull request
 
-- `scripts/test.sh` and `scripts/lint.sh` pass. CI runs both.
-- The build has no warnings.
+- `scripts/test.sh`, `scripts/lint.sh` and `scripts/check-repo.sh` pass. CI runs all three.
+- The build has no warnings. CI builds with warnings as errors: `swift build -Xswiftc -warnings-as-errors`.
 - New logic in `KeyfariCore` comes with unit tests.
 - Changes to accessibility, input handling or the overlay are tried in a real application. These parts need system permissions and have no automated tests, so say in the pull request what you tried and in which application.
+
+## What CI checks
+
+Every pull request runs four jobs:
+
+- **Build and test**: the package builds without warnings and the unit tests pass.
+- **Lint and repository checks**: `scripts/lint.sh` and `scripts/check-repo.sh`.
+- **Package the app**: a universal release build is assembled, signed ad hoc and packed into a disk image. The image is kept with the run for a week, so a change can be tried without building it.
+- **Check shell scripts**: ShellCheck on `scripts/*.sh`.
 
 ## Conventions
 
@@ -41,7 +51,7 @@ To add a language, add a case to `Language` and `AppLanguage`, a field to `Local
 
 Debug builds only:
 
-- `pkill -USR1 -x Keyfari` toggles hint mode and `pkill -USR2 -x Keyfari` toggles scroll mode, so a mode can be driven from a terminal.
+- `pkill -USR1 -x Keyfari` toggles hint mode and `pkill -USR2 -x Keyfari` toggles scroll mode, so a mode can be driven from a terminal. A release build ignores both signals.
 - `Keyfari --open-settings` opens the settings window at launch.
 - `Keyfari --render-settings <directory>` writes a PNG of every settings pane in every language and exits. It uses a throwaway defaults domain, so it neither reads nor changes your settings.
 
@@ -62,10 +72,10 @@ iconutil -c icns /tmp/AppIcon.iconset -o Resources/AppIcon.icns
 
 ## Releasing
 
-1. Add a section for the new version to `CHANGELOG.md` and commit it to `main`.
+1. Add a section for the new version to `CHANGELOG.md`, set the same version in `Resources/Info.plist`, and get both onto `main`. `scripts/check-repo.sh` fails when the two disagree.
 2. Tag that commit and push the tag: `git tag v0.2.0 && git push origin v0.2.0`.
 
-The `Release` workflow then builds a universal app, packs it into a disk image, publishes a GitHub release with that section as its notes, and points `Casks/keyfari.rb` at the new image.
+The `Release` workflow first checks that the tag has a section in the changelog, then builds a universal app, packs it into a disk image, publishes a GitHub release with that section as its notes, and points `Casks/keyfari.rb` at the new image.
 
 ## Licence
 

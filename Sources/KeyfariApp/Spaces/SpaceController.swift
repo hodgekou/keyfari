@@ -20,15 +20,6 @@ enum SystemSpaces {
     static var displaysHaveSeparateSpaces: Bool {
         UserDefaults(suiteName: "com.apple.spaces")?.bool(forKey: "spans-displays") != true
     }
-
-    /// Bounds of the active displays, in accessibility coordinates.
-    static var displayBounds: [CGRect] {
-        var count: UInt32 = 0
-        CGGetActiveDisplayList(0, nil, &count)
-        var displays = [CGDirectDisplayID](repeating: 0, count: Int(count))
-        CGGetActiveDisplayList(count, &displays, &count)
-        return displays.prefix(Int(count)).map(CGDisplayBounds)
-    }
 }
 
 /// Goes one Space to the left or right by pressing the system's own shortcut.
@@ -57,7 +48,7 @@ final class SpaceController {
         }
         log.notice("Pressing \(systemShortcut.displayString, privacy: .public)")
 
-        let displays = SystemSpaces.displayBounds
+        let displays = AXElementQuery.activeDisplayBounds()
         // With one display, or one set of Spaces across all of them, there is nothing to choose.
         guard displays.count > 1, SystemSpaces.displaysHaveSeparateSpaces,
             let pid = NSWorkspace.shared.frontmostApplication?.processIdentifier

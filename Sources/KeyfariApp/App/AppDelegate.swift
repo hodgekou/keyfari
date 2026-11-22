@@ -114,6 +114,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             source.resume()
             return source
         }
+        #else
+        // The same signals would end a release build, which has no use for them.
+        signal(SIGUSR1, SIG_IGN)
+        signal(SIGUSR2, SIG_IGN)
         #endif
     }
 

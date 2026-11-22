@@ -226,7 +226,7 @@ final class HintModeController {
                 .map(\.processIdentifier)
         )
         let pointer = CGEvent(source: nil)?.location ?? .zero
-        let displays = SystemSpaces.displayBounds
+        let displays = AXElementQuery.activeDisplayBounds()
         let limit = Self.windowLimit
 
         let listing = Task { [weak self] in

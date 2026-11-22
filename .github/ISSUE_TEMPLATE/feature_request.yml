@@ -1,0 +1,21 @@
+name: Feature request
+description: Something Keyfari could do
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What you are trying to do
+      description: The situation in which you reach for the pointer today, or what gets in your way.
+    validations:
+      required: true
+  - type: textarea
+    id: idea
+    attributes:
+      label: What would help
+      description: How you imagine it working. A rough idea is fine.
+  - type: textarea
+    id: other
+    attributes:
+      label: Anything else
+      description: Other tools that do this, or constraints worth knowing.
