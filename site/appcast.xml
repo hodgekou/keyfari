@@ -5,5 +5,29 @@
     <link>https://github.com/hodgekou/keyfari/releases</link>
     <description>Releases of Keyfari.</description>
     <language>en</language>
+    <item>
+      <title>0.3.0</title>
+      <pubDate>Sun, 22 Nov 2026 08:01:51 +0000</pubDate>
+      <link>https://github.com/hodgekou/keyfari/releases/tag/v0.3.0</link>
+      <sparkle:version>0.3.0</sparkle:version>
+      <sparkle:shortVersionString>0.3.0</sparkle:shortVersionString>
+      <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
+      <description><![CDATA[
+<h3>Added</h3>
+<ul>
+<li>Hint mode labels every visible window on every display, not only the focused one. Windows on the display under the pointer share the short labels and appear together with the focused window; windows on other displays follow with longer labels that start with the last label character. A window in the background is brought forward before it is clicked. Text detection still reads the focused window only. The setting &quot;Label all visible windows&quot; switches this off.</li>
+<li>The Stable Labels pane lists the remembered labels by how often they were used, most used first, and shows the count.</li>
+<li>Search mode searches every visible window on every display too, after the focused window&#x27;s elements, and brings a window in the background forward before clicking in it.</li>
+<li>The letters that scroll, and the two for half a page, can be changed in the Scrolling pane.</li>
+<li>Hint mode and search mode cover the icons in the Dock while it shows. The setting &quot;Label the Dock&quot; switches this off.</li>
+<li>An optional shortcut repeats the last click made through a label: it finds the same element again in the frontmost application and clicks it the same way.</li>
+<li>Hint mode can drag: hold Control and Shift on the last letter of a label to pick that element up, then type the label of where to drop it. Nothing is sent until the second label is typed, so <code>Esc</code> in between does nothing.</li>
+<li>A welcome guide opens on the first launch: it shows whether the Accessibility permission is granted, the three shortcuts, and the first choices to make. It can be opened again from the menu and from the General pane.</li>
+<li>Experimental: text detection can also label small shapes that line up like the icons of a toolbar. It uses the system&#x27;s contour detection only, with no model, so it misses lone icons and may label decoration. Off by default, in the AI Detection pane.</li>
+<li>Keyfari keeps itself up to date, with [Sparkle](https://sparkle-project.org): once a day it looks for a newer version, shows what is new and, if you agree, downloads the update, checks the project&#x27;s signature on it, installs it and restarts. A version can be skipped, and the check can be switched off in the General pane; &quot;Check for Updates…&quot; in the menu checks at once. These are the only network requests the app makes. Versions up to 0.2.0 do not have this and need one last manual update.</li>
+</ul>
+]]></description>
+      <enclosure url="https://github.com/hodgekou/keyfari/releases/download/v0.3.0/Keyfari-0.3.0.dmg" sparkle:edSignature="1qkuNzVPKJgxehD2F+ZqLfaHu3kaY0x5dzDfxs5Pm7QVlUofByRPE1LpUWSEVWDKceQTigoKuG/skK8Be23mAw==" length="3406848" type="application/octet-stream"/>
+    </item>
   </channel>
 </rss>

@@ -1,6 +1,6 @@
 cask "keyfari" do
-  version "0.2.0"
-  sha256 "7158f6b59f99d4d6fa7ce638a572c066802b171ebd8ff5e31205ab6d8440bd3e"
+  version "0.3.0"
+  sha256 "1939da3ba4513d59dbd8406dad1df0f38a637549eec979de8ccf842bb0ac02d8"
 
   url "https://github.com/hodgekou/keyfari/releases/download/v#{version}/Keyfari-#{version}.dmg"
   name "Keyfari"
