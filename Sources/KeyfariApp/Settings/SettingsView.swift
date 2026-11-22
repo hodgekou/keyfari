@@ -361,6 +361,15 @@ struct SettingsView: View {
                 tint: tint
             )
         }
+        Card("Icon buttons", symbol: "square.grid.3x3.square", tint: tint) {
+            ToggleRow(
+                "Detect icon buttons", detail: "Experimental. Labels small shapes that line up like a toolbar",
+                isOn: $store.settings.iconDetection, tint: tint)
+            RowDivider()
+            Notice(
+                "Works from shapes alone, without a model: it misses icons that stand alone and may label decoration. It needs text detection to be on.",
+                symbol: "flask.fill", tint: tint)
+        }
     }
 
     @ViewBuilder

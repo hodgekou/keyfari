@@ -30,8 +30,6 @@ public enum ScreenTextDetector {
         CGRequestScreenCaptureAccess()
     }
 
-    /// Recognises the text in the window of `pid` whose frame is `windowFrame`.
-    /// Returns nothing when that window cannot be found.
     /// Loads the recognition models and the capture service ahead of the first real request.
     ///
     /// A fresh process spends several seconds on that, which is far longer than anyone keeps
@@ -45,14 +43,27 @@ public enum ScreenTextDetector {
         }
     }
 
+    /// What was found in one screenshot of a window.
+    public struct Scan: Sendable {
+        public let text: [TextRegion]
+        /// Bounding boxes of the outlines of shapes, in accessibility coordinates. Empty unless asked for.
+        public let outlines: [CGRect]
+    }
+
     public static func textRegions(pid: pid_t, windowFrame: CGRect) async throws -> [TextRegion] {
+        try await scan(pid: pid, windowFrame: windowFrame, includesOutlines: false).text
+    }
+
+    /// Recognises the text in the window of `pid` whose frame is `windowFrame` and, when asked,
+    /// traces the outlines of the shapes in it. Returns nothing when that window cannot be found.
+    public static func scan(pid: pid_t, windowFrame: CGRect, includesOutlines: Bool) async throws -> Scan {
         let content = try await SCShareableContent.excludingDesktopWindows(true, onScreenWindowsOnly: true)
         try Task.checkCancellation()
         guard
             let window = content.windows.first(where: {
                 $0.owningApplication?.processID == pid && isSame($0.frame, windowFrame)
             })
-        else { return [] }
+        else { return Scan(text: [], outlines: []) }
 
         let filter = SCContentFilter(desktopIndependentWindow: window)
         let scale = CGFloat(filter.pointPixelScale)
@@ -64,7 +75,36 @@ public enum ScreenTextDetector {
         configuration.ignoreShadowsSingleWindow = true
 
         let image = try await SCScreenshotManager.captureImage(contentFilter: filter, configuration: configuration)
-        return try await recognize(image, windowFrame: window.frame)
+        let text = try await recognize(image, windowFrame: window.frame)
+        let outlines = includesOutlines ? try outlines(in: image, windowFrame: window.frame) : []
+        return Scan(text: text, outlines: outlines)
+    }
+
+    /// Traces the shapes in the image and returns the box around each.
+    ///
+    /// Both dark shapes on light ground and light shapes on dark ground are traced, since a
+    /// window can hold either. Boxes much larger than an icon are left out here already,
+    /// which keeps the list short.
+    static func outlines(in image: CGImage, windowFrame: CGRect) throws -> [CGRect] {
+        let largestUseful: CGFloat = 64
+        var result: [CGRect] = []
+        for darkOnLight in [true, false] {
+            try Task.checkCancellation()
+            let request = VNDetectContoursRequest()
+            request.contrastAdjustment = 1.5
+            request.detectsDarkOnLight = darkOnLight
+            // The default shrinks the image so far that small icons blur into nothing.
+            request.maximumImageDimension = 2048
+            try VNImageRequestHandler(cgImage: image, options: [:]).perform([request])
+            guard let observation = request.results?.first else { continue }
+            for contour in observation.topLevelContours {
+                let box = frame(of: contour.normalizedPath.boundingBox, in: windowFrame)
+                if box.width <= largestUseful, box.height <= largestUseful, box.width >= 2, box.height >= 2 {
+                    result.append(box)
+                }
+            }
+        }
+        return result
     }
 
     /// Screen coordinates from the two APIs can differ by a fraction of a point.

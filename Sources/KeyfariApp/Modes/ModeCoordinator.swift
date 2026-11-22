@@ -277,7 +277,7 @@ final class ModeCoordinator {
     }
 
     private func vision(_ settings: Settings) -> VisionAugmenter? {
-        settings.visionMode == .off ? nil : VisionAugmenter(mode: settings.visionMode)
+        settings.visionMode == .off ? nil : VisionAugmenter(mode: settings.visionMode, detectsIcons: settings.iconDetection)
     }
 
     /// The frontmost application, unless it is this app or on the ignore list.
