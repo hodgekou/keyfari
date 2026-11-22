@@ -46,7 +46,8 @@ final class UsageStatsStore {
     var currentStreak: Int {
         let calendar = Calendar.autoupdatingCurrent
         let today = calendar.startOfDay(for: .now)
-        let start = snapshot.clicksByDay[dayKey(today)] == nil
+        let start =
+            snapshot.clicksByDay[dayKey(today)] == nil
             ? calendar.date(byAdding: .day, value: -1, to: today) ?? today
             : today
         return streak(startingAt: start, calendar: calendar)
