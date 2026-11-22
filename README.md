@@ -1,108 +1,58 @@
 # Keyfari
 
-[![CI](https://github.com/hodgekou/keyfari/actions/workflows/ci.yml/badge.svg)](https://github.com/hodgekou/keyfari/actions/workflows/ci.yml)
-[![Latest release](https://img.shields.io/github/v/release/hodgekou/keyfari)](https://github.com/hodgekou/keyfari/releases/latest)
-[![License: GPL-3.0](https://img.shields.io/github/license/hodgekou/keyfari)](LICENSE)
-
-Keyboard-driven navigation for macOS. Press a shortcut, and every button, link and menu item gets a short label; type the label to click it. Scroll with `H J K L`, pick a window in Mission Control by its label, switch desktops. No mouse needed.
-
-## Text detection
-
-Some windows expose little or nothing to the accessibility tree: canvas-drawn interfaces, games, remote desktops, pictures of an interface. Keyfari can read the window's pixels with Apple's Vision framework, on the device, and label the text it finds.
-
-Both screenshots show hint mode in the same window. The window is Preview displaying a picture of a made-up application, so everything inside it is only pixels.
-
-| Without text detection | With text detection |
-| --- | --- |
-| ![Hint mode without text detection: only Preview's own toolbar has labels](docs/images/hints-without-text-detection.png) | ![Hint mode with text detection: every piece of text in the picture has a label](docs/images/hints-with-text-detection.png) |
-| Only Preview's toolbar, which is real interface, gets labels. | The buttons and entries in the picture get labels too. |
-
-The regular labels appear at once; the detected ones follow in well under a second. Detection finds text, not icons, so a button with no text still goes without a label.
-
-## Settings
-
-![The Hints pane of the settings window, with a live preview of the labels](docs/images/settings.png)
-
-## Features
-
-- **Hint mode** (`⌘⇧Space`): labels on every clickable element of the focused window, the menu bar, menu bar extras, notifications and the Dock, and on the other visible windows on every display. Windows on the display under the pointer share the short labels; those on other displays get longer ones that start with the last label character. Type a label to click; a window in the background comes forward first. Hold `Shift` on the last letter for a right click, `Command` for a double click, `Control` for a command-click, `Option` to only move the cursor. To drag, hold `Control` and `Shift` on the last letter to pick an element up, then type the label of where to drop it. `Delete` removes a letter, `Space` flips overlapping labels, `Esc` leaves.
-- **Search mode** (`⌘⇧/`): searches the focused window first and the other visible windows after it. Type part of an element's text to filter, `Tab` / arrows / `Ctrl-N` `Ctrl-P` to move the focus, `Shift` + label to jump, `Return` to click (twice for a double click), `Shift-Return` right click, `Command-Return` command-click. `*` or `;` matches everything. Chinese text matches its pinyin in full or as initials, so `baocun` and `bc` both find 保存.
-- **Scroll mode** (`⌘⇧J`): `h j k l` scroll (the letters can be changed), with `Shift` for speed, `d` / `u` half a page, `gg` / `G` top and bottom, `Tab` or `0`–`9` to switch scroll areas, `Esc` leaves.
-- **On-screen text detection**: recognises text in the window's pixels, on the device, and labels what the accessibility tree does not expose. The regular labels appear at once and the detected ones are added a moment later.
-- **Repeat last click**: an optional shortcut clicks the element you clicked last once more, for paging through a list or stepping through a dialog.
-- **Desktops**: optional shortcuts that go one desktop (Space) to the left or right. Keyfari presses the system's own shortcut for it, on the display with the focused window. Off until you record a shortcut.
-- **Mission Control**: press the hint shortcut while Mission Control is open to label its windows and desktops, on every display. Type a label to open its item, `Esc` to leave. Labels can also appear by themselves whenever Mission Control opens.
-- **Customisable**: shortcuts, label characters, themes (including Liquid Glass on macOS 26+), size and corner radius, scroll speed, click chains, ignored applications, launch at login.
-- **Stable labels**: an element keeps the label you last clicked it with. The Stable Labels pane lists what Keyfari remembered; type other letters there to choose a label yourself, or forget it.
-- **Usage statistics**: clicks, active days, most used apps and an estimate of the time saved. Everything stays on this Mac, and the statistics can be switched off.
-- **Updates**: once a day Keyfari looks for a newer version, shows what changed and, if you agree, downloads and installs it. You can skip a version or switch the check off.
-- **Interface in English, Chinese and Japanese**, following the system language unless you choose one.
-
-Icon-only buttons are detected only experimentally, from their shapes, when they line up like a toolbar; switch it on in the AI Detection pane.
-
-More at [hodgekou.github.io/keyfari](https://hodgekou.github.io/keyfari/).
+Keyfari lets you use your Mac with the keyboard. Press a shortcut to put letter labels on buttons, links and menu items, then type a label to click. You can also search for a button by name or scroll a page without reaching for the mouse.
 
 ## Install
 
-Download the latest disk image from the [releases page](https://github.com/hodgekou/keyfari/releases/latest), open it and drag Keyfari to Applications. Or use Homebrew:
+Keyfari runs on macOS 14 (Sonoma) or later, on both Apple silicon and Intel Macs.
+
+1. Open the [latest release](https://github.com/hodgekou/keyfari/releases/latest). Under **Assets**, download the file ending in **.dmg**.
+2. Double-click the downloaded file and drag **Keyfari** onto the **Applications** folder in the window.
+3. Open **Applications** in Finder and double-click **Keyfari**.
+
+If you already use Homebrew, you can install Keyfari with one command, then open it from Applications:
 
 ```sh
 brew install --cask hodgekou/keyfari/keyfari
 ```
 
-Keyfari is not signed with an Apple Developer ID, so macOS blocks it the first time. Open it once, then go to **System Settings > Privacy & Security** and choose **Open Anyway**. When upgrading from 0.3.0 or earlier, macOS may ask for permissions once more. [First-launch screenshots](https://hodgekou.github.io/keyfari/#first-launch)
+## Open Keyfari for the first time
 
-On first launch, grant **Accessibility** permission so Keyfari can read other apps' interfaces and send clicks. On-screen text detection also requires **Screen Recording** permission; it stays idle until you grant it.
+If macOS says it can’t verify Keyfari, dismiss the alert. Open **System Settings → Privacy & Security**, scroll down to **Security**, and click **Open Anyway** beside the message naming Keyfari. Confirm when prompted. [See the steps with screenshots](https://hodgekou.github.io/keyfari/#first-launch).
 
-## Requirements
+The welcome guide will ask you to allow **Accessibility** so Keyfari can click and scroll in other apps. **Screen Recording** is optional. Enable it if you want Keyfari to recognise text inside images or windows where ordinary labels are missing.
 
-- macOS 14 or later, Apple silicon or Intel
-- To build from source: a Swift 6 toolchain. The Command Line Tools are enough; Xcode is optional.
+## Try your first click
 
-## Build from source
+Open a Finder window. Press **Command + Shift + Space** together, then release them. Look at the letters beside the folder or button you want and type those letters in order. Keyfari clicks it for you. Press **Esc** at any time to cancel.
 
-```sh
-scripts/bundle.sh          # builds build/Keyfari.app (debug)
-open build/Keyfari.app
-```
+| To… | Press | Then… |
+| --- | --- | --- |
+| Click something you can see | **Command + Shift + Space** | Type its label. For a right-click, hold **Shift** while typing the last letter. |
+| Find something by name | **Command + Shift + /** | Type part of its name, use the arrow keys to select a match, then press **Return**. |
+| Scroll a page | **Command + Shift + J** | Press **J** to scroll down or **K** to scroll up. Press **Esc** to finish. |
+| Pick a window in Mission Control | Open Mission Control, then press **Command + Shift + Space** | Type the label on the window you want. |
 
-Pass `release` for an optimised build.
+## When a button has no label
 
-Keyfari appears in the menu bar.
+Try turning on **text detection** in Keyfari’s settings. Here, Preview is displaying a picture of an app. Text detection lets you point to the words inside that picture.
 
-The bundle is signed ad hoc by default, so macOS asks for the permissions again after every rebuild. Set `KEYFARI_SIGN_IDENTITY` to a code signing identity from your keychain to keep them.
+| Text detection off | Text detection on |
+| --- | --- |
+| ![Only the Preview toolbar has labels](docs/images/hints-without-text-detection.png) | ![Labels also appear over text inside the picture](docs/images/hints-with-text-detection.png) |
+
+## Settings and updates
+
+Click the **Keyfari icon in the menu bar** to open Settings or revisit the **Welcome Guide**. In Settings you can change shortcuts, make labels easier to read, or export your settings and remembered labels to take them to another Mac. If you’ve hidden the menu bar icon, open Keyfari again from Applications to reach Settings.
+
+![Settings with a preview of label size and appearance](docs/images/settings.png)
+
+Keyfari checks for updates daily. To check now, choose **Check for Updates…** from its menu. If you upgrade from 0.3.0 or earlier, macOS may ask you to grant Accessibility and Screen Recording again.
 
 ## Privacy
 
-Keyfari has no telemetry. Its only network requests are for updates: once a day it reads the project's update feed, and it downloads a new version when you choose to install it. The requests carry no identifier and nothing about you or your Mac, an update is only installed if it carries the project's signature, and the check can be switched off in the settings; then Keyfari makes no network requests at all. Screenshots taken for text detection are processed on the device with Apple's Vision framework and exist only in memory. Settings, remembered labels and the usage statistics are stored locally in the user defaults; the statistics hold counts per day and per application, nothing about what was clicked.
+Text recognition happens on your Mac. Screenshots stay in memory. Settings, remembered labels and optional usage statistics stay on your Mac too. Keyfari contacts the network only to check for and download updates. You can turn automatic checks off in Settings.
 
-## Project layout
+[Keyfari website](https://hodgekou.github.io/keyfari/) · [Report a problem](https://github.com/hodgekou/keyfari/issues) · [GPL-3.0 license](LICENSE)
 
-| Path | Contents |
-| --- | --- |
-| `Sources/KeyfariCore` | Pure logic: label generation, input state machines, settings, translations. No system permissions needed; fully unit tested. |
-| `Sources/AXKit` | Accessibility tree access and traversal. |
-| `Sources/InputKit` | Event taps, hot keys, activators, synthesized mouse and scroll events. |
-| `Sources/OverlayKit` | Transparent per-screen panels that draw labels, the search bar and scroll outlines. |
-| `Sources/ScreenVision` | Screenshot text recognition. |
-| `Sources/KeyfariApp` | The executable: `App` (lifecycle, menu bar), `Modes` (hint, search, scroll, Mission Control), `Spaces` (desktop switching), `Settings` (settings window). |
-| `Tests/KeyfariCoreTests` | Unit tests, one file per suite. |
-| `Resources` | `Info.plist`, the application icon and the sounds. |
-| `scripts` | Building, testing, linting, checking the repository, packaging and drawing the icon. |
-| `site` | The landing page, published to GitHub Pages. |
-| `Casks` | The Homebrew cask. |
-
-## Development
-
-```sh
-scripts/test.sh            # unit tests
-scripts/lint.sh            # formatting and style; --fix rewrites in place
-scripts/check-repo.sh      # licence headers, unused translations, documented paths, versions
-log stream --predicate 'subsystem == "app.keyfari.Keyfari"'
-```
-
-See [CONTRIBUTING.md](CONTRIBUTING.md) for conventions, debugging aids and how to add a translation.
-
-## License
-
-[GPL-3.0](LICENSE), the same license as Vimac. Portions are derived from Vimac, Copyright © 2019–2021 Dexter Leng; the files concerned say so at the top.
+Portions of Keyfari are derived from Vimac, copyright © 2019–2021 Dexter Leng.

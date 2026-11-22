@@ -7,13 +7,41 @@ Bug reports, fixes and translations are welcome. Open an issue first for anythin
 You need macOS 14 or later and a Swift 6 toolchain. The Command Line Tools are enough.
 
 ```sh
-scripts/bundle.sh          # build build/Keyfari.app
+scripts/bundle.sh          # build build/Keyfari.app (debug)
+open build/Keyfari.app     # launch the menu bar app
 scripts/test.sh            # run the unit tests
 scripts/lint.sh            # check formatting and style
 scripts/check-repo.sh      # check licence headers, translations, documented paths and versions
 ```
 
 `scripts/test.sh` exists because the Command Line Tools keep the Swift Testing macro plugin outside the compiler's default search path. With Xcode installed, plain `swift test` works too.
+
+### Packaging locally
+
+To build an optimised app for both Apple silicon and Intel and package it in a disk image, run:
+
+```sh
+KEYFARI_UNIVERSAL=1 scripts/bundle.sh release
+scripts/make-dmg.sh build/Keyfari.app build/Keyfari.dmg
+```
+
+Local builds use ad hoc signing by default. After a rebuild macOS may ask for permissions again. To reuse a signing identity from your keychain, set `KEYFARI_SIGN_IDENTITY` when running the bundle script. See [The signing certificate](#the-signing-certificate) for release builds.
+
+## Project layout
+
+| Path | Contents |
+| --- | --- |
+| `Sources/KeyfariCore` | Pure logic: label generation, input state machines, settings, translations. No system permissions needed; fully unit tested. |
+| `Sources/AXKit` | Accessibility tree access and traversal. |
+| `Sources/InputKit` | Event taps, hot keys, activators, synthesized mouse and scroll events. |
+| `Sources/OverlayKit` | Transparent per-screen panels that draw labels, the search bar and scroll outlines. |
+| `Sources/ScreenVision` | Screenshot text recognition. |
+| `Sources/KeyfariApp` | The executable: `App` (lifecycle, menu bar), `Modes` (hint, search, scroll, Mission Control), `Spaces` (desktop switching), `Settings` (settings window). |
+| `Tests/KeyfariCoreTests` | Unit tests, one file per suite. |
+| `Resources` | `Info.plist`, the application icon and the sounds. |
+| `scripts` | Building, testing, linting, checking the repository, packaging and drawing the icon. |
+| `site` | The landing page, published to GitHub Pages. |
+| `Casks` | The Homebrew cask. |
 
 ## Before you open a pull request
 
