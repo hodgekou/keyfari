@@ -42,6 +42,8 @@ public struct Settings: Codable, Equatable, Sendable {
     /// Shortcuts that go one Space to the left or right. Nil means off.
     public var previousSpaceShortcut: Shortcut?
     public var nextSpaceShortcut: Shortcut?
+    /// Clicks the element that was clicked last through a label once more. Nil means off.
+    public var repeatClickShortcut: Shortcut?
     /// Show labels in Mission Control as soon as it opens, without pressing the hint shortcut.
     public var missionControlAutoHints = false
     /// Keep the mode open after a click so several elements can be clicked in a row.
@@ -91,6 +93,7 @@ public struct Settings: Codable, Equatable, Sendable {
         scrollShortcut = (try? container.decodeIfPresent(Shortcut.self, forKey: .scrollShortcut)) ?? fallback.scrollShortcut
         previousSpaceShortcut = try? container.decodeIfPresent(Shortcut.self, forKey: .previousSpaceShortcut)
         nextSpaceShortcut = try? container.decodeIfPresent(Shortcut.self, forKey: .nextSpaceShortcut)
+        repeatClickShortcut = try? container.decodeIfPresent(Shortcut.self, forKey: .repeatClickShortcut)
         missionControlAutoHints = try container.decodeIfPresent(Bool.self, forKey: .missionControlAutoHints) ?? fallback.missionControlAutoHints
         chainClicks = try container.decodeIfPresent(Bool.self, forKey: .chainClicks) ?? fallback.chainClicks
         hintAllWindows = try container.decodeIfPresent(Bool.self, forKey: .hintAllWindows) ?? fallback.hintAllWindows
@@ -141,12 +144,12 @@ public struct Settings: Codable, Equatable, Sendable {
             result.searchShortcut = fallback.searchShortcut
             result.scrollShortcut = fallback.scrollShortcut
         }
-        // A Spaces shortcut that is unusable or already taken is switched off; the modes come first.
+        // An optional shortcut that is unusable or already taken is switched off; the modes come first.
         var taken = Set([result.hintShortcut, result.searchShortcut, result.scrollShortcut])
-        for direction in SpaceDirection.allCases {
-            guard let shortcut = self[keyPath: Self.spaceShortcut(direction)] else { continue }
+        for keyPath in SpaceDirection.allCases.map(Self.spaceShortcut) + [\.repeatClickShortcut] {
+            guard let shortcut = self[keyPath: keyPath] else { continue }
             if !shortcut.isUsable || !taken.insert(shortcut).inserted {
-                result[keyPath: Self.spaceShortcut(direction)] = nil
+                result[keyPath: keyPath] = nil
             }
         }
         // The two sets of scroll keys only make sense together.

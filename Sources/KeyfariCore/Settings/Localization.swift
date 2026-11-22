@@ -88,6 +88,10 @@ public enum Localizer {
         "Find an element by its text": Entry(chinese: "按文字查找元素", japanese: "テキストで要素を探す"),
         "Scroll mode": Entry(chinese: "滚动模式", japanese: "スクロールモード"),
         "Scroll with H J K L": Entry(chinese: "用 H J K L 滚动", japanese: "H J K L でスクロール"),
+        "Repeat last click": Entry(chinese: "重复上一次点击", japanese: "直前のクリックを繰り返す"),
+        "Click the element you clicked last once more": Entry(chinese: "再点一次上次点过的那个元素", japanese: "最後にクリックした要素をもう一度クリック"),
+        "There is no click to repeat yet.": Entry(chinese: "还没有可以重复的点击。", japanese: "繰り返すクリックがまだありません。"),
+        "The element you clicked last is not on screen.": Entry(chinese: "上次点击的元素不在屏幕上。", japanese: "最後にクリックした要素は画面上にありません。"),
         "Two modes share a shortcut, so the defaults are in use.": Entry(
             chinese: "有两个模式使用了相同的快捷键,已改用默认设置。", japanese: "2 つのモードが同じショートカットを使っているため、デフォルトを使用しています。"),
         "Press a shortcut…": Entry(chinese: "请按下快捷键…", japanese: "ショートカットを押してください…"),

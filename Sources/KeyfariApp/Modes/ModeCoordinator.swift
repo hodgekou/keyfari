@@ -23,6 +23,7 @@ final class ModeCoordinator {
     private enum Command: Equatable {
         case mode(Mode)
         case space(SpaceDirection)
+        case repeatClick
     }
 
     private struct Binding: Equatable {
@@ -40,6 +41,9 @@ final class ModeCoordinator {
     private let interceptor = KeyInterceptor()
     private lazy var spaces = SpaceController(store: store)
     /// Decides whether the hint shortcut means hint mode or Mission Control.
+    /// The last click made through a label, for the shortcut that repeats it. Kept in memory only.
+    private var lastClick: LastClick?
+    private var repeatTask: Task<Void, Never>?
     private var pendingActivation: Task<Void, Never>?
     /// Shows the labels when Mission Control opens, while that setting is on.
     private var missionControlWatch: Task<Void, Never>?
@@ -72,6 +76,9 @@ final class ModeCoordinator {
             }
             wanted.append(Binding(command: .space(direction), shortcut: shortcut))
         }
+        if let shortcut = settings.repeatClickShortcut, !systemShortcuts.contains(shortcut) {
+            wanted.append(Binding(command: .repeatClick, shortcut: shortcut))
+        }
         guard wanted != shortcuts else { return }
 
         hotkeys.unregisterAll()
@@ -97,6 +104,9 @@ final class ModeCoordinator {
             // Labels drawn for this Space mean nothing on the next one.
             active?.stop()
             spaces.switchSpace(direction)
+        case .repeatClick:
+            active?.stop()
+            repeatLastClick()
         }
     }
 
@@ -165,6 +175,12 @@ final class ModeCoordinator {
         let recordClick: @MainActor (String, Int, Bool) -> Void = { [weak self] bundleID, count, isNewAction in
             self?.store.recordAction(bundleID: bundleID, clicks: count, isNewAction: isNewAction)
         }
+        let rememberClick: @MainActor (ElementSnapshot, String, ClickAction) -> Void = { [weak self] element, bundleID, action in
+            // A click that cannot be repeated leaves the earlier one in place.
+            if let click = LastClick(element: element, bundleID: bundleID, action: action) {
+                self?.lastClick = click
+            }
+        }
         let onShortcut: @MainActor (KeyStroke) -> Bool = { [weak self] stroke in
             self?.handleShortcut(stroke) ?? false
         }
@@ -180,7 +196,7 @@ final class ModeCoordinator {
             let controller = HintModeController(
                 query: elementQuery(settings), vision: vision(settings), overlay: overlay, interceptor: interceptor, settings: settings,
                 memory: store.labelMemory,
-                target: target, recordClick: recordClick, onShortcut: onShortcut, onExit: onExit
+                target: target, recordClick: recordClick, rememberClick: rememberClick, onShortcut: onShortcut, onExit: onExit
             )
             started = controller.start()
             stop = { controller.stop() }
@@ -188,7 +204,7 @@ final class ModeCoordinator {
             applyStyle(settings)
             let controller = SearchModeController(
                 query: elementQuery(settings), vision: vision(settings), overlay: overlay, interceptor: interceptor, settings: settings,
-                target: target, recordClick: recordClick, onShortcut: onShortcut, onExit: onExit
+                target: target, recordClick: recordClick, rememberClick: rememberClick, onShortcut: onShortcut, onExit: onExit
             )
             started = controller.start()
             stop = { controller.stop() }
@@ -213,6 +229,37 @@ final class ModeCoordinator {
 
         guard started else { return refuse("the keyboard could not be intercepted") }
         active = (mode, stop)
+    }
+
+    /// Finds the element of the last click again in the frontmost application and clicks it the same way.
+    private func repeatLastClick() {
+        guard AXPermission.isGranted else { return refuse("the Accessibility permission is missing") }
+        guard let lastClick else {
+            return refuse("nothing was clicked through a label yet", message: tr("There is no click to repeat yet."))
+        }
+        guard let target = currentTarget() else {
+            return refuse("the frontmost application is missing, ignored, or Keyfari itself")
+        }
+        let settings = store.effective
+        let query = elementQuery(settings)
+        let application = target.application
+        let frontmost = application.bundleIdentifier ?? ""
+
+        repeatTask?.cancel()
+        repeatTask = Task { [weak self] in
+            let found =
+                (try? await query.hintableElements(
+                    pid: application.processIdentifier, bundleURL: application.bundleURL, otherPIDs: target.otherPIDs
+                )) ?? []
+            guard let self, !Task.isCancelled else { return }
+            let owners = found.map { BackgroundWindows.owner(of: $0, frontmost: frontmost) }
+            guard let index = lastClick.index(in: found, bundleIDs: owners) else {
+                return self.refuse("the element of the last click is not on screen", message: tr("The element you clicked last is not on screen."))
+            }
+            MouseSynthesizer.perform(lastClick.action, at: found[index].clickPoint)
+            if settings.successSoundEnabled { SoundFeedback.success() }
+            self.store.recordAction(bundleID: owners[index], clicks: lastClick.action.clickCount, isNewAction: true)
+        }
     }
 
     private func applyStyle(_ settings: Settings) {
@@ -265,8 +312,10 @@ final class ModeCoordinator {
         return true
     }
 
-    private func refuse(_ reason: String) {
+    /// - Parameter message: shown on screen when the user would otherwise not know why nothing happened.
+    private func refuse(_ reason: String, message: String? = nil) {
         log.notice("Not activating: \(reason, privacy: .public)")
         SoundFeedback.warningIfEnabled(store.effective.warningSoundEnabled)
+        if let message { Toast.show(message) }
     }
 }

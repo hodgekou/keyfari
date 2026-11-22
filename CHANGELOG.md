@@ -12,6 +12,7 @@ All notable changes to Keyfari are recorded here. The format follows [Keep a Cha
 - Search mode searches every visible window on every display too, after the focused window's elements, and brings a window in the background forward before clicking in it.
 - The letters that scroll, and the two for half a page, can be changed in the Scrolling pane.
 - Hint mode and search mode cover the icons in the Dock while it shows. The setting "Label the Dock" switches this off.
+- An optional shortcut repeats the last click made through a label: it finds the same element again in the frontmost application and clicks it the same way.
 
 ## [0.2.0] - 2026-11-22
 

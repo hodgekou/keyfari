@@ -61,6 +61,7 @@ final class HintModeController {
     private let memory: LabelMemory?
     private let target: @MainActor () -> ModeTarget?
     private let recordClick: @MainActor (String, Int, Bool) -> Void
+    private let rememberClick: @MainActor (ElementSnapshot, String, ClickAction) -> Void
     private let onShortcut: @MainActor (KeyStroke) -> Bool
     private let onExit: @MainActor () -> Void
 
@@ -107,6 +108,7 @@ final class HintModeController {
         memory: LabelMemory?,
         target: @escaping @MainActor () -> ModeTarget?,
         recordClick: @escaping @MainActor (String, Int, Bool) -> Void,
+        rememberClick: @escaping @MainActor (ElementSnapshot, String, ClickAction) -> Void,
         onShortcut: @escaping @MainActor (KeyStroke) -> Bool,
         onExit: @escaping @MainActor () -> Void
     ) {
@@ -118,6 +120,7 @@ final class HintModeController {
         self.memory = memory
         self.target = target
         self.recordClick = recordClick
+        self.rememberClick = rememberClick
         self.onShortcut = onShortcut
         self.onExit = onExit
     }
@@ -440,8 +443,9 @@ final class HintModeController {
         }
 
         let point = target.element.clickPoint
-        let click: @MainActor () -> Void = { [recordClick, settings] in
+        let click: @MainActor () -> Void = { [recordClick, rememberClick, settings] in
             MouseSynthesizer.perform(action, at: point)
+            rememberClick(target.element, target.bundleID, action)
             if settings.successSoundEnabled, action.clickCount > 0 { SoundFeedback.success() }
             recordClick(target.bundleID, action.clickCount, true)
         }

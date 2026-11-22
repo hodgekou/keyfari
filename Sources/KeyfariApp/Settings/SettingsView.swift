@@ -96,6 +96,14 @@ struct SettingsView: View {
             ShortcutRecorder(title: "Search", detail: "Find an element by its text", shortcut: $store.settings.searchShortcut, tint: tint)
             RowDivider()
             ShortcutRecorder(title: "Scroll mode", detail: "Scroll with H J K L", shortcut: $store.settings.scrollShortcut, tint: tint)
+            RowDivider()
+            ShortcutRecorder(
+                title: "Repeat last click", detail: "Click the element you clicked last once more", optional: $store.settings.repeatClickShortcut,
+                tint: tint)
+            if store.settings.repeatClickShortcut != store.effective.repeatClickShortcut {
+                RowDivider()
+                Notice("A shortcut that is unusable or already taken is switched off.", symbol: "exclamationmark.triangle.fill", tint: .orange)
+            }
             if store.effective.hintShortcut != store.settings.hintShortcut
                 || store.effective.searchShortcut != store.settings.searchShortcut
                 || store.effective.scrollShortcut != store.settings.scrollShortcut
