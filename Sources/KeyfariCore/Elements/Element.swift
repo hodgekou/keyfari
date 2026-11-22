@@ -44,7 +44,15 @@ public struct ElementSnapshot: Sendable, Equatable {
         // A link can wrap over several lines, so its centre may be empty space.
         // Vimac clicks just inside the bottom-left corner instead, which is kept here.
         if role == "AXLink" {
-            return CGPoint(x: frame.minX + 5, y: frame.maxY - 5)
+            let point = CGPoint(x: frame.minX + 5, y: frame.maxY - 5)
+            // A link can be clipped by a scroll area. Keep its preferred point when visible,
+            // otherwise move it just inside the visible bounds.
+            let xInset = min(1, clippedFrame.width / 2)
+            let yInset = min(1, clippedFrame.height / 2)
+            return CGPoint(
+                x: min(max(point.x, clippedFrame.minX + xInset), clippedFrame.maxX - xInset),
+                y: min(max(point.y, clippedFrame.minY + yInset), clippedFrame.maxY - yInset)
+            )
         }
         return CGPoint(x: clippedFrame.midX, y: clippedFrame.midY)
     }
