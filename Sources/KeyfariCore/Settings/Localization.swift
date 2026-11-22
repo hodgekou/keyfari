@@ -165,13 +165,15 @@ public enum Localizer {
         "The same label for the same element, every time": Entry(chinese: "同一个元素每次都用同一个标签", japanese: "同じ要素にはいつも同じラベル"),
         "Stable labels": Entry(chinese: "固定标签", japanese: "固定ラベル"),
         "Remembered labels": Entry(chinese: "已记住的标签", japanese: "記憶したラベル"),
-        "When you click something by its label, Keyfari remembers that label and shows it again next time. Type other letters into a field and press Return to choose the label yourself.":
+        "When you click something by its label, Keyfari remembers that label and shows it again next time. The most used come first. Type other letters into a field and press Return to choose the label yourself.":
             Entry(
-                chinese: "用标签点击某个元素后,Keyfari 会记住这个标签,下次仍然显示它。在输入框里改成别的字母并按回车,就可以自己指定标签。",
-                japanese: "ラベルで要素をクリックすると、Keyfari はそのラベルを記憶し、次回も同じものを表示します。欄に別の文字を入力して Return を押すと、自分でラベルを決められます。"
+                chinese: "用标签点击某个元素后,Keyfari 会记住这个标签,下次仍然显示它。列表按使用次数排序。在输入框里改成别的字母并按回车,就可以自己指定标签。",
+                japanese: "ラベルで要素をクリックすると、Keyfari はそのラベルを記憶し、次回も同じものを表示します。一覧は使用回数の多い順です。欄に別の文字を入力して Return を押すと、自分でラベルを決められます。"
             ),
         "No labels remembered yet": Entry(chinese: "还没有记住任何标签", japanese: "記憶したラベルはまだありません"),
         "%d more labels are remembered": Entry(chinese: "另外还记住了 %d 个标签", japanese: "ほかに %d 個のラベルを記憶しています"),
+        "Used once": Entry(chinese: "用过 1 次", japanese: "1 回使用"),
+        "Used %d times": Entry(chinese: "用过 %d 次", japanese: "%d 回使用"),
         "Forget all labels": Entry(chinese: "清除全部标签", japanese: "すべてのラベルを消去"),
         "Chosen": Entry(chinese: "自定义", japanese: "指定済み"),
         "Save": Entry(chinese: "保存", japanese: "保存"),

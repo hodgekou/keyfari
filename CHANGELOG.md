@@ -7,6 +7,7 @@ All notable changes to Keyfari are recorded here. The format follows [Keep a Cha
 ### Added
 
 - Hint mode labels every visible window on every display, not only the focused one. Windows on the display under the pointer share the short labels and appear together with the focused window; windows on other displays follow with longer labels that start with the last label character. A window in the background is brought forward before it is clicked. Text detection still reads the focused window only. The setting "Label all visible windows" switches this off.
+- The Stable Labels pane lists the remembered labels by how often they were used, most used first, and shows the count.
 
 ## [0.2.0] - 2026-11-22
 

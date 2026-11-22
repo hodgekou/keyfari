@@ -331,7 +331,7 @@ final class HintModeController {
     private func assignLabels(to found: [Target], reserve: Int) -> [String] {
         let elements = found.map(\.element)
         if let memory {
-            return memory.assign(
+            return memory.book.assign(
                 to: elements, bundleIDs: found.map(\.bundleID), alphabet: settings.hintAlphabet, reserve: reserve,
                 useMemory: settings.stableLabels, excludedLead: secondaryLead
             )

@@ -23,7 +23,8 @@ enum SettingsSnapshot {
         for (label, text) in [("S", "Save"), ("D", "New Tab")] {
             store.labelMemory.remember(label, for: ElementSnapshot(role: "AXButton", frame: .zero, searchText: text), bundleID: "com.apple.Terminal")
         }
-        if let first = store.labelMemory.entries.first {
+        store.labelMemory.remember("D", for: ElementSnapshot(role: "AXButton", frame: .zero, searchText: "New Tab"), bundleID: "com.apple.Terminal")
+        if let first = store.labelMemory.book.entries.first {
             _ = store.labelMemory.setCustomLabel("JK", id: first.id, alphabet: store.effective.hintAlphabet)
         }
 
