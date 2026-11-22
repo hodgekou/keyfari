@@ -144,7 +144,7 @@ final class HintModeController {
     private func show(_ found: [ElementSnapshot]) {
         // With detection on, an empty tree is not the end: the text regions may still arrive.
         guard !found.isEmpty || vision != nil else {
-            NSSound.beep()
+            SoundFeedback.warningIfEnabled(settings.warningSoundEnabled)
             stop()
             return
         }
@@ -175,7 +175,7 @@ final class HintModeController {
             let added = Array(extras.prefix(self.reservedLabels.count))
             guard !added.isEmpty else {
                 if self.elements.isEmpty {
-                    NSSound.beep()
+                    SoundFeedback.warningIfEnabled(self.settings.warningSoundEnabled)
                     self.stop()
                 }
                 return
@@ -210,7 +210,7 @@ final class HintModeController {
         case let .updated(prefix, _):
             overlay.update(prefix: prefix)
         case .rejected:
-            NSSound.beep()
+            SoundFeedback.warningIfEnabled(settings.warningSoundEnabled)
         case .rotate:
             overlay.rotate()
         case let .matched(index, action):
@@ -231,12 +231,19 @@ final class HintModeController {
             clearState()
             overlay.hide()
             MouseSynthesizer.perform(action, at: element.clickPoint)
+            playSuccessSound(for: action)
             recordClick(bundleID, action.clickCount)
             runQuery(after: Self.chainDelay)
         } else {
             stop()
             MouseSynthesizer.perform(action, at: element.clickPoint)
+            playSuccessSound(for: action)
             recordClick(bundleID, action.clickCount)
         }
+    }
+
+    private func playSuccessSound(for action: ClickAction) {
+        guard settings.successSoundEnabled, action.clickCount > 0 else { return }
+        SoundFeedback.success()
     }
 }

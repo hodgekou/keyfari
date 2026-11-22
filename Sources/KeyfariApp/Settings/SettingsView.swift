@@ -121,6 +121,17 @@ struct SettingsView: View {
         Card("Ignored applications", symbol: "nosign", tint: tint) {
             IgnoredApplicationsList(store: store, tint: tint)
         }
+        Card("Sound effects", symbol: "speaker.wave.2.fill", tint: tint) {
+            ToggleRow(
+                "Click sounds", detail: "Play a sound after a successful click", isOn: $store.settings.successSoundEnabled,
+                tint: tint
+            )
+            RowDivider()
+            ToggleRow(
+                "Warning sounds", detail: "Play a sound for invalid or unavailable actions", isOn: $store.settings.warningSoundEnabled,
+                tint: tint
+            )
+        }
     }
 
     @ViewBuilder

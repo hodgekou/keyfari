@@ -100,6 +100,11 @@ public enum Localizer {
         "Takes effect immediately": Entry(chinese: "立即生效", japanese: "すぐに反映されます"),
         "System default": Entry(chinese: "跟随系统", japanese: "システムに合わせる"),
         "Ignored applications": Entry(chinese: "忽略的应用", japanese: "除外するアプリ"),
+        "Sound effects": Entry(chinese: "音效", japanese: "効果音"),
+        "Click sounds": Entry(chinese: "点击成功音", japanese: "クリック音"),
+        "Play a sound after a successful click": Entry(chinese: "成功点击后播放提示音", japanese: "クリック成功時に音を鳴らす"),
+        "Warning sounds": Entry(chinese: "警告音", japanese: "警告音"),
+        "Play a sound for invalid or unavailable actions": Entry(chinese: "操作无效或无法执行时播放提示音", japanese: "無効または実行できない操作で音を鳴らす"),
         "Permissions": Entry(chinese: "权限", japanese: "アクセス権限"),
         "Accessibility permission": Entry(chinese: "辅助功能权限", japanese: "アクセシビリティ権限"),
         "Required for global shortcuts and controlling apps": Entry(

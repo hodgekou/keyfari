@@ -7,6 +7,7 @@ All notable changes to Keyfari are recorded here. The format follows [Keep a Cha
 ### Added
 
 - Add opt-in local usage statistics for successful clicks, active days and frequently used apps.
+- Add independent, off-by-default sounds for successful clicks and warning feedback.
 
 ### Removed
 
