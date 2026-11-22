@@ -110,7 +110,7 @@ final class SearchModeController {
             guard !Task.isCancelled, self.isActive else { return }
             // With detection on, an empty tree is not the end: the text regions may still arrive.
             guard !found.isEmpty || self.vision != nil else {
-                NSSound.beep()
+                SoundFeedback.warningIfEnabled(self.settings.warningSoundEnabled)
                 self.stop()
                 return
             }
@@ -140,7 +140,7 @@ final class SearchModeController {
             guard let self, !Task.isCancelled, self.isActive, self.session != nil else { return }
             guard !extras.isEmpty else {
                 if self.elements.isEmpty {
-                    NSSound.beep()
+                    SoundFeedback.warningIfEnabled(self.settings.warningSoundEnabled)
                     self.stop()
                 }
                 return
@@ -170,6 +170,7 @@ final class SearchModeController {
             // Only Return is intercepted while armed. Its auto-repeat must not count as a second press.
             guard !stroke.isRepeat else { return }
             MouseSynthesizer.secondClick(at: point)
+            playSuccessSound(clickCount: 1)
             recordClick(bundleID, 1)
             stop()
             return
@@ -188,7 +189,7 @@ final class SearchModeController {
             appliedStrokes.append(stroke)
             render()
         case .rejected:
-            NSSound.beep()
+            SoundFeedback.warningIfEnabled(settings.warningSoundEnabled)
         case let .act(index, action):
             perform(action, on: elements[index])
         case .exit:
@@ -204,6 +205,7 @@ final class SearchModeController {
         session = nil
         overlay.hide()
         MouseSynthesizer.perform(action, at: point)
+        playSuccessSound(clickCount: action.clickCount)
         recordClick(bundleID, action.clickCount)
 
         if settings.chainClicks, action != .moveOnly, !element.acceptsText {
@@ -222,5 +224,10 @@ final class SearchModeController {
         } else {
             stop()
         }
+    }
+
+    private func playSuccessSound(clickCount: Int) {
+        guard settings.successSoundEnabled, clickCount > 0 else { return }
+        SoundFeedback.success()
     }
 }

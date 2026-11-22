@@ -53,7 +53,7 @@ final class ScrollModeController {
             guard let self, !Task.isCancelled, self.isActive else { return }
             self.log.notice("Found \(found.count) scroll areas in \(name, privacy: .public)")
             guard !found.isEmpty else {
-                NSSound.beep()
+                SoundFeedback.warningIfEnabled(settings.warningSoundEnabled)
                 self.stop()
                 return
             }

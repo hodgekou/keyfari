@@ -43,6 +43,7 @@ cp "$binary" "$app/Contents/MacOS/Keyfari"
 cp "$root/Resources/Info.plist" "$app/Contents/Info.plist"
 # Regenerate the icon with scripts/make-icon.swift and iconutil.
 cp "$root/Resources/AppIcon.icns" "$app/Contents/Resources/AppIcon.icns"
+cp -R "$root/Resources/Sounds" "$app/Contents/Resources/Sounds"
 
 if [ -n "${KEYFARI_VERSION:-}" ]; then
   /usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString $KEYFARI_VERSION" "$app/Contents/Info.plist"

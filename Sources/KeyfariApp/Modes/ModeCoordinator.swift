@@ -190,6 +190,6 @@ final class ModeCoordinator {
 
     private func refuse(_ reason: String) {
         log.notice("Not activating: \(reason, privacy: .public)")
-        NSSound.beep()
+        SoundFeedback.warningIfEnabled(store.effective.warningSoundEnabled)
     }
 }
