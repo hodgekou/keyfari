@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
+import AXKit
+import AppKit
 import KeyfariCore
 import ScreenVision
 import SwiftUI
@@ -98,6 +100,9 @@ struct SettingsView: View {
         }
         Card("Startup", symbol: "power", tint: tint) {
             ToggleRow("Launch at login", detail: "Start Keyfari when you log in", isOn: $store.settings.launchAtLogin, tint: tint)
+        }
+        TimelineView(.periodic(from: .now, by: 1)) { _ in
+            permissions(tint: tint)
         }
         Card("Language", symbol: "globe", tint: tint) {
             SettingRow("Interface language", detail: "Takes effect immediately") {
@@ -232,7 +237,6 @@ struct SettingsView: View {
     @ViewBuilder
     private var vision: some View {
         let tint = SettingsPane.vision.tint
-        let granted = ScreenTextDetector.hasPermission
         Card("On-screen text detection", symbol: "text.viewfinder", tint: tint) {
             SettingRow("Detect text") {
                 Picker("", selection: $store.settings.visionMode) {
@@ -251,11 +255,29 @@ struct SettingsView: View {
                 tint: tint
             )
         }
-        Card("Screen Recording permission", symbol: "rectangle.dashed.badge.record", tint: tint) {
-            SettingRow("Status", detail: "Turn it on in System Settings, then restart Keyfari") {
+    }
+
+    private func permissions(tint: Color) -> some View {
+        let accessibilityGranted = AXPermission.isGranted
+        let screenRecordingGranted = ScreenTextDetector.hasPermission
+        return Card("Permissions", symbol: "lock.shield.fill", tint: tint) {
+            SettingRow("Accessibility permission", detail: "Required for global shortcuts and controlling apps") {
                 HStack(spacing: 10) {
-                    StatusPill(text: tr(granted ? "Granted" : "Not granted"), tint: granted ? .green : .orange)
-                    if !granted {
+                    StatusPill(text: tr(accessibilityGranted ? "Granted" : "Not granted"), tint: accessibilityGranted ? .green : .orange)
+                    if !accessibilityGranted {
+                        Button(tr("Open System Settings…")) {
+                            _ = AXPermission.request()
+                            openPermissionSettings("Privacy_Accessibility")
+                        }
+                        .buttonStyle(.bordered)
+                    }
+                }
+            }
+            RowDivider()
+            SettingRow("Screen Recording permission", detail: "Turn it on in System Settings, then restart Keyfari") {
+                HStack(spacing: 10) {
+                    StatusPill(text: tr(screenRecordingGranted ? "Granted" : "Not granted"), tint: screenRecordingGranted ? .green : .orange)
+                    if !screenRecordingGranted {
                         Button(tr("Request…")) { ScreenRecordingAccess.request() }
                             .buttonStyle(.borderedProminent)
                             .tint(tint)
@@ -265,6 +287,11 @@ struct SettingsView: View {
                 }
             }
         }
+    }
+
+    private func openPermissionSettings(_ privacyPane: String) {
+        guard let url = URL(string: "x-apple.systempreferences:com.apple.preference.security?\(privacyPane)") else { return }
+        NSWorkspace.shared.open(url)
     }
 
     // MARK: Bindings
