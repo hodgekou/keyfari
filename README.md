@@ -1,6 +1,6 @@
 # Keyfari
 
-Keyfari lets you use your Mac with the keyboard. Press a shortcut to put letter labels on buttons, links and menu items, then type a label to click. You can also search for a button by name or scroll a page without reaching for the mouse.
+Keyfari is a free, open-source alternative to Vimac and Homerow for navigating your Mac with the keyboard. Press a shortcut to put letter labels on buttons, links and menu items, then type a label to click. You can also search for a button by name, label text inside images, or pick a window in Mission Control without reaching for the mouse.
 
 ## Install
 
@@ -54,5 +54,3 @@ Keyfari checks for updates daily. To check now, choose **Check for Updates…** 
 Text recognition happens on your Mac. Screenshots stay in memory. Settings, remembered labels and optional usage statistics stay on your Mac too. Keyfari contacts the network only to check for and download updates. You can turn automatic checks off in Settings.
 
 [Keyfari website](https://hodgekou.github.io/keyfari/) · [Report a problem](https://github.com/hodgekou/keyfari/issues) · [GPL-3.0 license](LICENSE)
-
-Portions of Keyfari are derived from Vimac, copyright © 2019–2021 Dexter Leng.
