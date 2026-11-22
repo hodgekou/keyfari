@@ -39,6 +39,9 @@ public struct Settings: Codable, Equatable, Sendable {
     public var hintShortcut = Shortcut(keyCode: KeyCode.space, modifiers: [.command, .shift])
     public var searchShortcut = Shortcut(keyCode: KeyCode.slash, modifiers: [.command, .shift])
     public var scrollShortcut = Shortcut(keyCode: KeyCode.j, modifiers: [.command, .shift])
+    /// Shortcuts that go one Space to the left or right. Nil means off.
+    public var previousSpaceShortcut: Shortcut?
+    public var nextSpaceShortcut: Shortcut?
     /// Keep the mode open after a click so several elements can be clicked in a row.
     public var chainClicks = false
     /// Give an element the label it had the last time it was clicked.
@@ -77,6 +80,8 @@ public struct Settings: Codable, Equatable, Sendable {
         hintShortcut = (try? container.decodeIfPresent(Shortcut.self, forKey: .hintShortcut)) ?? fallback.hintShortcut
         searchShortcut = (try? container.decodeIfPresent(Shortcut.self, forKey: .searchShortcut)) ?? fallback.searchShortcut
         scrollShortcut = (try? container.decodeIfPresent(Shortcut.self, forKey: .scrollShortcut)) ?? fallback.scrollShortcut
+        previousSpaceShortcut = try? container.decodeIfPresent(Shortcut.self, forKey: .previousSpaceShortcut)
+        nextSpaceShortcut = try? container.decodeIfPresent(Shortcut.self, forKey: .nextSpaceShortcut)
         chainClicks = try container.decodeIfPresent(Bool.self, forKey: .chainClicks) ?? fallback.chainClicks
         stableLabels = try container.decodeIfPresent(Bool.self, forKey: .stableLabels) ?? fallback.stableLabels
         hintKeySequence = try container.decodeIfPresent(String.self, forKey: .hintKeySequence) ?? fallback.hintKeySequence
@@ -93,6 +98,14 @@ public struct Settings: Codable, Equatable, Sendable {
         reverseVertical = try container.decodeIfPresent(Bool.self, forKey: .reverseVertical) ?? fallback.reverseVertical
         ignoredBundleIDs = try container.decodeIfPresent([String].self, forKey: .ignoredBundleIDs) ?? fallback.ignoredBundleIDs
         launchAtLogin = try container.decodeIfPresent(Bool.self, forKey: .launchAtLogin) ?? fallback.launchAtLogin
+    }
+
+    /// Where the shortcut that changes the Space in `direction` is stored.
+    public static func spaceShortcut(_ direction: SpaceDirection) -> WritableKeyPath<Settings, Shortcut?> {
+        switch direction {
+        case .previous: \.previousSpaceShortcut
+        case .next: \.nextSpaceShortcut
+        }
     }
 
     /// A copy in which every out-of-range value is replaced by its default.
@@ -114,6 +127,14 @@ public struct Settings: Codable, Equatable, Sendable {
             result.hintShortcut = fallback.hintShortcut
             result.searchShortcut = fallback.searchShortcut
             result.scrollShortcut = fallback.scrollShortcut
+        }
+        // A Spaces shortcut that is unusable or already taken is switched off; the modes come first.
+        var taken = Set([result.hintShortcut, result.searchShortcut, result.scrollShortcut])
+        for direction in SpaceDirection.allCases {
+            guard let shortcut = self[keyPath: Self.spaceShortcut(direction)] else { continue }
+            if !shortcut.isUsable || !taken.insert(shortcut).inserted {
+                result[keyPath: Self.spaceShortcut(direction)] = nil
+            }
         }
         if !(1...100).contains(scrollSpeed) { result.scrollSpeed = fallback.scrollSpeed }
         if !(0.25...10).contains(dashMultiplier) { result.dashMultiplier = fallback.dashMultiplier }

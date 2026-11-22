@@ -68,6 +68,7 @@ struct SettingsView: View {
                 case .general: general
                 case .hints: hints
                 case .scrolling: scrolling
+                case .desktops: desktops
                 case .activation: activation
                 case .vision: vision
                 case .stats: stats
@@ -249,6 +250,40 @@ struct SettingsView: View {
                 KeyHint(keys: ["Tab"], text: "Next scroll area  ·  0–9 to jump")
             }
             .padding(12)
+        }
+    }
+
+    @ViewBuilder
+    private var desktops: some View {
+        let tint = SettingsPane.desktops.tint
+        let systemShortcuts = SpaceDirection.allCases.map(SystemSpaces.shortcut)
+        let chosen = SpaceDirection.allCases.compactMap { store.settings[keyPath: Settings.spaceShortcut($0)] }
+        let inForce = SpaceDirection.allCases.compactMap { store.effective[keyPath: Settings.spaceShortcut($0)] }
+        Card("Switch desktops", symbol: "arrow.left.arrow.right", tint: tint) {
+            ShortcutRecorder(
+                title: "Previous desktop", detail: "Go one desktop to the left", optional: $store.settings.previousSpaceShortcut, tint: tint)
+            RowDivider()
+            ShortcutRecorder(title: "Next desktop", detail: "Go one desktop to the right", optional: $store.settings.nextSpaceShortcut, tint: tint)
+            if chosen != inForce {
+                RowDivider()
+                Notice("A shortcut that is unusable or already taken is switched off.", symbol: "exclamationmark.triangle.fill", tint: .orange)
+            }
+            if inForce.contains(where: { systemShortcuts.contains($0) }) {
+                RowDivider()
+                Notice(
+                    "A shortcut that macOS already uses to change desktops is left to macOS.", symbol: "exclamationmark.triangle.fill",
+                    tint: .orange)
+            }
+            if systemShortcuts.contains(nil) {
+                RowDivider()
+                Notice(
+                    "Turn on “Move left a space” and “Move right a space” in System Settings > Keyboard > Keyboard Shortcuts > Mission Control.",
+                    symbol: "exclamationmark.triangle.fill", tint: .orange)
+            }
+            RowDivider()
+            Notice(
+                "Keyfari changes desktops by pressing the system's own shortcuts, so those have to stay on. When displays have separate Spaces, the display with the focused window changes.",
+                symbol: "info.circle.fill", tint: tint)
         }
     }
 

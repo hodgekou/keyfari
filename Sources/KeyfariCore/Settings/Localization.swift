@@ -70,6 +70,8 @@ public enum Localizer {
         "Activation": Entry(chinese: "激活方式", japanese: "起動方法"),
         "AI Detection": Entry(chinese: "AI 识别", japanese: "AI 検出"),
         "Stats": Entry(chinese: "统计", japanese: "統計"),
+        "Desktops": Entry(chinese: "桌面", japanese: "デスクトップ"),
+        "Switch desktops from the keyboard": Entry(chinese: "用键盘切换桌面", japanese: "キーボードでデスクトップを切り替える"),
         "Shortcuts, startup, permissions and ignored apps": Entry(
             chinese: "快捷键、启动、权限与忽略的应用", japanese: "ショートカット、起動、権限、除外するアプリ"),
         "How labels look and behave": Entry(chinese: "标签的外观与行为", japanese: "ラベルの外観と動作"),
@@ -179,6 +181,28 @@ public enum Localizer {
         "Half a page down, up": Entry(chinese: "向下、向上半页", japanese: "半ページ下・上"),
         "Top  ·  Shift-G for the bottom": Entry(chinese: "到顶部  ·  Shift-G 到底部", japanese: "先頭へ  ·  Shift-G で末尾へ"),
         "Next scroll area  ·  0–9 to jump": Entry(chinese: "下一个滚动区  ·  0–9 直接跳转", japanese: "次のスクロール領域  ·  0–9 で移動"),
+
+        // Desktops
+        "Switch desktops": Entry(chinese: "切换桌面", japanese: "デスクトップを切り替える"),
+        "Previous desktop": Entry(chinese: "上一个桌面", japanese: "前のデスクトップ"),
+        "Go one desktop to the left": Entry(chinese: "切换到左边的桌面", japanese: "左のデスクトップへ移動"),
+        "Next desktop": Entry(chinese: "下一个桌面", japanese: "次のデスクトップ"),
+        "Go one desktop to the right": Entry(chinese: "切换到右边的桌面", japanese: "右のデスクトップへ移動"),
+        "Record shortcut": Entry(chinese: "录制快捷键", japanese: "ショートカットを記録"),
+        "Turn this shortcut off": Entry(chinese: "关闭这个快捷键", japanese: "このショートカットをオフにする"),
+        "A shortcut that is unusable or already taken is switched off.": Entry(
+            chinese: "无法使用或已被占用的快捷键会被关闭。", japanese: "使用できない、またはすでに使われているショートカットはオフになります。"),
+        "A shortcut that macOS already uses to change desktops is left to macOS.": Entry(
+            chinese: "与 macOS 切换桌面相同的快捷键会交给系统处理。", japanese: "macOS がデスクトップの切り替えに使っているショートカットは macOS に任せます。"),
+        "Turn on “Move left a space” and “Move right a space” in System Settings > Keyboard > Keyboard Shortcuts > Mission Control.": Entry(
+            chinese: "请在“系统设置 > 键盘 > 键盘快捷键 > 调度中心”中打开“向左移动一个空间”和“向右移动一个空间”。",
+            japanese: "「システム設定 > キーボード > キーボードショートカット > Mission Control」で「左の操作スペースに移動」と「右の操作スペースに移動」をオンにしてください。"
+        ),
+        "Keyfari changes desktops by pressing the system's own shortcuts, so those have to stay on. When displays have separate Spaces, the display with the focused window changes.":
+            Entry(
+                chinese: "Keyfari 通过按下系统自带的快捷键来切换桌面,因此这些快捷键需要保持开启。开启“显示器具有单独的空间”时,切换的是当前窗口所在的显示器。",
+                japanese: "Keyfari はシステム標準のショートカットを押してデスクトップを切り替えるため、それらをオンのままにしておく必要があります。「ディスプレイごとに個別の操作スペース」がオンの場合、フォーカスのあるウインドウのディスプレイが切り替わります。"
+            ),
 
         // Activation
         "Key sequences": Entry(chinese: "按键序列", japanese: "キーシーケンス"),

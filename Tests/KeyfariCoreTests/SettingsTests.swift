@@ -47,6 +47,35 @@ import Testing
         #expect(settings.validated().hintShortcut == Shortcut(keyCode: 3, modifiers: .control))
     }
 
+    @Test func spaceShortcutsAreOffByDefaultAndSurviveEncoding() throws {
+        var settings = Settings()
+        #expect(settings.previousSpaceShortcut == nil)
+        #expect(settings.nextSpaceShortcut == nil)
+
+        let shortcut = Shortcut(keyCode: KeyCode.rightArrow, modifiers: [.control, .option])
+        settings.nextSpaceShortcut = shortcut
+        let decoded = try JSONDecoder().decode(Settings.self, from: JSONEncoder().encode(settings))
+        #expect(decoded.nextSpaceShortcut == shortcut)
+        #expect(decoded.previousSpaceShortcut == nil)
+        #expect(decoded.validated() == decoded)
+    }
+
+    @Test func aSpaceShortcutThatIsUnusableOrTakenIsSwitchedOff() {
+        var settings = Settings()
+        settings.previousSpaceShortcut = Shortcut(keyCode: KeyCode.leftArrow, modifiers: .shift)
+        settings.nextSpaceShortcut = settings.hintShortcut
+        #expect(settings.validated().previousSpaceShortcut == nil)
+        #expect(settings.validated().nextSpaceShortcut == nil)
+        #expect(settings.validated().hintShortcut == Settings().hintShortcut)
+
+        // The first of two equal shortcuts keeps it.
+        let shared = Shortcut(keyCode: KeyCode.leftArrow, modifiers: [.control, .option])
+        settings.previousSpaceShortcut = shared
+        settings.nextSpaceShortcut = shared
+        #expect(settings.validated().previousSpaceShortcut == shared)
+        #expect(settings.validated().nextSpaceShortcut == nil)
+    }
+
     @Test func shortcutDisplayAndMatching() {
         let shortcut = Shortcut(keyCode: KeyCode.space, modifiers: [.command, .shift])
         #expect(shortcut.displayString == "⇧⌘Space")
