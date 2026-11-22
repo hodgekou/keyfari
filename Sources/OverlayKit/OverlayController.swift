@@ -116,6 +116,8 @@ public final class OverlayController {
     private var glassPrefix = ""
     private var decorations: [CALayer] = []
     private var isReversed = false
+    /// Where the pointer's tip was when the panels were prepared, in accessibility coordinates.
+    private var pointerTip: CGPoint?
 
     public init() {}
 
@@ -292,6 +294,8 @@ public final class OverlayController {
         screenScales = screens.map(\.backingScaleFactor)
         // The primary screen defines the origin of both coordinate spaces.
         primaryHeight = screenFrames.first?.height ?? 0
+        let mouse = NSEvent.mouseLocation
+        pointerTip = CGPoint(x: mouse.x, y: primaryHeight - mouse.y)
         panels = screenFrames.map { OverlayPanel(screenFrame: $0) }
     }
 
@@ -347,10 +351,13 @@ public final class OverlayController {
     }
 
     private func addEntry(label: String, at point: CGPoint, isFocused: Bool, typedCount: Int) {
-        guard let placement = place(CGRect(origin: point, size: .zero)) else { return }
         let string = attributedLabel(label, typedCount: typedCount, isFocused: isFocused)
         let textSize = string.size()
         let size = CGSize(width: ceil(textSize.width) + 8, height: ceil(textSize.height) + 3)
+        // The pointer cannot be hidden from a background application, so a label it would
+        // cover steps aside instead.
+        let point = ScreenGeometry.labelCenter(point, size: size, avoidingPointerAt: pointerTip)
+        guard let placement = place(CGRect(origin: point, size: .zero)) else { return }
         let colors = style.colors(for: label)
 
         if usesLiquidGlass {

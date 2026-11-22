@@ -7,6 +7,7 @@ All notable changes to Keyfari are recorded here. The format follows [Keep a Cha
 ### Added
 
 - Scroll mode: the arrow keys can scroll instead of selecting a scroll area, the area numbers can be hidden, and the mode can leave by itself after a time without a key.
+- A label that the pointer would cover is drawn next to the pointer instead.
 
 ### Removed
 
