@@ -428,6 +428,9 @@ struct SettingsView: View {
                     statMetric("Active days", value: "\(usage.activeDays)")
                 }
                 .padding(12)
+                RowDivider()
+                ActivityHeatmap(weeks: usage.activity(weeks: ActivityHeatmap.weekCount), tint: tint)
+                    .padding(12)
             }
             Card("Top apps", symbol: "square.grid.2x2.fill", tint: tint) {
                 if usage.topApps.isEmpty {

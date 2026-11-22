@@ -10,6 +10,7 @@ All notable changes to Keyfari are recorded here. The format follows [Keep a Cha
 - A label that the pointer would cover is drawn next to the pointer instead.
 - The menu bar icon can be hidden; opening Keyfari again then opens the settings.
 - "Copy" under Troubleshooting in the General pane puts versions, displays, permissions and the names of changed settings on the clipboard, for a bug report.
+- The Stats pane shows a calendar of the last half year, one square a day, shaded by how much Keyfari was used.
 
 ### Removed
 
