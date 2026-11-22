@@ -95,6 +95,26 @@ rm ~/sparkle-private-key.txt
 
 Put the public key into `Resources/Info.plist`. Export the private half to a place outside the repository, as above, so it cannot be committed by accident; a key that was ever pushed is burnt and has to be replaced.
 
+### The signing certificate
+
+macOS ties the Accessibility and Screen Recording permissions to an application's code signature. Signed ad hoc, every build is a new application to the system and has to be granted them again. Signed with the same certificate every time, updates keep them.
+
+The project has no Apple Developer ID, so the certificate is a self-signed one, which costs nothing. It does not stop macOS from blocking the first launch; only a Developer ID does that.
+
+To set it up once, as a maintainer:
+
+1. In Keychain Access, choose Keychain Access > Certificate Assistant > Create a Certificate. Name it `Keyfari Signing`, identity type Self Signed Root, certificate type Code Signing, and override the defaults to make it valid for ten years.
+2. Export the certificate together with its private key as a `.p12` file with a password, to a place outside the repository.
+3. Store the two as secrets and delete the file:
+
+```sh
+base64 -i ~/keyfari-signing.p12 | gh secret set KEYFARI_SIGNING_P12 --repo hodgekou/keyfari
+gh secret set KEYFARI_SIGNING_PASSWORD --repo hodgekou/keyfari
+rm ~/keyfari-signing.p12
+```
+
+The release workflow then signs with it through `scripts/import-signing-certificate.sh`. Without the secrets it signs ad hoc and says so. The certificate must stay the same from release to release: a new one makes every installed copy ask for its permissions once more.
+
 ## Licence
 
 By contributing you agree that your contribution is licensed under GPL-3.0, like the rest of the project.
