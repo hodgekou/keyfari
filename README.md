@@ -1,5 +1,9 @@
 # Keyfari
 
+[![CI](https://github.com/hodgekou/keyfari/actions/workflows/ci.yml/badge.svg)](https://github.com/hodgekou/keyfari/actions/workflows/ci.yml)
+[![Latest release](https://img.shields.io/github/v/release/hodgekou/keyfari)](https://github.com/hodgekou/keyfari/releases/latest)
+[![License: GPL-3.0](https://img.shields.io/github/license/hodgekou/keyfari)](LICENSE)
+
 Keyboard-driven navigation for macOS. Press a shortcut, and every button, link and menu item gets a short label; type the label to click it. Scroll with `H J K L`, pick a window in Mission Control by its label, switch desktops. No mouse needed.
 
 ## Text detection
@@ -85,8 +89,8 @@ Keyfari has no telemetry and makes no network requests. Screenshots taken for te
 | `Sources/ScreenVision` | Screenshot text recognition. |
 | `Sources/KeyfariApp` | The executable: `App` (lifecycle, menu bar), `Modes` (hint, search, scroll, Mission Control), `Spaces` (desktop switching), `Settings` (settings window). |
 | `Tests/KeyfariCoreTests` | Unit tests, one file per suite. |
-| `Resources` | `Info.plist` and the application icon. |
-| `scripts` | Building, testing, linting, packaging and drawing the icon. |
+| `Resources` | `Info.plist`, the application icon and the sounds. |
+| `scripts` | Building, testing, linting, checking the repository, packaging and drawing the icon. |
 | `site` | The landing page, published to GitHub Pages. |
 | `Casks` | The Homebrew cask. |
 
@@ -95,6 +99,7 @@ Keyfari has no telemetry and makes no network requests. Screenshots taken for te
 ```sh
 scripts/test.sh            # unit tests
 scripts/lint.sh            # formatting and style; --fix rewrites in place
+scripts/check-repo.sh      # licence headers, unused translations, documented paths, versions
 log stream --predicate 'subsystem == "app.keyfari.Keyfari"'
 ```
 

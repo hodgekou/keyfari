@@ -1,9 +1,12 @@
 name: CI
 
+# Runs on every pull request and on main. Each job answers one question, so a red check
+# says at a glance what is wrong.
 on:
   push:
     branches: [main]
   pull_request:
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -13,17 +16,62 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build:
-    name: Build, test and lint
+  test:
+    name: Build and test
     runs-on: macos-latest
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
-      - name: Show toolchain
+      - name: Show the toolchain
         run: swift --version
-      - name: Build
-        run: swift build
+      - name: Build without warnings
+        run: swift build -Xswiftc -warnings-as-errors
       - name: Test
         run: scripts/test.sh
-      - name: Lint
+
+  lint:
+    name: Lint and repository checks
+    runs-on: macos-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check formatting and style
         run: scripts/lint.sh
+      - name: Check headers, translations, documented paths and versions
+        run: scripts/check-repo.sh
+
+  package:
+    name: Package the app
+    runs-on: macos-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build the universal app
+        run: KEYFARI_UNIVERSAL=1 scripts/bundle.sh release
+      - name: Verify the bundle
+        run: |
+          codesign --verify --strict build/Keyfari.app
+          archs="$(lipo -archs build/Keyfari.app/Contents/MacOS/Keyfari)"
+          echo "Architectures: $archs"
+          case "$archs" in *arm64*x86_64* | *x86_64*arm64*) ;; *) echo "::error::The app is not universal"; exit 1 ;; esac
+          plutil -lint build/Keyfari.app/Contents/Info.plist
+          test -f build/Keyfari.app/Contents/Resources/AppIcon.icns
+          test -f build/Keyfari.app/Contents/Resources/Sounds/Success.wav
+      - name: Create the disk image
+        run: scripts/make-dmg.sh build/Keyfari.app build/Keyfari.dmg
+      - name: Keep the disk image for trying the change
+        uses: actions/upload-artifact@v4
+        with:
+          name: Keyfari-${{ github.sha }}
+          path: build/Keyfari.dmg
+          retention-days: 7
+          if-no-files-found: error
+
+  scripts:
+    name: Check shell scripts
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run ShellCheck
+        run: shellcheck scripts/*.sh

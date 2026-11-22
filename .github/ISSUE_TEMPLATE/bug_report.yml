@@ -1,0 +1,39 @@
+name: Bug report
+description: Something does not work as it should
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: What you did, what you expected, and what happened instead.
+    validations:
+      required: true
+  - type: input
+    id: application
+    attributes:
+      label: Application
+      description: The application Keyfari was used in, with its version if you know it. Labels depend on what each application exposes.
+      placeholder: Safari 18, Slack, Finder
+  - type: input
+    id: keyfari
+    attributes:
+      label: Keyfari version
+      placeholder: 0.2.0
+    validations:
+      required: true
+  - type: input
+    id: macos
+    attributes:
+      label: macOS version and Mac
+      placeholder: macOS 15.1, MacBook Air M2, one external display
+    validations:
+      required: true
+  - type: textarea
+    id: log
+    attributes:
+      label: Log
+      description: |
+        If you can, run this in Terminal, reproduce the problem and paste what it prints.
+        `log stream --predicate 'subsystem == "app.keyfari.Keyfari"'`
+      render: text
