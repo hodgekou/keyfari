@@ -53,6 +53,7 @@ public enum StableLabels {
 
     private static func availableLabels(count: Int, alphabet: String, avoiding reserved: [String]) -> [String] {
         guard count > 0 else { return [] }
+        guard !reserved.isEmpty else { return HintLabelGenerator.labels(count: count, alphabet: alphabet) }
         var candidateCount = count + reserved.count + 1
         for _ in 0..<8 {
             let candidates = HintLabelGenerator.labels(count: candidateCount, alphabet: alphabet)
