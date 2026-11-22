@@ -58,36 +58,21 @@ jobs:
           gh release create "$GITHUB_REF_NAME" "build/Keyfari-$VERSION.dmg"
           --title "Keyfari $VERSION" --notes-file build/notes.md
 
-      - name: Sign the update
-        env:
-          SPARKLE_PRIVATE_KEY: ${{ secrets.SPARKLE_PRIVATE_KEY }}
-        run: |
-          # Without the key the release still goes out; installed copies just do not learn of it.
-          if [ -z "$SPARKLE_PRIVATE_KEY" ]; then
-            echo "::warning::No SPARKLE_PRIVATE_KEY secret, so this release is not added to the update feed"
-            exit 0
-          fi
-          # The key goes in on standard input and never touches the disk or the log.
-          signature="$(printf '%s' "$SPARKLE_PRIVATE_KEY" \
-            | .build/artifacts/sparkle/Sparkle/bin/sign_update --ed-key-file - -p "build/Keyfari-$VERSION.dmg")"
-          echo "SIGNATURE=$signature" >> "$GITHUB_ENV"
-
       - name: Point the Homebrew cask and the update feed at the release
         env:
           GH_TOKEN: ${{ github.token }}
+          SPARKLE_PRIVATE_KEY: ${{ secrets.SPARKLE_PRIVATE_KEY }}
         run: |
-          sha="$(shasum -a 256 "build/Keyfari-$VERSION.dmg" | cut -d ' ' -f 1)"
+          # The disk image is kept aside: checking out main replaces the working tree's scripts.
+          cp "build/Keyfari-$VERSION.dmg" "$RUNNER_TEMP/"
           git fetch origin main
           git checkout main
-          sed -i '' -E "s/^  version \".*\"/  version \"$VERSION\"/; s/^  sha256 \".*\"/  sha256 \"$sha\"/" Casks/keyfari.rb
-          if [ -n "${SIGNATURE:-}" ]; then
-            scripts/update-appcast.py "$VERSION" "build/Keyfari-$VERSION.dmg" "$SIGNATURE"
-            git add site/appcast.xml
-          fi
-          if git diff --quiet HEAD; then exit 0; fi
+          scripts/publish-feed.sh "$VERSION" "$RUNNER_TEMP/Keyfari-$VERSION.dmg"
+          git add Casks/keyfari.rb site/appcast.xml
+          if git diff --cached --quiet; then exit 0; fi
           git config user.name "hz.kou"
           git config user.email "49755533+hodgekou@users.noreply.github.com"
-          git commit -am "Point the cask and the update feed at $VERSION"
+          git commit -m "Point the cask and the update feed at $VERSION"
           git push origin main
           # A push made by a workflow does not start other workflows, so the site, which
           # carries the feed, is published by asking for it.
