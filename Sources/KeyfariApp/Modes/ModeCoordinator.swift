@@ -162,8 +162,8 @@ final class ModeCoordinator {
 
         let settings = store.effective
         let target: @MainActor () -> ModeTarget? = { [weak self] in self?.currentTarget() }
-        let recordClick: @MainActor (String, Int) -> Void = { [weak self] bundleID, count in
-            self?.store.recordClick(bundleID: bundleID, count: count)
+        let recordClick: @MainActor (String, Int, Bool) -> Void = { [weak self] bundleID, count, isNewAction in
+            self?.store.recordAction(bundleID: bundleID, clicks: count, isNewAction: isNewAction)
         }
         let onShortcut: @MainActor (KeyStroke) -> Bool = { [weak self] stroke in
             self?.handleShortcut(stroke) ?? false
@@ -204,6 +204,7 @@ final class ModeCoordinator {
             applyStyle(settings)
             let controller = MissionControlModeController(
                 overlay: overlay, interceptor: interceptor, settings: settings,
+                recordAction: { [weak self] in self?.store.recordAction(bundleID: "", clicks: 0, isNewAction: true) },
                 onShortcut: onShortcut, onExit: onExit
             )
             started = controller.start()

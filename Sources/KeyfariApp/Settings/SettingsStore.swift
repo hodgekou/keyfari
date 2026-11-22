@@ -63,9 +63,9 @@ final class SettingsStore {
         }
     }
 
-    func recordClick(bundleID: String, count: Int) {
-        guard effective.statisticsEnabled else { return }
-        usageStats.recordClick(bundleID: bundleID, count: count)
+    func recordAction(bundleID: String, clicks: Int, isNewAction: Bool) {
+        guard effective.usageStatisticsEnabled else { return }
+        usageStats.record(bundleID: bundleID, clicks: clicks, isNewAction: isNewAction)
     }
 
     private func save() {

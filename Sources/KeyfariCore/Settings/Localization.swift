@@ -75,7 +75,7 @@ public enum Localizer {
             chinese: "快捷键、启动、权限与忽略的应用", japanese: "ショートカット、起動、権限、除外するアプリ"),
         "How labels look and behave": Entry(chinese: "标签的外观与行为", japanese: "ラベルの外観と動作"),
         "Speed and direction": Entry(chinese: "速度与方向", japanese: "速度と方向"),
-        "Local, opt-in activity counts": Entry(chinese: "可选的本地使用统计", japanese: "任意で記録するローカル使用統計"),
+        "Activity counts that stay on this Mac": Entry(chinese: "仅保存在本机的使用统计", japanese: "この Mac にのみ保存される使用統計"),
         "Find text that apps do not expose": Entry(chinese: "找出应用没有暴露的文字", japanese: "アプリが公開していないテキストを見つける"),
         "Keyboard navigation": Entry(chinese: "键盘导航", japanese: "キーボード操作"),
         "Keyfari Settings": Entry(chinese: "Keyfari 设置", japanese: "Keyfari 設定"),
@@ -123,8 +123,13 @@ public enum Localizer {
         "No clicks recorded yet": Entry(chinese: "还没有点击记录", japanese: "クリック記録はまだありません"),
         "%d clicks": Entry(chinese: "%d 次点击", japanese: "%d 回のクリック"),
         "Clear statistics": Entry(chinese: "清除统计数据", japanese: "統計データを消去"),
-        "Statistics are off. No usage is recorded until you turn them on. Only aggregate counts are stored locally.": Entry(
-            chinese: "统计已关闭。启用后才会开始记录，仅在本机保存汇总数据。", japanese: "統計はオフです。有効にするまで記録されません。集計データのみこの Mac に保存されます。"),
+        "Statistics are off, so nothing is recorded. When they are on, only aggregate counts are stored, on this Mac.": Entry(
+            chinese: "统计已关闭,不会记录任何内容。开启后仅在本机保存汇总数据。", japanese: "統計はオフのため、何も記録されません。オンにすると集計データのみがこの Mac に保存されます。"),
+        "Time saved": Entry(chinese: "节省的时间", japanese: "節約した時間"),
+        "%d keyboard actions, each counted as %d seconds": Entry(chinese: "共 %d 次键盘操作,每次按 %d 秒计算", japanese: "キーボード操作 %d 回、1 回あたり %d 秒で計算"),
+        "%d h %d min": Entry(chinese: "%d 小时 %d 分钟", japanese: "%d 時間 %d 分"),
+        "%d min %d s": Entry(chinese: "%d 分 %d 秒", japanese: "%d 分 %d 秒"),
+        "%d s": Entry(chinese: "%d 秒", japanese: "%d 秒"),
         "No applications are ignored": Entry(chinese: "没有忽略任何应用", japanese: "除外しているアプリはありません"),
         "Shortcuts do nothing while one of these applications is in front.": Entry(
             chinese: "这些应用在前台时,快捷键不起作用。",

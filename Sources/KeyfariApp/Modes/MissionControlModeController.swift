@@ -20,6 +20,7 @@ final class MissionControlModeController {
     private let overlay: OverlayController
     private let interceptor: KeyInterceptor
     private let settings: Settings
+    private let recordAction: @MainActor () -> Void
     private let onShortcut: @MainActor (KeyStroke) -> Bool
     private let onExit: @MainActor () -> Void
 
@@ -34,12 +35,14 @@ final class MissionControlModeController {
         overlay: OverlayController,
         interceptor: KeyInterceptor,
         settings: Settings,
+        recordAction: @escaping @MainActor () -> Void,
         onShortcut: @escaping @MainActor (KeyStroke) -> Bool,
         onExit: @escaping @MainActor () -> Void
     ) {
         self.overlay = overlay
         self.interceptor = interceptor
         self.settings = settings
+        self.recordAction = recordAction
         self.onShortcut = onShortcut
         self.onExit = onExit
     }
@@ -140,10 +143,12 @@ final class MissionControlModeController {
         let playsSound = settings.successSoundEnabled
         let warns = settings.warningSoundEnabled
         let log = log
+        let recordAction = recordAction
         stop()
         Task {
             let pressed = await Task.detached { target.press() }.value
             if pressed {
+                recordAction()
                 if playsSound { SoundFeedback.success() }
             } else {
                 log.error("Mission Control did not accept the selection")

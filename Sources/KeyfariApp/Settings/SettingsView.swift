@@ -338,12 +338,23 @@ struct SettingsView: View {
         Card("Usage statistics", symbol: "chart.bar.fill", tint: tint) {
             ToggleRow(
                 "Enable usage statistics", detail: "Counts stay on this Mac and are never sent anywhere",
-                isOn: $store.settings.statisticsEnabled, tint: tint
+                isOn: $store.settings.usageStatisticsEnabled, tint: tint
             )
         }
 
-        if store.effective.statisticsEnabled {
+        if store.effective.usageStatisticsEnabled {
             let usage = store.usageStats
+            Card("Time saved", symbol: "clock.fill", tint: tint) {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(timeSaved(actions: usage.totalActions))
+                        .font(.system(size: 28, weight: .bold, design: .rounded))
+                        .foregroundStyle(tint)
+                    Text(tr("%d keyboard actions, each counted as %d seconds", usage.totalActions, TimeSaved.secondsPerAction))
+                        .font(.system(size: 11)).foregroundStyle(.secondary)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(12)
+            }
             Card("Activity", symbol: "calendar", tint: tint) {
                 HStack(spacing: 8) {
                     statMetric("Total clicks", value: "\(usage.totalClicks)")
@@ -378,10 +389,17 @@ struct SettingsView: View {
             .buttonStyle(.bordered)
         } else {
             Notice(
-                "Statistics are off. No usage is recorded until you turn them on. Only aggregate counts are stored locally.",
+                "Statistics are off, so nothing is recorded. When they are on, only aggregate counts are stored, on this Mac.",
                 symbol: "lock.shield.fill", tint: tint
             )
         }
+    }
+
+    private func timeSaved(actions: Int) -> String {
+        let parts = TimeSaved.parts(actions: actions)
+        if parts.hours > 0 { return tr("%d h %d min", parts.hours, parts.minutes) }
+        if parts.minutes > 0 { return tr("%d min %d s", parts.minutes, parts.seconds) }
+        return tr("%d s", parts.seconds)
     }
 
     private func statMetric(_ title: String, value: String) -> some View {

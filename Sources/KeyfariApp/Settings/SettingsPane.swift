@@ -26,7 +26,7 @@ enum SettingsPane: String, CaseIterable, Identifiable {
         case .scrolling: "Speed and direction"
         case .desktops: "Desktops and Mission Control"
         case .vision: "Find text that apps do not expose"
-        case .stats: "Local, opt-in activity counts"
+        case .stats: "Activity counts that stay on this Mac"
         }
     }
 

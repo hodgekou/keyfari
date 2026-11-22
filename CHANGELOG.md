@@ -6,7 +6,7 @@ All notable changes to Keyfari are recorded here. The format follows [Keep a Cha
 
 ### Added
 
-- Add opt-in local usage statistics for successful clicks, active days and frequently used apps.
+- Add local usage statistics for successful clicks, active days and frequently used apps, with an estimate of the time saved at five seconds per keyboard action. They are on by default and can be switched off.
 - Add independent, off-by-default sounds for successful clicks and warning feedback.
 - Add a Liquid Glass hint theme on macOS 26 and later, with existing themes as the fallback on earlier systems.
 - Add optional shortcuts that go one desktop (Space) to the left or right, acting on the display with the focused window.
