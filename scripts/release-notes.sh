@@ -21,7 +21,7 @@ cat <<NOTES
 
 Download \`Keyfari-$version.dmg\`, open it and drag Keyfari to Applications.
 
-Keyfari is not signed with an Apple Developer ID, so macOS blocks it the first time. Open it once, then go to **System Settings > Privacy & Security** and choose **Open Anyway**. After that, grant the Accessibility permission when asked.
+Keyfari is not signed with an Apple Developer ID, so macOS blocks it the first time. Open it once, then go to **System Settings > Privacy & Security** and choose **Open Anyway**. After that, grant the Accessibility permission when asked. [First-launch screenshots](https://hodgekou.github.io/keyfari/#first-launch)
 
 With Homebrew:
 

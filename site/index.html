@@ -119,6 +119,8 @@
     .hero { padding-top: 24px; }
     .lead { font-size: 18px; }
   }
+  #first-launch figure { margin: 18px 0 0; }
+  #first-launch img { display: block; height: auto; max-width: 100%; margin-top: 8px; border-radius: 8px; }
 </style>
 </head>
 <body>
@@ -223,6 +225,18 @@
         </div>
       </div>
     </section>
+    <section id="first-launch">
+      <h2 data-i18n="launchTitle">Opening Keyfari for the first time</h2>
+      <p data-i18n="launchIntro">Open Keyfari from Applications. If macOS shows “Keyfari Not Opened”, click Done and open System Settings.</p>
+      <figure>
+        <figcaption data-i18n="launchSidebar">1. Select Privacy &amp; Security in the sidebar.</figcaption>
+        <img src="first-launch/privacy.png" width="212" height="110" alt="Privacy &amp; Security" loading="lazy">
+      </figure>
+      <figure>
+        <figcaption data-i18n="launchButton">2. Scroll down to Security. Find the message naming Keyfari and click Open Anyway. Confirm when prompted.</figcaption>
+        <img src="first-launch/open-anyway.png" width="493" height="180" alt="Keyfari · Open Anyway" loading="lazy">
+      </figure>
+    </section>
   </main>
 
   <footer>
@@ -235,6 +249,10 @@
 // English is in the markup. The other languages replace it by key.
 const translations = {
   zh: {
+    launchTitle: '首次打开 Keyfari',
+    launchIntro: '在「应用程序」里打开 Keyfari。若 macOS 提示无法打开，请点「完成」，然后打开「系统设置」。',
+    launchSidebar: '1. 在左侧栏选择「隐私与安全性」（Privacy & Security）。',
+    launchButton: '2. 向下滚动到「安全性」（Security），找到写有 Keyfari 的拦截提示，点击右侧的「仍要打开」（Open Anyway），再按系统提示确认。',
     title: '用键盘点击 Mac 上的<span>任何东西</span>',
     lead: '按下快捷键,每个按钮、链接和菜单项都会出现一个简短的标签,敲出标签就能点击。在调度中心里同样可用。免费且开源。',
     download: '下载 macOS 版',
@@ -279,6 +297,10 @@ const translations = {
     foot2: '基于 Dexter Leng 的 <a href="https://github.com/nchudleigh/vimac">Vimac</a> 重写,与 Vimac 及其作者没有隶属关系。'
   },
   ja: {
+    launchTitle: 'Keyfari を初めて開くとき',
+    launchIntro: '「アプリケーション」から Keyfari を開きます。開けないという警告が表示されたら「完了」をクリックし、「システム設定」を開きます。',
+    launchSidebar: '1. サイドバーで「プライバシーとセキュリティ」（Privacy & Security）を選びます。',
+    launchButton: '2.「セキュリティ」まで下にスクロールし、Keyfari の警告の横にある「このまま開く」（Open Anyway）をクリックします。画面の指示に従って確認してください。',
     title: 'Mac のあらゆる操作を<span>キーボードで</span>',
     lead: 'ショートカットを押すと、ボタンやリンク、メニュー項目に短いラベルが付きます。ラベルを入力すればクリックできます。Mission Control でも使えます。無料のオープンソースです。',
     download: 'macOS 版をダウンロード',
