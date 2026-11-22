@@ -19,6 +19,13 @@ enum SettingsSnapshot {
         let store = SettingsStore(defaults: defaults)
         // Two entries, one of them not installed, so both kinds of row are drawn.
         store.settings.ignoredBundleIDs = ["com.apple.Terminal", "com.example.missing"]
+        // A remembered label and a chosen one, so both kinds of row are drawn.
+        for (label, text) in [("S", "Save"), ("D", "New Tab")] {
+            store.labelMemory.remember(label, for: ElementSnapshot(role: "AXButton", frame: .zero, searchText: text), bundleID: "com.apple.Terminal")
+        }
+        if let first = store.labelMemory.entries.first {
+            _ = store.labelMemory.setCustomLabel("JK", id: first.id, alphabet: store.effective.hintAlphabet)
+        }
 
         for language in [AppLanguage.english, .chinese, .japanese] {
             store.settings.language = language

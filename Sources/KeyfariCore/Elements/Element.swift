@@ -22,7 +22,7 @@ public struct ElementSnapshot: Sendable, Equatable {
     public let actions: [String]
     public let searchText: String
     public let source: ElementSource
-    /// Accessibility ancestry path used to distinguish repeated labels where possible.
+    /// The element's place in its window's accessibility tree, which identifies it when it has no text.
     public let stableIdentity: String?
 
     public init(

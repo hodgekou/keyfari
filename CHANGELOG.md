@@ -12,8 +12,14 @@ All notable changes to Keyfari are recorded here. The format follows [Keep a Cha
 - Add optional shortcuts that go one desktop (Space) to the left or right, acting on the display with the focused window.
 - Add labels in Mission Control: the hint shortcut labels the windows and desktops of the overview, a typed label opens its item, on every display. An option shows the labels as soon as Mission Control opens.
 
+### Changed
+
+- Stable labels have their own settings pane. It lists the labels Keyfari remembered, and each can be replaced by one of your choice or forgotten.
+- An element with text keeps its label when the window title or the surrounding layout changes; one without text, such as a toolbar icon, is recognised by its place in the window. Labels remembered by earlier versions are dropped.
+
 ### Removed
 
+- Remove the Control-Option gesture for pinning a label; labels are chosen in the Stable Labels pane instead.
 - Remove hold-Space activation and its settings, event interceptor and state machine.
 - Remove activation by key sequence, together with the Activation settings pane.
 

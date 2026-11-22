@@ -153,10 +153,7 @@ final class HintModeController {
         // later can never be a prefix of the ones already on screen, or the other way round.
         let reserve = vision == nil ? 0 : (Self.detectedCounts[bundleID] ?? Self.defaultReserve) + 10
         let all =
-            memory?.assign(
-                to: found, bundleID: bundleID, alphabet: settings.hintAlphabet, reserve: reserve,
-                keepAutomatic: settings.stableLabels
-            )
+            (settings.stableLabels ? memory : nil)?.assign(to: found, bundleID: bundleID, alphabet: settings.hintAlphabet, reserve: reserve)
             ?? HintLabelGenerator.labels(count: found.count + reserve, alphabet: settings.hintAlphabet)
 
         elements = found
@@ -221,14 +218,6 @@ final class HintModeController {
                 memory?.remember(labels[index], for: elements[index], bundleID: bundleID)
             }
             perform(action, on: elements[index])
-        case let .pin(index):
-            guard let memory else { return }
-            switch memory.pin(labels[index], element: elements[index], elements: elements, bundleID: bundleID, alphabet: settings.hintAlphabet) {
-            case .saved:
-                break
-            case .unsupported, .ambiguous, .conflict:
-                SoundFeedback.warningIfEnabled(settings.warningSoundEnabled)
-            }
         case .exit:
             stop()
         case .ignored:

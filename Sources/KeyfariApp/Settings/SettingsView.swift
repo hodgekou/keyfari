@@ -67,6 +67,7 @@ struct SettingsView: View {
                 switch pane {
                 case .general: general
                 case .hints: hints
+                case .labels: labels
                 case .scrolling: scrolling
                 case .desktops:
                     desktops
@@ -180,51 +181,20 @@ struct SettingsView: View {
         }
         Card("Behaviour", symbol: "hand.tap.fill", tint: tint) {
             ToggleRow(
-                "Keep labels stable", detail: "An element keeps the label it had when you last clicked it", isOn: $store.settings.stableLabels,
-                tint: tint)
-            RowDivider()
-            ToggleRow(
                 "Chain clicks", detail: "Stay in the mode after a click, until Esc or a text field", isOn: $store.settings.chainClicks, tint: tint)
         }
-        Card("Fixed label bindings", symbol: "pin.fill", tint: tint) {
-            VStack(alignment: .leading, spacing: 8) {
-                Text(
-                    tr(
-                        "In hint mode, hold Control and Option while typing a label to bind it to that element. Fixed labels take priority over automatic label memory. Only uniquely identifiable accessibility controls can be pinned."
-                    )
-                )
-                .font(.system(size: 11)).foregroundStyle(.secondary)
-                .fixedSize(horizontal: false, vertical: true)
-                .padding(.horizontal, 12).padding(.top, 10)
-                let bindings = store.labelMemory.pinnedBindings
-                if bindings.isEmpty {
-                    Text(tr("No fixed labels yet"))
-                        .font(.system(size: 12)).foregroundStyle(.secondary)
-                        .padding(.horizontal, 12).padding(.bottom, 10)
-                } else {
-                    ForEach(bindings) { binding in
-                        HStack(spacing: 10) {
-                            Text(binding.label)
-                                .font(.system(size: 13, weight: .semibold, design: .monospaced))
-                                .frame(width: 46, alignment: .leading)
-                            VStack(alignment: .leading, spacing: 2) {
-                                Text(binding.targetDescription).font(.system(size: 12)).lineLimit(1)
-                                Text(applicationName(binding.bundleID) + " · " + binding.bundleID)
-                                    .font(.system(size: 10)).foregroundStyle(.secondary).lineLimit(1)
-                            }
-                            Spacer(minLength: 4)
-                            Button {
-                                store.labelMemory.removePin(id: binding.id)
-                            } label: {
-                                Image(systemName: "minus.circle.fill").foregroundStyle(.red.opacity(0.85))
-                            }
-                            .buttonStyle(.plain)
-                            .help(tr("Remove"))
-                        }
-                        .padding(.horizontal, 12).padding(.vertical, 7)
-                    }
-                }
-            }
+    }
+
+    @ViewBuilder
+    private var labels: some View {
+        let tint = SettingsPane.labels.tint
+        Card("Stable labels", symbol: "pin.fill", tint: tint) {
+            ToggleRow(
+                "Keep labels stable", detail: "An element keeps the label it had when you last clicked it", isOn: $store.settings.stableLabels,
+                tint: tint)
+        }
+        Card("Remembered labels", symbol: "list.bullet", tint: tint) {
+            StableLabelsList(store: store, editing: navigation.labelEditing, tint: tint)
         }
     }
 
@@ -450,10 +420,6 @@ struct SettingsView: View {
     }
 
     // MARK: Bindings
-
-    private func applicationName(_ bundleID: String) -> String {
-        ApplicationInfo(bundleID: bundleID).name
-    }
 
     private var scrollSpeed: Binding<Double> {
         Binding(

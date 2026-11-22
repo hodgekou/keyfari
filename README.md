@@ -27,7 +27,7 @@ The regular labels appear at once; the detected ones follow in well under a seco
 - **On-screen text detection**: recognises text in the window's pixels, on the device, and labels what the accessibility tree does not expose. The regular labels appear at once and the detected ones are added a moment later.
 - **Desktops**: optional shortcuts that go one desktop (Space) to the left or right. Keyfari presses the system's own shortcut for it, on the display with the focused window. Off until you record a shortcut.
 - **Mission Control**: press the hint shortcut while Mission Control is open to label its windows and desktops. Type a label to open its item, `Esc` to leave. With several displays, all of them get labels. Labels can also appear by themselves whenever Mission Control opens.
-- **Customisable**: shortcuts, label characters, themes (including Liquid Glass on macOS 26+), size and corner radius, scroll speed, click chains, stable labels, ignored applications, launch at login.
+- **Customisable**: shortcuts, label characters, themes (including Liquid Glass on macOS 26+), size and corner radius, scroll speed, click chains, stable labels that you can also choose yourself, ignored applications, launch at login.
 - **Usage statistics**: clicks, active days, most used apps and an estimate of the time saved, at five seconds per keyboard action. Everything stays on this Mac, and the statistics can be switched off.
 - **Interface in English, Chinese and Japanese**, following the system language unless you choose one.
 

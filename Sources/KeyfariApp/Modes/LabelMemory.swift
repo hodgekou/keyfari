@@ -4,100 +4,116 @@ import Foundation
 import KeyfariCore
 import Observation
 
-struct PinnedLabelBinding: Codable, Identifiable, Equatable {
+/// The label one element of one application keeps.
+struct StableLabel: Codable, Identifiable, Equatable {
     var bundleID: String
     var fingerprint: String
     var label: String
-    var targetDescription: String
+    /// What the element is, for the list in the settings.
+    var title: String
+    /// Whether the user chose the label, rather than it being the one the element happened to have.
+    var isCustom: Bool
+    var lastUsed: Date
+
     var id: String { "\(bundleID)|\(fingerprint)" }
 }
 
-enum PinResult {
-    case saved
-    case unsupported
-    case ambiguous
-    case conflict
-}
-
-/// Remembers which label each clicked element had, per application.
+/// Remembers which label each clicked element had, per application, and the labels the user chose instead.
 @MainActor
 @Observable
 final class LabelMemory {
-    private static let key = "labelMemory"
-    private static let pinsKey = "pinnedLabelBindings"
-    private static let capacity = 3000
+    private static let key = "stableLabels"
+    /// Keys of the two stores this one replaces. Their fingerprints no longer match anything.
+    private static let obsoleteKeys = ["labelMemory", "pinnedLabelBindings"]
+    private static let capacity = 2000
 
     @ObservationIgnored
     private let defaults: UserDefaults
-    @ObservationIgnored
-    private var labels: [String: String]
-    private(set) var pinnedBindings: [PinnedLabelBinding]
+    private(set) var entries: [StableLabel]
 
     init(defaults: UserDefaults = .standard) {
         self.defaults = defaults
-        labels = defaults.dictionary(forKey: Self.key) as? [String: String] ?? [:]
-        pinnedBindings = (try? JSONDecoder().decode([PinnedLabelBinding].self, from: defaults.data(forKey: Self.pinsKey) ?? Data())) ?? []
+        entries = (try? JSONDecoder().decode([StableLabel].self, from: defaults.data(forKey: Self.key) ?? Data())) ?? []
+        Self.obsoleteKeys.forEach(defaults.removeObject(forKey:))
     }
 
-    /// Labels for `elements`, reusing remembered ones where possible.
+    /// Labels for `elements`, reusing chosen and remembered ones where possible.
     /// `reserve` extra labels follow, for elements that are not known yet.
-    func assign(to elements: [ElementSnapshot], bundleID: String, alphabet: String, reserve: Int = 0, keepAutomatic: Bool) -> [String] {
-        StableLabels.assign(
-            fingerprints: elements.map { key(for: $0, bundleID: bundleID) } + [String?](repeating: nil, count: reserve),
+    func assign(to elements: [ElementSnapshot], bundleID: String, alphabet: String, reserve: Int = 0) -> [String] {
+        var memory: [String: String] = [:]
+        var custom: [String: String] = [:]
+        for entry in entries where entry.bundleID == bundleID {
+            if entry.isCustom {
+                custom[entry.fingerprint] = entry.label
+            } else {
+                memory[entry.fingerprint] = entry.label
+            }
+        }
+        return StableLabels.assign(
+            fingerprints: elements.map(StableLabels.fingerprint) + [String?](repeating: nil, count: reserve),
             alphabet: alphabet,
-            memory: keepAutomatic ? labels : [:],
-            pinned: Dictionary(
-                pinnedBindings.filter { $0.bundleID == bundleID }.map { ("\(bundleID)|\($0.fingerprint)", $0.label) },
-                uniquingKeysWith: { first, _ in first }
-            )
+            memory: memory,
+            custom: custom
         )
     }
 
-    func pin(_ label: String, element: ElementSnapshot, elements: [ElementSnapshot], bundleID: String, alphabet: String) -> PinResult {
-        guard element.source == .window, let fingerprint = StableLabels.fingerprint(of: element),
-            element.stableIdentity != nil, !bundleID.isEmpty
-        else { return .unsupported }
-        let count = elements.filter { StableLabels.fingerprint(of: $0) == fingerprint }.count
-        guard count == 1 else { return .ambiguous }
-        let normalizedLabel = label.uppercased()
-        guard normalizedLabel.allSatisfy({ alphabet.uppercased().contains($0) }) else { return .unsupported }
-        let conflict = pinnedBindings.contains {
-            $0.bundleID == bundleID && $0.fingerprint != fingerprint
-                && ($0.label.hasPrefix(normalizedLabel) || normalizedLabel.hasPrefix($0.label))
-        }
-        guard !conflict else { return .conflict }
-        let key = "\(bundleID)|\(fingerprint)"
-        pinnedBindings.removeAll { $0.id == key }
-        pinnedBindings.append(
-            PinnedLabelBinding(
-                bundleID: bundleID,
-                fingerprint: fingerprint,
-                label: normalizedLabel,
-                targetDescription: element.searchText.isEmpty ? element.role : element.searchText
-            ))
-        savePins()
-        return .saved
-    }
-
-    func removePin(id: String) {
-        pinnedBindings.removeAll { $0.id == id }
-        savePins()
-    }
-
-    private func savePins() {
-        guard let data = try? JSONEncoder().encode(pinnedBindings) else { return }
-        defaults.set(data, forKey: Self.pinsKey)
-    }
-
+    /// Notes that `element` was just used under `label`.
     func remember(_ label: String, for element: ElementSnapshot, bundleID: String) {
-        guard let key = key(for: element, bundleID: bundleID), labels[key] != label else { return }
-        // Simple bound: starting over is cheaper than tracking which entries are oldest.
-        if labels.count >= Self.capacity { labels.removeAll() }
-        labels[key] = label
-        defaults.set(labels, forKey: Self.key)
+        guard !bundleID.isEmpty, let fingerprint = StableLabels.fingerprint(of: element) else { return }
+        if let index = entries.firstIndex(where: { $0.bundleID == bundleID && $0.fingerprint == fingerprint }) {
+            // A chosen label stays, even if the element showed another one this time.
+            if !entries[index].isCustom { entries[index].label = label }
+            entries[index].lastUsed = .now
+        } else {
+            let text = element.searchText.trimmingCharacters(in: .whitespacesAndNewlines)
+            entries.append(
+                StableLabel(
+                    bundleID: bundleID,
+                    fingerprint: fingerprint,
+                    label: label,
+                    title: text.isEmpty ? String(element.role.trimmingPrefix("AX")) : String(text.prefix(80)),
+                    isCustom: false,
+                    lastUsed: .now
+                ))
+            trim()
+        }
+        save()
     }
 
-    private func key(for element: ElementSnapshot, bundleID: String) -> String? {
-        StableLabels.fingerprint(of: element).map { "\(bundleID)|\($0)" }
+    /// Gives an element the label the user typed. Returns what is wrong with it, or nil when it was saved.
+    func setCustomLabel(_ label: String, id: String, alphabet: String) -> StableLabels.CustomLabelProblem? {
+        guard let index = entries.firstIndex(where: { $0.id == id }) else { return nil }
+        let others = entries.filter { $0.isCustom && $0.bundleID == entries[index].bundleID && $0.id != id }.map(\.label)
+        if let problem = StableLabels.problem(withCustomLabel: label, alphabet: alphabet, otherCustomLabels: others) {
+            return problem
+        }
+        entries[index].label = label
+        entries[index].isCustom = true
+        save()
+        return nil
+    }
+
+    func remove(id: String) {
+        entries.removeAll { $0.id == id }
+        save()
+    }
+
+    func removeAll() {
+        entries.removeAll()
+        save()
+    }
+
+    /// Drops the labels that went unused longest once there are too many. Chosen labels stay.
+    private func trim() {
+        let excess = entries.count - Self.capacity
+        guard excess > 0 else { return }
+        let oldest = entries.filter { !$0.isCustom }.sorted { $0.lastUsed < $1.lastUsed }.prefix(excess).map(\.id)
+        let dropped = Set(oldest)
+        entries.removeAll { dropped.contains($0.id) }
+    }
+
+    private func save() {
+        guard let data = try? JSONEncoder().encode(entries) else { return }
+        defaults.set(data, forKey: Self.key)
     }
 }
