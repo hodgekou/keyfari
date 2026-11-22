@@ -293,7 +293,7 @@ final class HintModeController {
     }
 
     private func showFirstLabels(focused: [ElementSnapshot], nearby: [WindowResult]) {
-        var found = focused.map { Target(element: $0, bundleID: bundleID, window: nil) }
+        var found = focused.map { Target(element: $0, bundleID: BackgroundWindows.owner(of: $0, frontmost: bundleID), window: nil) }
         for result in nearby {
             found.append(contentsOf: result.elements.map { Target(element: $0, bundleID: result.bundleID, window: result.window) })
         }

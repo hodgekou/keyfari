@@ -2,6 +2,7 @@
 
 import AXKit
 import AppKit
+import KeyfariCore
 
 /// What the modes share when they reach into windows that do not have the keyboard focus.
 @MainActor
@@ -10,6 +11,12 @@ enum BackgroundWindows {
     static let settleDelay: Duration = .milliseconds(150)
     /// The most background windows read in one activation, counted from the front.
     static let limit = 12
+
+    /// The application an element of the frontmost application's query belongs to. Most belong
+    /// to the frontmost application itself; the Dock's icons are the Dock's.
+    static func owner(of element: ElementSnapshot, frontmost bundleID: String) -> String {
+        element.source == .dock ? "com.apple.dock" : bundleID
+    }
 
     /// Applications whose windows are never read: this one, and the ones the user ignores.
     static func excludedPIDs(ignoredBundleIDs: [String]) -> Set<pid_t> {
