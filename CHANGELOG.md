@@ -10,6 +10,7 @@ All notable changes to Keyfari are recorded here. The format follows [Keep a Cha
 - Add independent, off-by-default sounds for successful clicks and warning feedback.
 - Add a Liquid Glass hint theme on macOS 26 and later, with existing themes as the fallback on earlier systems.
 - Add optional shortcuts that go one desktop (Space) to the left or right, acting on the display with the focused window.
+- Add labels in Mission Control: the hint shortcut labels the windows and desktops of the overview, a typed label selects one and `Return` opens it. An option shows the labels as soon as Mission Control opens.
 
 ### Removed
 

@@ -11,6 +11,9 @@ enum Mode: Equatable {
     case hint
     case search
     case scroll
+    /// Labels in Mission Control. It has no shortcut of its own: the hint shortcut leads here
+    /// while Mission Control is showing.
+    case missionControl
 }
 
 /// Owns the global shortcuts and makes sure at most one mode is active.
@@ -37,6 +40,10 @@ final class ModeCoordinator {
     private let interceptor = KeyInterceptor()
     private lazy var spaces = SpaceController(store: store)
     private var keySequence: KeySequenceActivator?
+    /// Decides whether the hint shortcut means hint mode or Mission Control.
+    private var pendingActivation: Task<Void, Never>?
+    /// Shows the labels when Mission Control opens, while that setting is on.
+    private var missionControlWatch: Task<Void, Never>?
     private var active: (mode: Mode, stop: @MainActor () -> Void)?
 
     init(store: SettingsStore) {
@@ -99,8 +106,13 @@ final class ModeCoordinator {
         let settings = store.effective
         keySequence?.stop()
         keySequence = nil
+        missionControlWatch?.cancel()
+        missionControlWatch = nil
         guard AXPermission.isGranted else { return }
         registerShortcuts(settings)
+        if settings.missionControlAutoHints {
+            watchMissionControl()
+        }
 
         let isSuppressed: @MainActor () -> Bool = { [weak self] in
             guard let self else { return true }
@@ -123,15 +135,49 @@ final class ModeCoordinator {
 
     /// Activates `mode`, or leaves it when it is already active. Another active mode is replaced.
     func toggle(_ mode: Mode) {
+        pendingActivation?.cancel()
+        pendingActivation = nil
         if let active {
             active.stop()
-            if active.mode == mode { return }
+            // In Mission Control the hint shortcut stands for its labels.
+            if active.mode == mode || (mode == .hint && active.mode == .missionControl) { return }
         }
 
         guard AXPermission.isGranted else { return refuse("the Accessibility permission is missing") }
         // Event taps receive nothing while a password field holds secure input.
         guard !SecureInput.isEnabled else { return refuse("secure input is active") }
-        guard let application = currentTarget()?.application else {
+        guard mode == .hint else { return activate(mode) }
+
+        // Mission Control belongs to no application, so the usual target would be the wrong one.
+        // Asking for it is a cross-process request, which the main thread must not wait for.
+        pendingActivation = Task { [weak self] in
+            let isShowing = await Task.detached { MissionControlQuery.isShowing() }.value
+            guard let self, !Task.isCancelled, self.active == nil else { return }
+            self.pendingActivation = nil
+            self.activate(isShowing ? .missionControl : .hint)
+        }
+    }
+
+    /// Polls for Mission Control and labels it the moment it opens.
+    private func watchMissionControl() {
+        missionControlWatch = Task { [weak self] in
+            var wasShowing = false
+            while !Task.isCancelled {
+                let isShowing = await Task.detached(priority: .utility) { MissionControlQuery.isShowing() }.value
+                guard let self, !Task.isCancelled else { return }
+                // Only the moment it opens counts: labels the user dismissed stay away.
+                if isShowing, !wasShowing, self.active == nil, self.pendingActivation == nil, !SecureInput.isEnabled {
+                    self.activate(.missionControl)
+                }
+                wasShowing = isShowing
+                try? await Task.sleep(for: .milliseconds(300))
+            }
+        }
+    }
+
+    private func activate(_ mode: Mode) {
+        let application = currentTarget()?.application
+        guard mode == .missionControl || application != nil else {
             return refuse("the frontmost application is missing, ignored, or Keyfari itself")
         }
 
@@ -168,11 +214,20 @@ final class ModeCoordinator {
             started = controller.start()
             stop = { controller.stop() }
         case .scroll:
+            guard let application else { return }
             let controller = ScrollModeController(
                 overlay: overlay, interceptor: interceptor, settings: settings,
                 onShortcut: onShortcut, onExit: onExit
             )
             started = controller.start(application: application)
+            stop = { controller.stop() }
+        case .missionControl:
+            applyStyle(settings)
+            let controller = MissionControlModeController(
+                overlay: overlay, interceptor: interceptor, settings: settings,
+                onShortcut: onShortcut, onExit: onExit
+            )
+            started = controller.start()
             stop = { controller.stop() }
         }
 

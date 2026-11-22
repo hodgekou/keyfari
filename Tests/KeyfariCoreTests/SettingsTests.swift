@@ -76,6 +76,14 @@ import Testing
         #expect(settings.validated().nextSpaceShortcut == nil)
     }
 
+    @Test func missionControlLabelsWaitForTheShortcutByDefault() throws {
+        var settings = Settings()
+        #expect(!settings.missionControlAutoHints)
+        settings.missionControlAutoHints = true
+        let decoded = try JSONDecoder().decode(Settings.self, from: JSONEncoder().encode(settings))
+        #expect(decoded.missionControlAutoHints)
+    }
+
     @Test func shortcutDisplayAndMatching() {
         let shortcut = Shortcut(keyCode: KeyCode.space, modifiers: [.command, .shift])
         #expect(shortcut.displayString == "⇧⌘Space")

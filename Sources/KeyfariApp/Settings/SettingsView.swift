@@ -68,7 +68,9 @@ struct SettingsView: View {
                 case .general: general
                 case .hints: hints
                 case .scrolling: scrolling
-                case .desktops: desktops
+                case .desktops:
+                    desktops
+                    missionControl
                 case .activation: activation
                 case .vision: vision
                 case .stats: stats
@@ -283,6 +285,28 @@ struct SettingsView: View {
             RowDivider()
             Notice(
                 "Keyfari changes desktops by pressing the system's own shortcuts, so those have to stay on. When displays have separate Spaces, the display with the focused window changes.",
+                symbol: "info.circle.fill", tint: tint)
+        }
+    }
+
+    @ViewBuilder
+    private var missionControl: some View {
+        let tint = SettingsPane.desktops.tint
+        Card("Mission Control", symbol: "rectangle.3.group", tint: tint) {
+            ToggleRow(
+                "Show labels automatically", detail: "Label windows and desktops as soon as Mission Control opens",
+                isOn: $store.settings.missionControlAutoHints, tint: tint)
+            RowDivider()
+            VStack(alignment: .leading, spacing: 10) {
+                KeyHint(keys: store.effective.hintShortcut.displayParts, text: "Show or hide the labels in Mission Control")
+                KeyHint(keys: ["A", "S"], text: "Type a label to select a window or desktop")
+                KeyHint(keys: ["Return"], text: "Open the selection")
+                KeyHint(keys: ["Esc"], text: "Leave Mission Control")
+            }
+            .padding(12)
+            RowDivider()
+            Notice(
+                "With several displays, labels appear on the display under the pointer. Arrow keys and the system's shortcuts keep working.",
                 symbol: "info.circle.fill", tint: tint)
         }
     }
