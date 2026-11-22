@@ -19,6 +19,10 @@ final class ScrollModeController {
     private let scroller = ScrollSynthesizer()
 
     private var queryTask: Task<Void, Never>?
+    /// Ends the mode when no key was pressed for the time set in the settings.
+    private var idleTask: Task<Void, Never>?
+    /// How many keys are down right now. The idle wait does not run while one is held.
+    private var heldKeys = 0
     private var areas: [CGRect] = []
     private var session: ScrollSession?
     private var isActive = false
@@ -60,9 +64,11 @@ final class ScrollModeController {
             self.areas = found
             self.session = ScrollSession(
                 areaCount: found.count,
-                keys: ScrollKeys(scroll: settings.scrollKeys, halfPage: settings.halfPageKeys) ?? .standard
+                keys: ScrollKeys(scroll: settings.scrollKeys, halfPage: settings.halfPageKeys) ?? .standard,
+                arrowsScroll: settings.arrowKeysScroll
             )
             self.select(0)
+            self.restartIdleTimer()
         }
         return true
     }
@@ -72,6 +78,8 @@ final class ScrollModeController {
         isActive = false
         queryTask?.cancel()
         queryTask = nil
+        idleTask?.cancel()
+        idleTask = nil
         scroller.stop()
         session = nil
         areas = []
@@ -82,12 +90,28 @@ final class ScrollModeController {
 
     private func select(_ index: Int) {
         let area = areas[index]
-        overlay.showScrollArea(frame: area, index: index)
+        overlay.showScrollArea(frame: area, index: settings.showScrollAreaNumbers ? index : nil)
         // Scroll events go to whatever is under the cursor.
         MouseSynthesizer.move(to: CGPoint(x: area.midX, y: area.midY))
     }
 
+    /// Starts the wait for the idle timeout again. A key that is held keeps scrolling, so the
+    /// wait only runs out once nothing is held.
+    private func restartIdleTimer() {
+        idleTask?.cancel()
+        idleTask = nil
+        guard settings.scrollIdleTimeout > 0, heldKeys == 0 else { return }
+        let timeout = Duration.seconds(settings.scrollIdleTimeout)
+        idleTask = Task { [weak self] in
+            try? await Task.sleep(for: timeout)
+            guard let self, !Task.isCancelled, self.isActive else { return }
+            self.stop()
+        }
+    }
+
     private func keyDown(_ stroke: KeyStroke) {
+        if !stroke.isRepeat { heldKeys += 1 }
+        idleTask?.cancel()
         if onShortcut(stroke) { return }
         guard var current = session else {
             if stroke.keyCode == KeyCode.escape { stop() }
@@ -99,6 +123,8 @@ final class ScrollModeController {
     }
 
     private func keyUp(_ keyCode: UInt16) {
+        heldKeys = max(heldKeys - 1, 0)
+        restartIdleTimer()
         guard var current = session else { return }
         let event = current.keyUp(keyCode: keyCode)
         session = current

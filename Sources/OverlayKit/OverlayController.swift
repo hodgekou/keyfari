@@ -201,13 +201,14 @@ public final class OverlayController {
 
     // MARK: Scroll mode
 
-    /// Outlines one scroll area and shows its number.
-    public func showScrollArea(frame: CGRect, index: Int) {
+    /// Outlines one scroll area and shows its number, unless `index` is nil.
+    public func showScrollArea(frame: CGRect, index: Int?) {
         draw {
             guard let placement = place(frame) else { return }
             let rect = CGRect(origin: placement.origin, size: placement.size).insetBy(dx: 2, dy: 2)
             addGradientBorder(rect, colors: HintStyle.accent, width: 3, cornerRadius: 8, to: placement.host)
 
+            guard let index else { return }
             // A pill in the corner that names the scroll area.
             let pill = CAGradientLayer()
             pill.colors = HintStyle.accent.map(\.cgColor)

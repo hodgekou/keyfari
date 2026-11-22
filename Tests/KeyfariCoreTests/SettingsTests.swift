@@ -119,6 +119,24 @@ import Testing
         #expect(!FirstLaunch.shouldWelcome(hasSeenWelcome: false, hasStoredSettings: true))
     }
 
+    @Test func scrollModeOptionsKeepTheirDefaultsAndBounds() throws {
+        var settings = Settings()
+        #expect(!settings.arrowKeysScroll)
+        #expect(settings.showScrollAreaNumbers)
+        #expect(settings.scrollIdleTimeout == 0)
+
+        settings.arrowKeysScroll = true
+        settings.showScrollAreaNumbers = false
+        settings.scrollIdleTimeout = 5
+        let decoded = try JSONDecoder().decode(Settings.self, from: JSONEncoder().encode(settings)).validated()
+        #expect(decoded.arrowKeysScroll)
+        #expect(!decoded.showScrollAreaNumbers)
+        #expect(decoded.scrollIdleTimeout == 5)
+
+        settings.scrollIdleTimeout = -3
+        #expect(settings.validated().scrollIdleTimeout == 0)
+    }
+
     @Test func shortcutDisplayAndMatching() {
         let shortcut = Shortcut(keyCode: KeyCode.space, modifiers: [.command, .shift])
         #expect(shortcut.displayString == "⇧⌘Space")

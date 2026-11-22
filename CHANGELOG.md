@@ -4,6 +4,10 @@ All notable changes to Keyfari are recorded here. The format follows [Keep a Cha
 
 ## [Unreleased]
 
+### Added
+
+- Scroll mode: the arrow keys can scroll instead of selecting a scroll area, the area numbers can be hidden, and the mode can leave by itself after a time without a key.
+
 ### Removed
 
 - Remove the offer to open the download page for a new version. Every release installs updates itself now; a build without the update key no longer looks for updates.
