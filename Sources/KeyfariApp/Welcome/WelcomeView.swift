@@ -78,7 +78,7 @@ struct WelcomeView: View {
         // The permission is granted in another application, so the state is looked up again and again.
         TimelineView(.periodic(from: .now, by: 1)) { _ in
             let isGranted = AXPermission.isGranted
-            Card("Accessibility permission", symbol: "lock.shield.fill", tint: Self.tint) {
+            Card("Permissions", symbol: "lock.shield.fill", tint: Self.tint) {
                 SettingRow("Accessibility permission", detail: "Required for global shortcuts and controlling apps") {
                     HStack(spacing: 10) {
                         StatusPill(text: tr(isGranted ? "Granted" : "Not granted"), tint: isGranted ? .green : .orange)
