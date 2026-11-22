@@ -26,9 +26,7 @@ Keyfari is not signed with an Apple Developer ID, so macOS blocks it the first t
 With Homebrew:
 
 \`\`\`sh
-brew tap hodgekou/keyfari https://github.com/hodgekou/keyfari
-brew trust hodgekou/keyfari
-brew install --cask keyfari
+brew install --cask hodgekou/keyfari/keyfari
 \`\`\`
 
 Because the build is not signed with a stable identity, macOS asks for the permissions again after each update.

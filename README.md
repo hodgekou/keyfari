@@ -47,12 +47,8 @@ More at [hodgekou.github.io/keyfari](https://hodgekou.github.io/keyfari/).
 Download the latest disk image from the [releases page](https://github.com/hodgekou/keyfari/releases/latest), open it and drag Keyfari to Applications. Or use Homebrew:
 
 ```sh
-brew tap hodgekou/keyfari https://github.com/hodgekou/keyfari
-brew trust hodgekou/keyfari
-brew install --cask keyfari
+brew install --cask hodgekou/keyfari/keyfari
 ```
-
-Homebrew may ask you to trust this tap. If your Homebrew version does not support `brew trust`, omit that command.
 
 Keyfari is not signed with an Apple Developer ID, so macOS blocks it the first time. Open it once, then go to **System Settings > Privacy & Security** and choose **Open Anyway**. Because the signature is not stable, macOS also asks for the permissions again after each update, including the ones Keyfari installs itself.
 

@@ -75,7 +75,7 @@ iconutil -c icns /tmp/AppIcon.iconset -o Resources/AppIcon.icns
 1. Add a section for the new version to `CHANGELOG.md`, set the same version in `Resources/Info.plist`, and get both onto `main`. `scripts/check-repo.sh` fails when the two disagree.
 2. Tag that commit and push the tag: `git tag v0.2.0 && git push origin v0.2.0`.
 
-The `Release` workflow first checks that the tag has a section in the changelog, then builds a universal app, signs the update and adds it to the update feed, packs it into a disk image, publishes a GitHub release with that section as its notes, and points `Casks/keyfari.rb` at the new image.
+The `Release` workflow first checks that the tag has a section in the changelog, then builds a universal app, signs the update and adds it to the update feed, packs it into a disk image, publishes a GitHub release with that section as its notes, and points `Casks/keyfari.rb` at the new image. After the workflow finishes, copy the updated cask from `main` to the same path in [the public Homebrew tap](https://github.com/hodgekou/homebrew-keyfari) so new installations use the latest disk image.
 
 ### The update key
 
