@@ -43,7 +43,17 @@ jobs:
         run: scripts/lint.sh
 
       - name: Build the universal app
-        run: KEYFARI_UNIVERSAL=1 KEYFARI_VERSION="$VERSION" scripts/bundle.sh release
+        env:
+          KEYFARI_SIGNING_P12: ${{ secrets.KEYFARI_SIGNING_P12 }}
+          KEYFARI_SIGNING_PASSWORD: ${{ secrets.KEYFARI_SIGNING_PASSWORD }}
+        run: |
+          # With the project's certificate every release has the same signature, so macOS
+          # keeps the permissions across updates. Without it the app is signed ad hoc.
+          KEYFARI_SIGN_IDENTITY="$(scripts/import-signing-certificate.sh)"
+          export KEYFARI_SIGN_IDENTITY
+          KEYFARI_UNIVERSAL=1 KEYFARI_VERSION="$VERSION" scripts/bundle.sh release
+          codesign --verify --deep --strict build/Keyfari.app
+          codesign --display --requirements - build/Keyfari.app 2>&1 | grep -E "^designated" || true
 
       - name: Create the disk image
         run: scripts/make-dmg.sh build/Keyfari.app "build/Keyfari-$VERSION.dmg"
