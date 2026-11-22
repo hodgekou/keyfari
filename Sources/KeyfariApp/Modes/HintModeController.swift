@@ -28,10 +28,6 @@ final class HintModeController {
     private static let nearbyDeadline: Duration = .milliseconds(300)
     /// How long the windows on other displays may take before they go without labels.
     private static let distantDeadline: Duration = .milliseconds(2500)
-    /// How long a window that was brought forward needs before it takes a click.
-    private static let raiseDelay: Duration = .milliseconds(150)
-    /// The most background windows read in one activation, counted from the front.
-    private static let windowLimit = 12
 
     /// How many text regions detection found last time, per application. It sizes the block of
     /// labels set aside for detection, which has to be decided before detection finishes.
@@ -218,16 +214,10 @@ final class HintModeController {
             windows = []
             return
         }
-        let ownPID = ProcessInfo.processInfo.processIdentifier
-        let ignored = Set(settings.ignoredBundleIDs)
-        let excluded = Set(
-            NSWorkspace.shared.runningApplications
-                .filter { $0.processIdentifier == ownPID || ignored.contains($0.bundleIdentifier ?? "") }
-                .map(\.processIdentifier)
-        )
+        let excluded = BackgroundWindows.excludedPIDs(ignoredBundleIDs: settings.ignoredBundleIDs)
         let pointer = CGEvent(source: nil)?.location ?? .zero
         let displays = AXElementQuery.activeDisplayBounds()
-        let limit = Self.windowLimit
+        let limit = BackgroundWindows.limit
 
         let listing = Task { [weak self] in
             let found = await Task.detached {
@@ -464,9 +454,7 @@ final class HintModeController {
         // The window is in the background: it comes forward first, like it would under a real
         // pointer, and takes the click once it listens.
         Task { [weak self] in
-            await Task.detached { window.raise() }.value
-            NSRunningApplication(processIdentifier: window.pid)?.activate()
-            try? await Task.sleep(for: Self.raiseDelay)
+            await BackgroundWindows.bringForward(window)
             click()
             if continues { self?.runQuery(after: Self.chainDelay) }
         }
