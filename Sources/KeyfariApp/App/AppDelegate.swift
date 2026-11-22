@@ -3,6 +3,7 @@
 import AXKit
 import AppKit
 import KeyfariCore
+import OverlayKit
 import ScreenVision
 import SwiftUI
 import os
@@ -119,6 +120,18 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         item.menu = menu
 
         statusItem = item
+        item.isVisible = store.effective.showMenuBarIcon
+        store.onMenuBarIconChange = { [weak self] in
+            guard let self else { return }
+            self.statusItem?.isVisible = self.store.effective.showMenuBarIcon
+        }
+    }
+
+    /// Opening the app again while it runs opens the settings. With the menu bar icon hidden
+    /// this is the way back to them.
+    func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows: Bool) -> Bool {
+        openSettings()
+        return false
     }
 
     /// Debug builds toggle a mode on a signal, so the modes can be driven from a terminal:
@@ -171,6 +184,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             let content = SettingsView(
                 store: store, navigation: SettingsNavigation(),
                 checkForUpdates: { [weak self] in self?.updates.checkNow() },
+                copyDiagnostics: { [weak self] in self?.copyDiagnostics() },
                 openWelcome: { [weak self] in self?.openWelcome() }
             )
             let window = NSWindow(contentViewController: NSHostingController(rootView: content))
@@ -190,6 +204,28 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         NSApp.setActivationPolicy(.regular)
         NSApp.activate(ignoringOtherApps: true)
         settingsWindow?.makeKeyAndOrderFront(nil)
+    }
+
+    private func copyDiagnostics() {
+        let system = ProcessInfo.processInfo.operatingSystemVersion
+        #if arch(arm64)
+        let architecture = "arm64"
+        #else
+        let architecture = "x86_64"
+        #endif
+        let diagnostics = Diagnostics(
+            appVersion: AppUpdater.currentVersion,
+            systemVersion: "\(system.majorVersion).\(system.minorVersion).\(system.patchVersion)",
+            architecture: architecture,
+            displays: NSScreen.screens.map(\.frame.size),
+            hasAccessibility: AXPermission.isGranted,
+            hasScreenRecording: ScreenTextDetector.hasPermission,
+            installsUpdates: AppUpdater.installsUpdates,
+            settings: store.effective
+        )
+        NSPasteboard.general.clearContents()
+        NSPasteboard.general.setString(diagnostics.report, forType: .string)
+        Toast.show(tr("Diagnostic information copied."), for: .seconds(2))
     }
 
     // MARK: Welcome guide

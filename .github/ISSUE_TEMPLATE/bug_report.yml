@@ -30,6 +30,12 @@ body:
     validations:
       required: true
   - type: textarea
+    id: diagnostics
+    attributes:
+      label: Diagnostic information
+      description: In Keyfari's settings, General > Troubleshooting > Copy, then paste here. It holds versions, displays, permissions and the names of changed settings, nothing else.
+      render: text
+  - type: textarea
     id: log
     attributes:
       label: Log

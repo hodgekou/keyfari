@@ -11,6 +11,8 @@ struct SettingsView: View {
     @Bindable var navigation: SettingsNavigation
     /// Runs the update check the user asked for. Nil where there is nothing to check, as in a rendered preview.
     var checkForUpdates: (@MainActor () -> Void)?
+    /// Puts the diagnostic information on the clipboard.
+    var copyDiagnostics: (@MainActor () -> Void)?
     /// Opens the welcome guide again. Nil where there is no application to open it, as in a rendered preview.
     var openWelcome: (@MainActor () -> Void)?
 
@@ -119,6 +121,16 @@ struct SettingsView: View {
             RowDivider()
             SettingRow("Welcome guide", detail: "Permissions, shortcuts and first choices, step by step") {
                 Button(tr("Show Guide")) { openWelcome?() }
+                    .buttonStyle(.bordered)
+            }
+            RowDivider()
+            ToggleRow(
+                "Show menu bar icon", detail: "When hidden, open Keyfari again to get back to these settings",
+                isOn: $store.settings.showMenuBarIcon, tint: tint)
+        }
+        Card("Troubleshooting", symbol: "stethoscope", tint: tint) {
+            SettingRow("Diagnostic information", detail: "Versions, displays, permissions and the names of changed settings, for a bug report") {
+                Button(tr("Copy")) { copyDiagnostics?() }
                     .buttonStyle(.bordered)
             }
         }

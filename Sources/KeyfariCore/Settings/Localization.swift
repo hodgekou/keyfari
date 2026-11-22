@@ -106,6 +106,15 @@ public enum Localizer {
         "Version %@": Entry(chinese: "版本 %@", japanese: "バージョン %@"),
         "Check Now": Entry(chinese: "立即检查", japanese: "今すぐ確認"),
         "Check for Updates…": Entry(chinese: "检查更新…", japanese: "アップデートを確認…"),
+        "Show menu bar icon": Entry(chinese: "显示菜单栏图标", japanese: "メニューバーにアイコンを表示"),
+        "When hidden, open Keyfari again to get back to these settings": Entry(
+            chinese: "隐藏后,再次打开 Keyfari 即可回到这里", japanese: "非表示のときは、Keyfari をもう一度開くとこの設定に戻れます"),
+        "Troubleshooting": Entry(chinese: "问题排查", japanese: "トラブルシューティング"),
+        "Diagnostic information": Entry(chinese: "诊断信息", japanese: "診断情報"),
+        "Versions, displays, permissions and the names of changed settings, for a bug report": Entry(
+            chinese: "版本、显示器、权限以及改动过的设置项名称,用于报告问题", japanese: "バージョン、ディスプレイ、権限、変更した設定の名前。不具合の報告用です"),
+        "Copy": Entry(chinese: "复制", japanese: "コピー"),
+        "Diagnostic information copied.": Entry(chinese: "诊断信息已复制。", japanese: "診断情報をコピーしました。"),
         "Language": Entry(chinese: "语言", japanese: "言語"),
         "Interface language": Entry(chinese: "界面语言", japanese: "表示言語"),
         "Takes effect immediately": Entry(chinese: "立即生效", japanese: "すぐに反映されます"),
