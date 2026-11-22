@@ -28,6 +28,4 @@ With Homebrew:
 \`\`\`sh
 brew install --cask hodgekou/keyfari/keyfari
 \`\`\`
-
-Because the build is not signed with a stable identity, macOS asks for the permissions again after each update.
 NOTES

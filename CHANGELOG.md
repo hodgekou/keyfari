@@ -4,6 +4,8 @@ All notable changes to Keyfari are recorded here. The format follows [Keep a Cha
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-11-22
+
 ### Added
 
 - Scroll mode: the arrow keys can scroll instead of selecting a scroll area, the area numbers can be hidden, and the mode can leave by itself after a time without a key.
@@ -14,6 +16,10 @@ All notable changes to Keyfari are recorded here. The format follows [Keep a Cha
 - The settings and the remembered labels can be exported to a file and imported again, for moving to another Mac. Statistics are not part of the file.
 - A compatibility mode makes applications such as Firefox, which show their interface only to assistive apps, usable. It is off by default because it can disturb window managers.
 - Single applications can override text detection, icon detection and the compatibility mode, under "Per-application settings" in the General pane.
+
+### Changed
+
+- Releases now share a stable signing identity so Accessibility and Screen Recording permissions persist across updates. When upgrading from 0.3.0 or earlier, macOS may ask you to grant these permissions once more.
 
 ### Removed
 

@@ -20,6 +20,6 @@ cask "keyfari" do
     macOS blocks it: go to System Settings > Privacy & Security and choose Open Anyway.
 
     It needs the Accessibility permission, and Screen Recording for text detection.
-    macOS asks for them again after each update.
+    When upgrading from 0.3.0 or earlier, macOS may ask for these permissions once more.
   EOS
 end

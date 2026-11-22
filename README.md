@@ -50,7 +50,7 @@ Download the latest disk image from the [releases page](https://github.com/hodge
 brew install --cask hodgekou/keyfari/keyfari
 ```
 
-Keyfari is not signed with an Apple Developer ID, so macOS blocks it the first time. Open it once, then go to **System Settings > Privacy & Security** and choose **Open Anyway**. Because the signature is not stable, macOS also asks for the permissions again after each update, including the ones Keyfari installs itself. [First-launch screenshots](https://hodgekou.github.io/keyfari/#first-launch)
+Keyfari is not signed with an Apple Developer ID, so macOS blocks it the first time. Open it once, then go to **System Settings > Privacy & Security** and choose **Open Anyway**. When upgrading from 0.3.0 or earlier, macOS may ask for permissions once more. [First-launch screenshots](https://hodgekou.github.io/keyfari/#first-launch)
 
 On first launch, grant **Accessibility** permission so Keyfari can read other apps' interfaces and send clicks. On-screen text detection also requires **Screen Recording** permission; it stays idle until you grant it.
 
