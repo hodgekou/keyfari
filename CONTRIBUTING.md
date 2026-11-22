@@ -79,7 +79,7 @@ The `Release` workflow first checks that the tag has a section in the changelog,
 
 ### The update key
 
-Installed copies only accept an update that is signed with the project's EdDSA key. The public half is `SUPublicEDKey` in `Resources/Info.plist`; the private half is the repository secret `SPARKLE_PRIVATE_KEY` and must never be committed. The workflow signs each disk image and `scripts/update-appcast.py` adds it to `site/appcast.xml`, the feed the app reads from the project's site.
+Installed copies only accept an update that is signed with the project's EdDSA key. The public half is `SUPublicEDKey` in `Resources/Info.plist`; the private half is the repository secret `SPARKLE_PRIVATE_KEY` and must never be committed. The workflow runs `scripts/publish-feed.sh`, which signs the disk image, checks the signature against the public key, and adds the release to `site/appcast.xml`, the feed the app reads from the project's site. If a release went out while the key was missing or wrong, run the `Update feed` workflow by hand with the version to do that part again.
 
 A build whose `Info.plist` has no public key cannot verify updates, so it only announces a new version and opens its download page.
 

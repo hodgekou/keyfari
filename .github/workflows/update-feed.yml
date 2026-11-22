@@ -1,0 +1,63 @@
+name: Update feed
+
+# Points the Homebrew cask and the update feed at a release that is already published.
+# The release workflow does this by itself; this is for doing it again, for example after
+# the signing key was missing or wrong when the release went out.
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: The released version, for example 0.3.0
+        required: true
+        type: string
+
+permissions:
+  contents: write
+  # To start the workflow that publishes the update feed with the site.
+  actions: write
+
+concurrency:
+  group: update-feed
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    name: Sign the release and publish the feed
+    runs-on: macos-latest
+    timeout-minutes: 20
+    env:
+      VERSION: ${{ inputs.version }}
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Check the version
+        run: |
+          if ! [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "::error::$VERSION is not a version of the form 1.2.3"
+            exit 1
+          fi
+
+      - name: Fetch the signing tool
+        run: swift package resolve
+
+      - name: Download the released disk image
+        run: gh release download "v$VERSION" --pattern "Keyfari-$VERSION.dmg" --dir "$RUNNER_TEMP"
+
+      - name: Point the Homebrew cask and the update feed at the release
+        env:
+          SPARKLE_PRIVATE_KEY: ${{ secrets.SPARKLE_PRIVATE_KEY }}
+        run: |
+          scripts/publish-feed.sh "$VERSION" "$RUNNER_TEMP/Keyfari-$VERSION.dmg"
+          git add Casks/keyfari.rb site/appcast.xml
+          if git diff --cached --quiet; then
+            echo "Nothing changed"
+            exit 0
+          fi
+          git config user.name "hz.kou"
+          git config user.email "49755533+hodgekou@users.noreply.github.com"
+          git commit -m "Point the cask and the update feed at $VERSION"
+          git push origin main
+          gh workflow run site.yml --ref main
