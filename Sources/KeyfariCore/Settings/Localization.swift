@@ -126,7 +126,7 @@ public enum Localizer {
         "Statistics are off, so nothing is recorded. When they are on, only aggregate counts are stored, on this Mac.": Entry(
             chinese: "统计已关闭,不会记录任何内容。开启后仅在本机保存汇总数据。", japanese: "統計はオフのため、何も記録されません。オンにすると集計データのみがこの Mac に保存されます。"),
         "Time saved": Entry(chinese: "节省的时间", japanese: "節約した時間"),
-        "%d keyboard actions, each counted as %d seconds": Entry(chinese: "共 %d 次键盘操作,每次按 %d 秒计算", japanese: "キーボード操作 %d 回、1 回あたり %d 秒で計算"),
+        "Across %d keyboard actions": Entry(chinese: "来自 %d 次键盘操作", japanese: "キーボード操作 %d 回分"),
         "%d h %d min": Entry(chinese: "%d 小时 %d 分钟", japanese: "%d 時間 %d 分"),
         "%d min %d s": Entry(chinese: "%d 分 %d 秒", japanese: "%d 分 %d 秒"),
         "%d s": Entry(chinese: "%d 秒", japanese: "%d 秒"),

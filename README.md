@@ -1,6 +1,6 @@
 # Keyfari
 
-Keyboard-driven navigation for macOS. Press a shortcut, and every button, link and menu item gets a short label; type the label to click it. Scroll with `H J K L`. No mouse needed.
+Keyboard-driven navigation for macOS. Press a shortcut, and every button, link and menu item gets a short label; type the label to click it. Scroll with `H J K L`, pick a window in Mission Control by its label, switch desktops. No mouse needed.
 
 ## Text detection
 
@@ -26,9 +26,10 @@ The regular labels appear at once; the detected ones follow in well under a seco
 - **Scroll mode** (`⌘⇧J`): `h j k l` scroll, with `Shift` for speed, `d` / `u` half a page, `gg` / `G` top and bottom, `Tab` or `0`–`9` to switch scroll areas, `Esc` leaves.
 - **On-screen text detection**: recognises text in the window's pixels, on the device, and labels what the accessibility tree does not expose. The regular labels appear at once and the detected ones are added a moment later.
 - **Desktops**: optional shortcuts that go one desktop (Space) to the left or right. Keyfari presses the system's own shortcut for it, on the display with the focused window. Off until you record a shortcut.
-- **Mission Control**: press the hint shortcut while Mission Control is open to label its windows and desktops. Type a label to open its item, `Esc` to leave. With several displays, all of them get labels. Labels can also appear by themselves whenever Mission Control opens.
-- **Customisable**: shortcuts, label characters, themes (including Liquid Glass on macOS 26+), size and corner radius, scroll speed, click chains, stable labels that you can also choose yourself, ignored applications, launch at login.
-- **Usage statistics**: clicks, active days, most used apps and an estimate of the time saved, at five seconds per keyboard action. Everything stays on this Mac, and the statistics can be switched off.
+- **Mission Control**: press the hint shortcut while Mission Control is open to label its windows and desktops, on every display. Type a label to open its item, `Esc` to leave. Labels can also appear by themselves whenever Mission Control opens.
+- **Customisable**: shortcuts, label characters, themes (including Liquid Glass on macOS 26+), size and corner radius, scroll speed, click chains, ignored applications, launch at login.
+- **Stable labels**: an element keeps the label you last clicked it with. The Stable Labels pane lists what Keyfari remembered; type other letters there to choose a label yourself, or forget it.
+- **Usage statistics**: clicks, active days, most used apps and an estimate of the time saved. Everything stays on this Mac, and the statistics can be switched off.
 - **Interface in English, Chinese and Japanese**, following the system language unless you choose one.
 
 Not yet: detection of icon-only buttons, automatic updates.
@@ -71,7 +72,7 @@ The bundle is signed ad hoc by default, so macOS asks for the permissions again 
 
 ## Privacy
 
-Keyfari has no telemetry and makes no network requests. Screenshots taken for text detection are processed on the device with Apple's Vision framework and exist only in memory. Settings and remembered labels are stored locally in the user defaults.
+Keyfari has no telemetry and makes no network requests. Screenshots taken for text detection are processed on the device with Apple's Vision framework and exist only in memory. Settings, remembered labels and the usage statistics are stored locally in the user defaults; the statistics hold counts per day and per application, nothing about what was clicked.
 
 ## Project layout
 

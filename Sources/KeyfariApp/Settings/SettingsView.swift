@@ -319,7 +319,7 @@ struct SettingsView: View {
                     Text(timeSaved(actions: usage.totalActions))
                         .font(.system(size: 28, weight: .bold, design: .rounded))
                         .foregroundStyle(tint)
-                    Text(tr("%d keyboard actions, each counted as %d seconds", usage.totalActions, TimeSaved.secondsPerAction))
+                    Text(tr("Across %d keyboard actions", usage.totalActions))
                         .font(.system(size: 11)).foregroundStyle(.secondary)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
