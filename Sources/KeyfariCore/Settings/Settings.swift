@@ -65,6 +65,10 @@ public struct Settings: Codable, Equatable, Sendable {
     /// Bundle identifiers of applications in which no mode activates.
     public var ignoredBundleIDs: [String] = []
     public var launchAtLogin = false
+    /// Ask GitHub once a day whether a newer version exists.
+    public var updateCheckEnabled = true
+    /// A version the user does not want to be told about again.
+    public var skippedVersion: String?
 
     public init() {}
 
@@ -96,6 +100,8 @@ public struct Settings: Codable, Equatable, Sendable {
         reverseVertical = try container.decodeIfPresent(Bool.self, forKey: .reverseVertical) ?? fallback.reverseVertical
         ignoredBundleIDs = try container.decodeIfPresent([String].self, forKey: .ignoredBundleIDs) ?? fallback.ignoredBundleIDs
         launchAtLogin = try container.decodeIfPresent(Bool.self, forKey: .launchAtLogin) ?? fallback.launchAtLogin
+        updateCheckEnabled = try container.decodeIfPresent(Bool.self, forKey: .updateCheckEnabled) ?? fallback.updateCheckEnabled
+        skippedVersion = try? container.decodeIfPresent(String.self, forKey: .skippedVersion)
     }
 
     /// Where the shortcut that changes the Space in `direction` is stored.
@@ -136,6 +142,9 @@ public struct Settings: Codable, Equatable, Sendable {
         }
         if !(1...100).contains(scrollSpeed) { result.scrollSpeed = fallback.scrollSpeed }
         if !(0.25...10).contains(dashMultiplier) { result.dashMultiplier = fallback.dashMultiplier }
+        // Only a real version can be skipped.
+        result.skippedVersion = skippedVersion.flatMap { AppVersion($0)?.description }
+
         var seen = Set<String>()
         result.ignoredBundleIDs =
             ignoredBundleIDs
