@@ -2,6 +2,7 @@
 
 import AppKit
 import KeyfariCore
+import SwiftUI
 
 /// One label to draw. `point` is in accessibility coordinates.
 public struct HintItem: Sendable {
@@ -69,6 +70,12 @@ public struct HintStyle: Sendable {
                 foreground: .black,
                 border: NSColor(calibratedWhite: 0.2, alpha: 0.9)
             )
+        case .liquidGlass:
+            return Colors(
+                background: NSColor(calibratedWhite: 0.9, alpha: 0.3),
+                foreground: .labelColor,
+                border: NSColor(calibratedWhite: 1, alpha: 0.6)
+            )
         }
     }
 }
@@ -86,6 +93,7 @@ public final class OverlayController {
     }
 
     private struct Placement {
+        let screenIndex: Int
         let host: CALayer
         let origin: CGPoint
         let size: CGSize
@@ -103,6 +111,9 @@ public final class OverlayController {
     private var screenScales: [CGFloat] = []
     private var primaryHeight: CGFloat = 0
     private var entries: [Entry] = []
+    private var glassItems: [GlassHintItem] = []
+    private var glassViews: [Int: NSHostingView<AnyView>] = [:]
+    private var glassPrefix = ""
     private var decorations: [CALayer] = []
     private var isReversed = false
 
@@ -131,12 +142,18 @@ public final class OverlayController {
                 entries[countBefore].background.isHidden = true
             }
         }
+        refreshGlassViews()
         CATransaction.commit()
         panels.forEach { $0.orderFrontRegardless() }
     }
 
     /// Dims the typed prefix and hides labels that no longer match.
     public func update(prefix: String) {
+        if !glassItems.isEmpty {
+            glassPrefix = prefix
+            refreshGlassViews()
+            return
+        }
         CATransaction.begin()
         CATransaction.setDisableActions(true)
         for entry in entries {
@@ -152,6 +169,10 @@ public final class OverlayController {
     /// Flips the stacking order so labels hidden under others come to the front.
     public func rotate() {
         isReversed.toggle()
+        if !glassItems.isEmpty {
+            refreshGlassViews()
+            return
+        }
         CATransaction.begin()
         CATransaction.setDisableActions(true)
         for (index, entry) in entries.enumerated() {
@@ -239,6 +260,7 @@ public final class OverlayController {
         CATransaction.setDisableActions(true)
         clearLayers()
         body()
+        refreshGlassViews()
         CATransaction.commit()
         panels.forEach { $0.orderFrontRegardless() }
     }
@@ -257,6 +279,10 @@ public final class OverlayController {
     private func clearLayers() {
         entries.forEach { $0.background.removeFromSuperlayer() }
         entries.removeAll()
+        glassViews.values.forEach { $0.removeFromSuperview() }
+        glassViews.removeAll()
+        glassItems.removeAll()
+        glassPrefix = ""
         decorations.forEach { $0.removeFromSuperlayer() }
         decorations.removeAll()
         isReversed = false
@@ -271,6 +297,7 @@ public final class OverlayController {
             let host = panels[index].contentView?.layer
         else { return nil }
         return Placement(
+            screenIndex: index,
             host: host,
             origin: CGPoint(x: global.minX - screenFrames[index].minX, y: global.minY - screenFrames[index].minY),
             size: global.size,
@@ -307,6 +334,19 @@ public final class OverlayController {
         let size = CGSize(width: ceil(textSize.width) + 8, height: ceil(textSize.height) + 3)
         let colors = style.colors(for: label)
 
+        if usesLiquidGlass {
+            glassItems.append(
+                GlassHintItem(
+                    id: glassItems.count,
+                    label: label,
+                    center: CGPoint(x: placement.origin.x, y: screenFrames[placement.screenIndex].height - placement.origin.y),
+                    focused: isFocused,
+                    screenIndex: placement.screenIndex
+                )
+            )
+            return
+        }
+
         let background = CALayer()
         background.frame = CGRect(
             x: (placement.origin.x - size.width / 2).rounded(),
@@ -331,6 +371,43 @@ public final class OverlayController {
 
         placement.host.addSublayer(background)
         entries.append(Entry(label: label, background: background, text: text))
+    }
+
+    private var usesLiquidGlass: Bool {
+        guard style.theme == .liquidGlass else { return false }
+        if #available(macOS 26.0, *) { return true }
+        return false
+    }
+
+    private func refreshGlassViews() {
+        guard usesLiquidGlass else { return }
+        if #available(macOS 26.0, *) {
+            for index in panels.indices {
+                guard let contentView = panels[index].contentView else { continue }
+                let items = glassItems.filter { $0.screenIndex == index }
+                guard !items.isEmpty else { continue }
+                let orderedItems = isReversed ? Array(items.reversed()) : items
+                let root = AnyView(
+                    GlassHintsView(
+                        items: orderedItems,
+                        prefix: glassPrefix,
+                        fontSize: style.fontSize,
+                        cornerRadius: style.cornerRadius
+                    )
+                )
+                if let host = glassViews[index] {
+                    host.rootView = root
+                } else {
+                    let host = NSHostingView(rootView: root)
+                    host.frame = contentView.bounds
+                    host.autoresizingMask = [.width, .height]
+                    host.wantsLayer = true
+                    host.layer?.backgroundColor = NSColor.clear.cgColor
+                    contentView.addSubview(host)
+                    glassViews[index] = host
+                }
+            }
+        }
     }
 
     /// A rounded outline drawn with a gradient.

@@ -141,6 +141,7 @@ public enum Localizer {
         "Yellow": Entry(chinese: "黄色", japanese: "イエロー"),
         "Dark": Entry(chinese: "深色", japanese: "ダーク"),
         "Light": Entry(chinese: "浅色", japanese: "ライト"),
+        "Liquid Glass": Entry(chinese: "液态玻璃", japanese: "リキッドグラス"),
         "Label size": Entry(chinese: "标签字号", japanese: "ラベルのサイズ"),
         "Corner radius": Entry(chinese: "圆角", japanese: "角の丸み"),
         "Label characters": Entry(chinese: "标签字符", japanese: "ラベルの文字"),

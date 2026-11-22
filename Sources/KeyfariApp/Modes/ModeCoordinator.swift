@@ -147,7 +147,7 @@ final class ModeCoordinator {
     private func applyStyle(_ settings: Settings) {
         overlay.style.fontSize = settings.hintFontSize
         overlay.style.cornerRadius = settings.hintCornerRadius
-        overlay.style.theme = settings.hintTheme
+        overlay.style.theme = settings.hintTheme.isAvailable ? settings.hintTheme : .vivid
         overlay.searchPlaceholder = tr("Type to search")
         overlay.matchCountText = { $0 == 1 ? tr("1 match") : tr("%d matches", $0) }
     }

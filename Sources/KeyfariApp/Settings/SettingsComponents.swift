@@ -297,6 +297,7 @@ struct ThemeSwatch: View {
         case .yellow: "Yellow"
         case .dark: "Dark"
         case .light: "Light"
+        case .liquidGlass: "Liquid Glass"
         }
     }
 
@@ -308,12 +309,7 @@ struct ThemeSwatch: View {
             VStack(spacing: 5) {
                 HStack(spacing: 2) {
                     ForEach(samples, id: \.0) { label, colors in
-                        Text(label)
-                            .font(.system(size: 10, weight: .bold))
-                            .foregroundStyle(Color(nsColor: colors.foreground))
-                            .frame(width: 16, height: 16)
-                            .background(RoundedRectangle(cornerRadius: 4).fill(Color(nsColor: colors.background)))
-                            .overlay(RoundedRectangle(cornerRadius: 4).stroke(Color(nsColor: colors.border), lineWidth: 0.5))
+                        sampleLabel(label, colors: colors)
                     }
                 }
                 Text(tr(name))
@@ -335,5 +331,23 @@ struct ThemeSwatch: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
+    }
+
+    @ViewBuilder
+    private func sampleLabel(_ label: String, colors: HintStyle.Colors) -> some View {
+        if theme == .liquidGlass, #available(macOS 26.0, *) {
+            Text(label)
+                .font(.system(size: 10, weight: .bold))
+                .foregroundStyle(.primary)
+                .frame(width: 16, height: 16)
+                .glassEffect(.regular, in: RoundedRectangle(cornerRadius: 4))
+        } else {
+            Text(label)
+                .font(.system(size: 10, weight: .bold))
+                .foregroundStyle(Color(nsColor: colors.foreground))
+                .frame(width: 16, height: 16)
+                .background(RoundedRectangle(cornerRadius: 4).fill(Color(nsColor: colors.background)))
+                .overlay(RoundedRectangle(cornerRadius: 4).stroke(Color(nsColor: colors.border), lineWidth: 0.5))
+        }
     }
 }

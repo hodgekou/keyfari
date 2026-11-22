@@ -13,6 +13,21 @@ public enum HintTheme: String, Codable, Sendable, CaseIterable {
     case yellow
     case dark
     case light
+    case liquidGlass
+
+    public var isAvailable: Bool {
+        switch self {
+        case .liquidGlass:
+            if #available(macOS 26.0, *) { return true }
+            return false
+        case .vivid, .yellow, .dark, .light:
+            return true
+        }
+    }
+
+    public static var available: [HintTheme] {
+        allCases.filter(\.isAvailable)
+    }
 }
 
 /// User preferences. Stored as one JSON document.
