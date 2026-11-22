@@ -151,10 +151,6 @@ public enum Localizer {
         "Next scroll area  ·  0–9 to jump": Entry(chinese: "下一个滚动区  ·  0–9 直接跳转", japanese: "次のスクロール領域  ·  0–9 で移動"),
 
         // Activation
-        "Hold Space": Entry(chinese: "长按空格", japanese: "スペースを長押し"),
-        "Hold Space to show hints": Entry(chinese: "长按空格显示标签", japanese: "スペースの長押しでヒントを表示"),
-        "A short tap still types a space, when you release it": Entry(chinese: "短按仍会输入空格,在松开时输入", japanese: "短く押した場合は、離したときに空白が入力されます"),
-        "Hold delay": Entry(chinese: "长按时长", japanese: "長押しの時間"),
         "Key sequences": Entry(chinese: "按键序列", japanese: "キーシーケンス"),
         "For example fd": Entry(chinese: "例如 fd", japanese: "例: fd"),
         "For example jk": Entry(chinese: "例如 jk", japanese: "例: jk"),

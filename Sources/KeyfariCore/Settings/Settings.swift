@@ -28,9 +28,6 @@ public struct Settings: Codable, Equatable, Sendable {
     public var chainClicks = false
     /// Give an element the label it had the last time it was clicked.
     public var stableLabels = true
-    public var holdSpaceEnabled = false
-    /// How long Space must be held, in seconds.
-    public var holdDelay = 0.25
     /// Typed sequences that activate a mode. Empty means off.
     public var hintKeySequence = ""
     public var scrollKeySequence = ""
@@ -63,8 +60,6 @@ public struct Settings: Codable, Equatable, Sendable {
         scrollShortcut = (try? container.decodeIfPresent(Shortcut.self, forKey: .scrollShortcut)) ?? fallback.scrollShortcut
         chainClicks = try container.decodeIfPresent(Bool.self, forKey: .chainClicks) ?? fallback.chainClicks
         stableLabels = try container.decodeIfPresent(Bool.self, forKey: .stableLabels) ?? fallback.stableLabels
-        holdSpaceEnabled = try container.decodeIfPresent(Bool.self, forKey: .holdSpaceEnabled) ?? fallback.holdSpaceEnabled
-        holdDelay = try container.decodeIfPresent(Double.self, forKey: .holdDelay) ?? fallback.holdDelay
         hintKeySequence = try container.decodeIfPresent(String.self, forKey: .hintKeySequence) ?? fallback.hintKeySequence
         scrollKeySequence = try container.decodeIfPresent(String.self, forKey: .scrollKeySequence) ?? fallback.scrollKeySequence
         keySequenceResetDelay = try container.decodeIfPresent(Double.self, forKey: .keySequenceResetDelay) ?? fallback.keySequenceResetDelay
@@ -100,7 +95,6 @@ public struct Settings: Codable, Equatable, Sendable {
         }
         if !(1...100).contains(scrollSpeed) { result.scrollSpeed = fallback.scrollSpeed }
         if !(0.25...10).contains(dashMultiplier) { result.dashMultiplier = fallback.dashMultiplier }
-        if !(0.1...1).contains(holdDelay) { result.holdDelay = fallback.holdDelay }
         if !(0.1...1).contains(keySequenceResetDelay) { result.keySequenceResetDelay = fallback.keySequenceResetDelay }
 
         // A sequence that is too short or collides with the other one is switched off.

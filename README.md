@@ -25,7 +25,7 @@ The regular labels appear at once; the detected ones follow in well under a seco
 - **Search mode** (`⌘⇧/`): type part of an element's text to filter, `Tab` / arrows / `Ctrl-N` `Ctrl-P` to move the focus, `Shift` + label to jump, `Return` to click (twice for a double click), `Shift-Return` right click, `Command-Return` command-click. `*` or `;` matches everything. Chinese text matches its pinyin in full or as initials, so `baocun` and `bc` both find 保存.
 - **Scroll mode** (`⌘⇧J`): `h j k l` scroll, with `Shift` for speed, `d` / `u` half a page, `gg` / `G` top and bottom, `Tab` or `0`–`9` to switch scroll areas, `Esc` leaves.
 - **On-screen text detection**: recognises text in the window's pixels, on the device, and labels what the accessibility tree does not expose. The regular labels appear at once and the detected ones are added a moment later.
-- **Other ways to activate**: hold `Space`, or type a key sequence such as `fd`. Both are off by default.
+- **Other ways to activate**: type a key sequence such as `fd`. This is off by default.
 - **Customisable**: shortcuts, label characters, themes, size and corner radius, scroll speed, click chains, stable labels, ignored applications, launch at login.
 - **Interface in English, Chinese and Japanese**, following the system language unless you choose one.
 

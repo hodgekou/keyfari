@@ -25,7 +25,6 @@ final class ModeCoordinator {
     private let overlay = OverlayController()
     private let interceptor = KeyInterceptor()
     private let labelMemory = LabelMemory()
-    private var holdKey: HoldKeyActivator?
     private var keySequence: KeySequenceActivator?
     private var active: (mode: Mode, stop: @MainActor () -> Void)?
 
@@ -62,8 +61,6 @@ final class ModeCoordinator {
     /// Starts or stops the optional activators to match the settings.
     func applySettings() {
         let settings = store.effective
-        holdKey?.stop()
-        holdKey = nil
         keySequence?.stop()
         keySequence = nil
         guard AXPermission.isGranted else { return }
@@ -72,13 +69,6 @@ final class ModeCoordinator {
         let isSuppressed: @MainActor () -> Bool = { [weak self] in
             guard let self else { return true }
             return self.active != nil || self.eligibleApplication() == nil
-        }
-
-        if settings.holdSpaceEnabled {
-            let activator = HoldKeyActivator(delay: settings.holdDelay, isSuppressed: isSuppressed) { [weak self] in
-                self?.toggle(.hint)
-            }
-            if activator.start() { holdKey = activator }
         }
 
         let bindings = [(settings.hintKeySequence, Mode.hint), (settings.scrollKeySequence, Mode.scroll)]

@@ -202,15 +202,6 @@ struct SettingsView: View {
     @ViewBuilder
     private var activation: some View {
         let tint = SettingsPane.activation.tint
-        Card("Hold Space", symbol: "space", tint: tint) {
-            ToggleRow(
-                "Hold Space to show hints", detail: "A short tap still types a space, when you release it", isOn: $store.settings.holdSpaceEnabled,
-                tint: tint)
-            RowDivider()
-            SliderRow("Hold delay", value: $store.settings.holdDelay, range: 0.1...1, step: 0.05, tint: tint) {
-                String(format: "%.2f s", $0)
-            }
-        }
         Card("Key sequences", symbol: "character.cursor.ibeam", tint: tint) {
             SettingRow("Show hints", detail: "For example fd") {
                 TextField(tr("off"), text: $store.settings.hintKeySequence)
