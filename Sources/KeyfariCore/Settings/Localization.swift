@@ -109,6 +109,23 @@ public enum Localizer {
         "Show menu bar icon": Entry(chinese: "显示菜单栏图标", japanese: "メニューバーにアイコンを表示"),
         "When hidden, open Keyfari again to get back to these settings": Entry(
             chinese: "隐藏后,再次打开 Keyfari 即可回到这里", japanese: "非表示のときは、Keyfari をもう一度開くとこの設定に戻れます"),
+        "Backup": Entry(chinese: "备份", japanese: "バックアップ"),
+        "Settings and remembered labels": Entry(chinese: "设置与已记住的标签", japanese: "設定と記憶したラベル"),
+        "Save them to a file to take to another Mac. Statistics are not included": Entry(
+            chinese: "保存成文件,可以带到另一台 Mac。不包含统计数据", japanese: "ファイルに保存して別の Mac に持っていけます。統計は含まれません"),
+        "Export…": Entry(chinese: "导出…", japanese: "書き出す…"),
+        "Import…": Entry(chinese: "导入…", japanese: "読み込む…"),
+        "The settings could not be saved.": Entry(chinese: "无法保存设置。", japanese: "設定を保存できませんでした。"),
+        "This file was written by a newer version of Keyfari.": Entry(
+            chinese: "这个文件是更新版本的 Keyfari 写的。", japanese: "このファイルは新しいバージョンの Keyfari で作成されています。"),
+        "Update Keyfari, then import it again.": Entry(chinese: "请先更新 Keyfari,再重新导入。", japanese: "Keyfari をアップデートしてから、もう一度読み込んでください。"),
+        "This is not a Keyfari settings file.": Entry(chinese: "这不是 Keyfari 的设置文件。", japanese: "これは Keyfari の設定ファイルではありません。"),
+        "Nothing was changed.": Entry(chinese: "没有做任何修改。", japanese: "何も変更していません。"),
+        "Replace the current settings?": Entry(chinese: "替换当前的设置?", japanese: "現在の設定を置き換えますか?"),
+        "The settings and the %d remembered labels in the file replace the ones here.": Entry(
+            chinese: "文件里的设置和 %d 个已记住的标签会替换这里现有的。", japanese: "ファイル内の設定と %d 個の記憶したラベルが、現在のものを置き換えます。"),
+        "Replace": Entry(chinese: "替换", japanese: "置き換える"),
+        "Cancel": Entry(chinese: "取消", japanese: "キャンセル"),
         "Troubleshooting": Entry(chinese: "问题排查", japanese: "トラブルシューティング"),
         "Diagnostic information": Entry(chinese: "诊断信息", japanese: "診断情報"),
         "Versions, displays, permissions and the names of changed settings, for a bug report": Entry(

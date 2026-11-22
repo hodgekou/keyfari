@@ -6,6 +6,7 @@ import KeyfariCore
 import OverlayKit
 import ScreenVision
 import SwiftUI
+import UniformTypeIdentifiers
 import os
 
 @MainActor
@@ -185,6 +186,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 store: store, navigation: SettingsNavigation(),
                 checkForUpdates: { [weak self] in self?.updates.checkNow() },
                 copyDiagnostics: { [weak self] in self?.copyDiagnostics() },
+                exportSettings: { [weak self] in self?.exportSettings() },
+                importSettings: { [weak self] in self?.importSettings() },
                 openWelcome: { [weak self] in self?.openWelcome() }
             )
             let window = NSWindow(contentViewController: NSHostingController(rootView: content))
@@ -226,6 +229,58 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         NSPasteboard.general.clearContents()
         NSPasteboard.general.setString(diagnostics.report, forType: .string)
         Toast.show(tr("Diagnostic information copied."), for: .seconds(2))
+    }
+
+    // MARK: Backup
+
+    private func exportSettings() {
+        let panel = NSSavePanel()
+        panel.nameFieldStringValue = "Keyfari Settings.json"
+        panel.allowedContentTypes = [.json]
+        guard panel.runModal() == .OK, let url = panel.url else { return }
+        do {
+            let archive = SettingsArchive(settings: store.effective, stableLabels: store.labelMemory.book.entries)
+            try archive.encoded().write(to: url, options: .atomic)
+        } catch {
+            log.error("Could not export the settings: \(error.localizedDescription, privacy: .public)")
+            alert(tr("The settings could not be saved."), detail: error.localizedDescription)
+        }
+    }
+
+    private func importSettings() {
+        let panel = NSOpenPanel()
+        panel.allowedContentTypes = [.json]
+        panel.allowsMultipleSelection = false
+        guard panel.runModal() == .OK, let url = panel.url else { return }
+
+        let archive: SettingsArchive
+        do {
+            // Read with a limit, so a huge file is refused before it is loaded.
+            let handle = try FileHandle(forReadingFrom: url)
+            defer { try? handle.close() }
+            let data = try handle.read(upToCount: SettingsArchive.maximumSize + 1) ?? Data()
+            archive = try SettingsArchive.read(data)
+        } catch SettingsArchive.ReadError.newerFormat {
+            return alert(tr("This file was written by a newer version of Keyfari."), detail: tr("Update Keyfari, then import it again."))
+        } catch {
+            return alert(tr("This is not a Keyfari settings file."), detail: tr("Nothing was changed."))
+        }
+
+        let confirmation = NSAlert()
+        confirmation.messageText = tr("Replace the current settings?")
+        confirmation.informativeText = tr("The settings and the %d remembered labels in the file replace the ones here.", archive.stableLabels.count)
+        confirmation.addButton(withTitle: tr("Replace"))
+        confirmation.addButton(withTitle: tr("Cancel"))
+        guard confirmation.runModal() == .alertFirstButtonReturn else { return }
+        store.settings = archive.settings
+        store.labelMemory.replaceAll(with: archive.stableLabels)
+    }
+
+    private func alert(_ message: String, detail: String) {
+        let alert = NSAlert()
+        alert.messageText = message
+        alert.informativeText = detail
+        alert.runModal()
     }
 
     // MARK: Welcome guide
