@@ -56,40 +56,76 @@ final class ShortcutRecording {
 struct ShortcutRecorder: View {
     let title: String
     let detail: String
-    @Binding var shortcut: Shortcut
+    @Binding var shortcut: Shortcut?
+    /// Whether the shortcut may be switched off.
+    let isOptional: Bool
     let tint: Color
+
+    init(title: String, detail: String, shortcut: Binding<Shortcut>, tint: Color) {
+        self.title = title
+        self.detail = detail
+        _shortcut = Binding(
+            get: { shortcut.wrappedValue },
+            set: { if let value = $0 { shortcut.wrappedValue = value } }
+        )
+        isOptional = false
+        self.tint = tint
+    }
+
+    /// A shortcut that can be off: it starts out empty and gets a button that clears it.
+    init(title: String, detail: String, optional shortcut: Binding<Shortcut?>, tint: Color) {
+        self.title = title
+        self.detail = detail
+        _shortcut = shortcut
+        isOptional = true
+        self.tint = tint
+    }
 
     var body: some View {
         let recording = ShortcutRecording.shared
         let isRecording = recording.activeTitle == title
         SettingRow(title, detail: detail) {
-            Button {
-                if isRecording {
-                    recording.stop()
-                } else {
-                    recording.start(title: title) { shortcut = $0 }
-                }
-            } label: {
-                HStack(spacing: 4) {
+            HStack(spacing: 6) {
+                Button {
                     if isRecording {
-                        Image(systemName: "record.circle.fill").foregroundStyle(.red)
-                        Text(tr("Press a shortcut…")).font(.system(size: 12, weight: .medium))
+                        recording.stop()
                     } else {
-                        ForEach(Array(shortcut.displayParts.enumerated()), id: \.offset) { _, part in
-                            Keycap(text: part, tint: tint)
+                        recording.start(title: title) { shortcut = $0 }
+                    }
+                } label: {
+                    HStack(spacing: 4) {
+                        if isRecording {
+                            Image(systemName: "record.circle.fill").foregroundStyle(.red)
+                            Text(tr("Press a shortcut…")).font(.system(size: 12, weight: .medium))
+                        } else if let shortcut {
+                            ForEach(Array(shortcut.displayParts.enumerated()), id: \.offset) { _, part in
+                                Keycap(text: part, tint: tint)
+                            }
+                        } else {
+                            Text(tr("Record shortcut")).font(.system(size: 12, weight: .medium)).foregroundStyle(tint)
                         }
                     }
+                    .padding(.horizontal, isRecording || shortcut == nil ? 10 : 4)
+                    .padding(.vertical, shortcut == nil ? 8 : 4)
+                    .background(
+                        RoundedRectangle(cornerRadius: 9, style: .continuous)
+                            .fill(isRecording ? Color.red.opacity(0.1) : tint.opacity(0.08))
+                    )
+                    .contentShape(Rectangle())
                 }
-                .padding(.horizontal, isRecording ? 10 : 4)
-                .padding(.vertical, 4)
-                .background(
-                    RoundedRectangle(cornerRadius: 9, style: .continuous)
-                        .fill(isRecording ? Color.red.opacity(0.1) : tint.opacity(0.08))
-                )
-                .contentShape(Rectangle())
+                .buttonStyle(.plain)
+                .help(tr("Click, then press the new shortcut. Esc cancels."))
+
+                if isOptional, shortcut != nil, !isRecording {
+                    Button {
+                        shortcut = nil
+                    } label: {
+                        Image(systemName: "xmark.circle.fill").foregroundStyle(.secondary)
+                    }
+                    .buttonStyle(.plain)
+                    .help(tr("Turn this shortcut off"))
+                }
             }
-            .buttonStyle(.plain)
-            .help(tr("Click, then press the new shortcut. Esc cancels."))
         }
     }
 }

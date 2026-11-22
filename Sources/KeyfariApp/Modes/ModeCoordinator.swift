@@ -16,14 +16,26 @@ enum Mode: Equatable {
 /// Owns the global shortcuts and makes sure at most one mode is active.
 @MainActor
 final class ModeCoordinator {
-    /// The global shortcut of each mode, from the settings in force.
-    private var shortcuts: [(mode: Mode, shortcut: Shortcut)] = []
+    /// What a global shortcut triggers.
+    private enum Command: Equatable {
+        case mode(Mode)
+        case space(SpaceDirection)
+    }
+
+    private struct Binding: Equatable {
+        let command: Command
+        let shortcut: Shortcut
+    }
+
+    /// The global shortcuts, from the settings in force.
+    private var shortcuts: [Binding] = []
 
     private let log = Logger(subsystem: "app.keyfari.Keyfari", category: "mode")
     private let store: SettingsStore
     private let hotkeys = GlobalHotkeys()
     private let overlay = OverlayController()
     private let interceptor = KeyInterceptor()
+    private lazy var spaces = SpaceController(store: store)
     private var keySequence: KeySequenceActivator?
     private var active: (mode: Mode, stop: @MainActor () -> Void)?
 
@@ -38,22 +50,47 @@ final class ModeCoordinator {
     }
 
     private func registerShortcuts(_ settings: Settings) {
-        let wanted: [(mode: Mode, shortcut: Shortcut)] = [
-            (.hint, settings.hintShortcut), (.search, settings.searchShortcut), (.scroll, settings.scrollShortcut),
+        var wanted = [
+            Binding(command: .mode(.hint), shortcut: settings.hintShortcut),
+            Binding(command: .mode(.search), shortcut: settings.searchShortcut),
+            Binding(command: .mode(.scroll), shortcut: settings.scrollShortcut),
         ]
-        guard wanted.map(\.shortcut) != shortcuts.map(\.shortcut) else { return }
+        let systemShortcuts = SpaceDirection.allCases.compactMap(SystemSpaces.shortcut)
+        for direction in SpaceDirection.allCases {
+            guard let shortcut = settings[keyPath: Settings.spaceShortcut(direction)] else { continue }
+            // Keyfari changes Spaces by pressing the system's shortcut. Owning the same keys
+            // would catch that press, and the system handles them already.
+            guard !systemShortcuts.contains(shortcut) else {
+                log.notice("Leaving \(shortcut.displayString, privacy: .public) to the system")
+                continue
+            }
+            wanted.append(Binding(command: .space(direction), shortcut: shortcut))
+        }
+        guard wanted != shortcuts else { return }
 
         hotkeys.unregisterAll()
         shortcuts = wanted
-        for (mode, shortcut) in wanted {
+        for binding in wanted {
+            let shortcut = binding.shortcut
             let registered = hotkeys.register(keyCode: shortcut.keyCode, modifiers: shortcut.modifiers) { [weak self] in
-                self?.toggle(mode)
+                self?.run(binding.command)
             }
             if registered {
                 log.notice("Registered \(shortcut.displayString, privacy: .public)")
             } else {
                 log.error("Could not register \(shortcut.displayString, privacy: .public); another application may own it")
             }
+        }
+    }
+
+    private func run(_ command: Command) {
+        switch command {
+        case let .mode(mode):
+            toggle(mode)
+        case let .space(direction):
+            // Labels drawn for this Space mean nothing on the next one.
+            active?.stop()
+            spaces.switchSpace(direction)
         }
     }
 
@@ -182,7 +219,7 @@ final class ModeCoordinator {
     private func handleShortcut(_ stroke: KeyStroke) -> Bool {
         guard let match = shortcuts.first(where: { $0.shortcut.matches(stroke) }) else { return false }
         if !stroke.isRepeat {
-            toggle(match.mode)
+            run(match.command)
         }
         return true
     }
