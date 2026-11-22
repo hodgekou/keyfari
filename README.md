@@ -26,6 +26,7 @@ The regular labels appear at once; the detected ones follow in well under a seco
 - **Scroll mode** (`⌘⇧J`): `h j k l` scroll, with `Shift` for speed, `d` / `u` half a page, `gg` / `G` top and bottom, `Tab` or `0`–`9` to switch scroll areas, `Esc` leaves.
 - **On-screen text detection**: recognises text in the window's pixels, on the device, and labels what the accessibility tree does not expose. The regular labels appear at once and the detected ones are added a moment later.
 - **Desktops**: optional shortcuts that go one desktop (Space) to the left or right. Keyfari presses the system's own shortcut for it, on the display with the focused window. Off until you record a shortcut.
+- **Mission Control**: press the hint shortcut while Mission Control is open to label its windows and desktops. Type a label to select, `Return` to open it, `Esc` to leave. Labels can also appear by themselves whenever Mission Control opens.
 - **Other ways to activate**: type a key sequence such as `fd`. This is off by default.
 - **Customisable**: shortcuts, label characters, themes (including Liquid Glass on macOS 26+), size and corner radius, scroll speed, click chains, stable labels, ignored applications, launch at login.
 - **Optional usage statistics**: count successful keyboard-driven clicks and active days locally; nothing is collected until enabled.
@@ -82,7 +83,7 @@ Keyfari has no telemetry and makes no network requests. Screenshots taken for te
 | `Sources/InputKit` | Event taps, hot keys, activators, synthesized mouse and scroll events. |
 | `Sources/OverlayKit` | Transparent per-screen panels that draw labels, the search bar and scroll outlines. |
 | `Sources/ScreenVision` | Screenshot text recognition. |
-| `Sources/KeyfariApp` | The executable: `App` (lifecycle, menu bar), `Modes` (hint, search, scroll), `Settings` (settings window). |
+| `Sources/KeyfariApp` | The executable: `App` (lifecycle, menu bar), `Modes` (hint, search, scroll, Mission Control), `Spaces` (desktop switching), `Settings` (settings window). |
 | `Tests/KeyfariCoreTests` | Unit tests, one file per suite. |
 | `Resources` | `Info.plist` and the application icon. |
 | `scripts` | Building, testing, linting, packaging and drawing the icon. |

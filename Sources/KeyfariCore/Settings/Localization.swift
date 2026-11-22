@@ -71,7 +71,7 @@ public enum Localizer {
         "AI Detection": Entry(chinese: "AI 识别", japanese: "AI 検出"),
         "Stats": Entry(chinese: "统计", japanese: "統計"),
         "Desktops": Entry(chinese: "桌面", japanese: "デスクトップ"),
-        "Switch desktops from the keyboard": Entry(chinese: "用键盘切换桌面", japanese: "キーボードでデスクトップを切り替える"),
+        "Desktops and Mission Control": Entry(chinese: "桌面切换与调度中心", japanese: "デスクトップと Mission Control"),
         "Shortcuts, startup, permissions and ignored apps": Entry(
             chinese: "快捷键、启动、权限与忽略的应用", japanese: "ショートカット、起動、権限、除外するアプリ"),
         "How labels look and behave": Entry(chinese: "标签的外观与行为", japanese: "ラベルの外観と動作"),
@@ -203,6 +203,19 @@ public enum Localizer {
                 chinese: "Keyfari 通过按下系统自带的快捷键来切换桌面,因此这些快捷键需要保持开启。开启“显示器具有单独的空间”时,切换的是当前窗口所在的显示器。",
                 japanese: "Keyfari はシステム標準のショートカットを押してデスクトップを切り替えるため、それらをオンのままにしておく必要があります。「ディスプレイごとに個別の操作スペース」がオンの場合、フォーカスのあるウインドウのディスプレイが切り替わります。"
             ),
+
+        "Mission Control": Entry(chinese: "调度中心", japanese: "Mission Control"),
+        "Show labels automatically": Entry(chinese: "自动显示标签", japanese: "ラベルを自動的に表示"),
+        "Label windows and desktops as soon as Mission Control opens": Entry(
+            chinese: "打开调度中心时立即给窗口和桌面打标签", japanese: "Mission Control を開くとすぐにウインドウとデスクトップにラベルを付ける"),
+        "Show or hide the labels in Mission Control": Entry(chinese: "在调度中心里显示或隐藏标签", japanese: "Mission Control でラベルを表示/非表示"),
+        "Type a label to select a window or desktop": Entry(chinese: "输入标签以选中窗口或桌面", japanese: "ラベルを入力してウインドウまたはデスクトップを選択"),
+        "Open the selection": Entry(chinese: "打开选中的项目", japanese: "選択した項目を開く"),
+        "Leave Mission Control": Entry(chinese: "退出调度中心", japanese: "Mission Control を終了"),
+        "With several displays, labels appear on the display under the pointer. Arrow keys and the system's shortcuts keep working.": Entry(
+            chinese: "连接多台显示器时,标签显示在指针所在的显示器上。方向键和系统快捷键照常可用。",
+            japanese: "複数のディスプレイがある場合、ラベルはポインタのあるディスプレイに表示されます。矢印キーとシステムのショートカットはそのまま使えます。"
+        ),
 
         // Activation
         "Key sequences": Entry(chinese: "按键序列", japanese: "キーシーケンス"),

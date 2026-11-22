@@ -25,7 +25,7 @@ enum SettingsPane: String, CaseIterable, Identifiable {
         case .general: "Shortcuts, startup, permissions and ignored apps"
         case .hints: "How labels look and behave"
         case .scrolling: "Speed and direction"
-        case .desktops: "Switch desktops from the keyboard"
+        case .desktops: "Desktops and Mission Control"
         case .activation: "Activate modes with key sequences"
         case .vision: "Find text that apps do not expose"
         case .stats: "Local, opt-in activity counts"

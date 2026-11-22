@@ -42,6 +42,8 @@ public struct Settings: Codable, Equatable, Sendable {
     /// Shortcuts that go one Space to the left or right. Nil means off.
     public var previousSpaceShortcut: Shortcut?
     public var nextSpaceShortcut: Shortcut?
+    /// Show labels in Mission Control as soon as it opens, without pressing the hint shortcut.
+    public var missionControlAutoHints = false
     /// Keep the mode open after a click so several elements can be clicked in a row.
     public var chainClicks = false
     /// Give an element the label it had the last time it was clicked.
@@ -82,6 +84,7 @@ public struct Settings: Codable, Equatable, Sendable {
         scrollShortcut = (try? container.decodeIfPresent(Shortcut.self, forKey: .scrollShortcut)) ?? fallback.scrollShortcut
         previousSpaceShortcut = try? container.decodeIfPresent(Shortcut.self, forKey: .previousSpaceShortcut)
         nextSpaceShortcut = try? container.decodeIfPresent(Shortcut.self, forKey: .nextSpaceShortcut)
+        missionControlAutoHints = try container.decodeIfPresent(Bool.self, forKey: .missionControlAutoHints) ?? fallback.missionControlAutoHints
         chainClicks = try container.decodeIfPresent(Bool.self, forKey: .chainClicks) ?? fallback.chainClicks
         stableLabels = try container.decodeIfPresent(Bool.self, forKey: .stableLabels) ?? fallback.stableLabels
         hintKeySequence = try container.decodeIfPresent(String.self, forKey: .hintKeySequence) ?? fallback.hintKeySequence
