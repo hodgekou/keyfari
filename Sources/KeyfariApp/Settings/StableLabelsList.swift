@@ -17,9 +17,9 @@ final class StableLabelEditing {
     var problem: String?
 }
 
-/// The remembered labels, grouped by application. Each label can be replaced or forgotten.
+/// The remembered labels, most used first and grouped by application. Each label can be replaced or forgotten.
 struct StableLabelsList: View {
-    /// More rows than this would make the pane slow to open; the newest and the chosen ones are shown.
+    /// More rows than this would make the pane slow to open; the most used ones are shown.
     private static let rowLimit = 150
 
     @Bindable var store: SettingsStore
@@ -28,11 +28,9 @@ struct StableLabelsList: View {
 
     var body: some View {
         let memory = store.labelMemory
-        // Chosen labels first, then the ones used most recently.
-        let ordered = memory.entries.sorted { lhs, rhs in
-            lhs.isCustom == rhs.isCustom ? lhs.lastUsed > rhs.lastUsed : lhs.isCustom
-        }
-        let shown = Array(ordered.prefix(Self.rowLimit))
+        let entries = memory.book.byUse
+        let shown = Array(entries.prefix(Self.rowLimit))
+        // Applications in the order of their most used label.
         let bundleIDs = shown.map(\.bundleID).reduce(into: [String]()) { result, id in
             if !result.contains(id) { result.append(id) }
         }
@@ -40,7 +38,7 @@ struct StableLabelsList: View {
         VStack(alignment: .leading, spacing: 0) {
             Text(
                 tr(
-                    "When you click something by its label, Keyfari remembers that label and shows it again next time. Type other letters into a field and press Return to choose the label yourself."
+                    "When you click something by its label, Keyfari remembers that label and shows it again next time. The most used come first. Type other letters into a field and press Return to choose the label yourself."
                 )
             )
             .font(.system(size: 11)).foregroundStyle(.secondary)
@@ -70,11 +68,11 @@ struct StableLabelsList: View {
                 }
             }
 
-            if !memory.entries.isEmpty {
+            if !entries.isEmpty {
                 RowDivider()
                 HStack {
-                    if memory.entries.count > shown.count {
-                        Text(tr("%d more labels are remembered", memory.entries.count - shown.count))
+                    if entries.count > shown.count {
+                        Text(tr("%d more labels are remembered", entries.count - shown.count))
                             .font(.system(size: 11)).foregroundStyle(.secondary)
                     }
                     Spacer()
@@ -92,7 +90,7 @@ struct StableLabelsList: View {
         }
     }
 
-    private func row(_ entry: StableLabel) -> some View {
+    private func row(_ entry: StableLabelEntry) -> some View {
         let draft = Binding(
             get: { editing.drafts[entry.id] ?? entry.label },
             set: { editing.drafts[entry.id] = String(StableLabels.normalized(customLabel: $0).prefix(StableLabels.maximumCustomLength)) }
@@ -109,6 +107,8 @@ struct StableLabelsList: View {
                 StatusPill(text: tr("Chosen"), tint: tint)
             }
             Spacer(minLength: 4)
+            Text(entry.useCount == 1 ? tr("Used once") : tr("Used %d times", entry.useCount))
+                .font(.system(size: 11, design: .monospaced)).foregroundStyle(.secondary)
             if isEdited {
                 Button(tr("Save")) { save(entry) }
                     .buttonStyle(.borderedProminent)
@@ -127,7 +127,7 @@ struct StableLabelsList: View {
         .padding(.horizontal, 12).padding(.vertical, 5)
     }
 
-    private func save(_ entry: StableLabel) {
+    private func save(_ entry: StableLabelEntry) {
         let label = editing.drafts[entry.id] ?? entry.label
         guard label != entry.label else { return }
         let alphabet = store.effective.hintAlphabet
