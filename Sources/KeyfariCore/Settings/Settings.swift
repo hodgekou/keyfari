@@ -46,6 +46,8 @@ public struct Settings: Codable, Equatable, Sendable {
     public var missionControlAutoHints = false
     /// Keep the mode open after a click so several elements can be clicked in a row.
     public var chainClicks = false
+    /// Label every visible window on every display, not only the focused one.
+    public var hintAllWindows = true
     /// Give an element the label it had the last time it was clicked.
     public var stableLabels = true
     public var visionMode = VisionMode.always
@@ -81,6 +83,7 @@ public struct Settings: Codable, Equatable, Sendable {
         nextSpaceShortcut = try? container.decodeIfPresent(Shortcut.self, forKey: .nextSpaceShortcut)
         missionControlAutoHints = try container.decodeIfPresent(Bool.self, forKey: .missionControlAutoHints) ?? fallback.missionControlAutoHints
         chainClicks = try container.decodeIfPresent(Bool.self, forKey: .chainClicks) ?? fallback.chainClicks
+        hintAllWindows = try container.decodeIfPresent(Bool.self, forKey: .hintAllWindows) ?? fallback.hintAllWindows
         stableLabels = try container.decodeIfPresent(Bool.self, forKey: .stableLabels) ?? fallback.stableLabels
         visionMode = (try? container.decodeIfPresent(VisionMode.self, forKey: .visionMode)) ?? fallback.visionMode
         language = (try? container.decodeIfPresent(AppLanguage.self, forKey: .language)) ?? fallback.language

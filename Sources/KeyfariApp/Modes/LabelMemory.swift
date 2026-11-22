@@ -39,21 +39,40 @@ final class LabelMemory {
 
     /// Labels for `elements`, reusing chosen and remembered ones where possible.
     /// `reserve` extra labels follow, for elements that are not known yet.
-    func assign(to elements: [ElementSnapshot], bundleID: String, alphabet: String, reserve: Int = 0) -> [String] {
+    /// - Parameters:
+    ///   - bundleIDs: the application each element belongs to, one per element.
+    ///   - useMemory: false hands out fresh labels, as when stable labels are switched off.
+    ///   - excludedLead: a letter no label may start with; see `StableLabels.assign`.
+    func assign(
+        to elements: [ElementSnapshot],
+        bundleIDs: [String],
+        alphabet: String,
+        reserve: Int = 0,
+        useMemory: Bool = true,
+        excludedLead: Character? = nil
+    ) -> [String] {
         var memory: [String: String] = [:]
         var custom: [String: String] = [:]
-        for entry in entries where entry.bundleID == bundleID {
-            if entry.isCustom {
-                custom[entry.fingerprint] = entry.label
-            } else {
-                memory[entry.fingerprint] = entry.label
+        if useMemory {
+            let involved = Set(bundleIDs)
+            for entry in entries where involved.contains(entry.bundleID) {
+                if entry.isCustom {
+                    custom[entry.id] = entry.label
+                } else {
+                    memory[entry.id] = entry.label
+                }
             }
         }
+        // The same text in two applications is two different elements, so the application is part of the key.
+        let fingerprints = zip(elements, bundleIDs).map { element, bundleID in
+            StableLabels.fingerprint(of: element).map { "\(bundleID)|\($0)" }
+        }
         return StableLabels.assign(
-            fingerprints: elements.map(StableLabels.fingerprint) + [String?](repeating: nil, count: reserve),
+            fingerprints: fingerprints + [String?](repeating: nil, count: reserve),
             alphabet: alphabet,
             memory: memory,
-            custom: custom
+            custom: custom,
+            excludedLead: excludedLead
         )
     }
 
