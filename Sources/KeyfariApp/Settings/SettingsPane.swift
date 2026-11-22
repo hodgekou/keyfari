@@ -20,7 +20,7 @@ enum SettingsPane: String, CaseIterable, Identifiable {
 
     var subtitle: String {
         switch self {
-        case .general: "Shortcuts, startup and ignored apps"
+        case .general: "Shortcuts, startup, permissions and ignored apps"
         case .hints: "How labels look and behave"
         case .scrolling: "Speed and direction"
         case .activation: "Other ways to start a mode"

@@ -69,7 +69,8 @@ public enum Localizer {
         "Scrolling": Entry(chinese: "滚动", japanese: "スクロール"),
         "Activation": Entry(chinese: "激活方式", japanese: "起動方法"),
         "AI Detection": Entry(chinese: "AI 识别", japanese: "AI 検出"),
-        "Shortcuts, startup and ignored apps": Entry(chinese: "快捷键、启动与忽略的应用", japanese: "ショートカット、起動、除外するアプリ"),
+        "Shortcuts, startup, permissions and ignored apps": Entry(
+            chinese: "快捷键、启动、权限与忽略的应用", japanese: "ショートカット、起動、権限、除外するアプリ"),
         "How labels look and behave": Entry(chinese: "标签的外观与行为", japanese: "ラベルの外観と動作"),
         "Speed and direction": Entry(chinese: "速度与方向", japanese: "速度と方向"),
         "Other ways to start a mode": Entry(chinese: "进入模式的其他方式", japanese: "モードを開始するほかの方法"),
@@ -97,6 +98,11 @@ public enum Localizer {
         "Takes effect immediately": Entry(chinese: "立即生效", japanese: "すぐに反映されます"),
         "System default": Entry(chinese: "跟随系统", japanese: "システムに合わせる"),
         "Ignored applications": Entry(chinese: "忽略的应用", japanese: "除外するアプリ"),
+        "Permissions": Entry(chinese: "权限", japanese: "アクセス権限"),
+        "Accessibility permission": Entry(chinese: "辅助功能权限", japanese: "アクセシビリティ権限"),
+        "Required for global shortcuts and controlling apps": Entry(
+            chinese: "用于全局快捷键和控制其他应用", japanese: "グローバルショートカットとアプリの操作に必要です"),
+        "Open System Settings…": Entry(chinese: "打开系统设置…", japanese: "システム設定を開く…"),
         "No applications are ignored": Entry(chinese: "没有忽略任何应用", japanese: "除外しているアプリはありません"),
         "Shortcuts do nothing while one of these applications is in front.": Entry(
             chinese: "这些应用在前台时,快捷键不起作用。",
@@ -179,8 +185,6 @@ public enum Localizer {
         "Request…": Entry(chinese: "申请…", japanese: "リクエスト…"),
 
         // Menu bar
-        "Accessibility: Granted": Entry(chinese: "辅助功能:已授权", japanese: "アクセシビリティ: 許可済み"),
-        "Grant Accessibility Permission…": Entry(chinese: "授予辅助功能权限…", japanese: "アクセシビリティを許可…"),
         "Show Hints": Entry(chinese: "显示标签", japanese: "ヒントを表示"),
         "Scroll Mode": Entry(chinese: "滚动模式", japanese: "スクロールモード"),
         "Ignore %@": Entry(chinese: "忽略 %@", japanese: "%@ を除外"),

@@ -11,7 +11,6 @@ import os
 final class AppDelegate: NSObject, NSApplicationDelegate {
     private let log = Logger(subsystem: "app.keyfari.Keyfari", category: "app")
     private var statusItem: NSStatusItem?
-    private var permissionMenuItem: NSMenuItem?
     private var permissionTimer: Timer?
     private let store = SettingsStore()
     private lazy var modes = ModeCoordinator(store: store)
@@ -66,9 +65,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         item.button?.image = NSImage(systemSymbolName: "keyboard", accessibilityDescription: "Keyfari")
 
         let menu = NSMenu()
-        let permission = NSMenuItem(title: "", action: #selector(openAccessibilitySettings), keyEquivalent: "")
-        permission.target = self
-        menu.addItem(permission)
         let hints = NSMenuItem(title: "Show Hints", action: #selector(showHints), keyEquivalent: "")
         hints.image = Self.menuSymbol("tag.fill")
         hints.target = self
@@ -103,16 +99,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         item.menu = menu
 
         statusItem = item
-        permissionMenuItem = permission
-        updatePermissionMenuItem(granted: AXPermission.isGranted)
-    }
-
-    private func updatePermissionMenuItem(granted: Bool) {
-        permissionMenuItem?.title =
-            granted
-            ? tr("Accessibility: Granted")
-            : tr("Grant Accessibility Permission…")
-        permissionMenuItem?.isEnabled = !granted
     }
 
     /// Debug builds toggle a mode on a signal, so the modes can be driven from a terminal:
@@ -174,11 +160,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         settingsWindow?.makeKeyAndOrderFront(nil)
     }
 
-    @objc private func openAccessibilitySettings() {
-        guard let url = URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility") else { return }
-        NSWorkspace.shared.open(url)
-    }
-
     // MARK: Permission
 
     private func waitForPermission() {
@@ -194,7 +175,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     private func permissionGranted() {
         log.notice("Accessibility permission granted")
-        updatePermissionMenuItem(granted: true)
         modes.start()
         installDebugTrigger()
         if store.effective.visionMode != .off {
@@ -214,8 +194,6 @@ extension AppDelegate: NSMenuDelegate {
         }
         settingsMenuItem?.title = tr("Settings…")
         quitMenuItem?.title = tr("Quit Keyfari")
-        updatePermissionMenuItem(granted: AXPermission.isGranted)
-
         guard let item = ignoreMenuItem else { return }
         let frontmost = NSWorkspace.shared.frontmostApplication
         guard let bundleID = frontmost?.bundleIdentifier,
