@@ -21,6 +21,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var updateMenuItem: NSMenuItem?
     private var modeMenuItems: [(item: NSMenuItem, title: String, shortcut: KeyPath<KeyfariCore.Settings, Shortcut>)] = []
     private var settingsWindow: NSWindow?
+    private var welcomeWindow: NSWindow?
+    private var welcomeMenuItem: NSMenuItem?
     #if DEBUG
     private var debugTriggers: [DispatchSourceSignal] = []
     #endif
@@ -30,7 +32,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         NSApp.applicationIconImage = Brand.icon
         setUpStatusItem()
         updates.start()
+        showWelcomeOnFirstLaunch()
         #if DEBUG
+        if CommandLine.arguments.contains("--open-welcome") {
+            openWelcome()
+        }
         // `--open-settings` opens the settings window at launch, for checking it without clicking through the menu.
         if CommandLine.arguments.contains("--open-settings") {
             openSettings()
@@ -99,6 +105,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         update.target = self
         menu.addItem(update)
         updateMenuItem = update
+        let welcome = NSMenuItem(title: "Welcome Guide…", action: #selector(openWelcome), keyEquivalent: "")
+        welcome.image = Self.menuSymbol("hand.wave")
+        welcome.target = self
+        menu.addItem(welcome)
+        welcomeMenuItem = welcome
         menu.delegate = self
         menu.addItem(.separator())
         let quit = NSMenuItem(title: "Quit Keyfari", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q")
@@ -156,7 +167,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     @objc private func openSettings() {
         if settingsWindow == nil {
-            let content = SettingsView(store: store, navigation: SettingsNavigation(), checkForUpdates: { [weak self] in self?.updates.checkNow() })
+            let content = SettingsView(
+                store: store, navigation: SettingsNavigation(),
+                checkForUpdates: { [weak self] in self?.updates.checkNow() },
+                openWelcome: { [weak self] in self?.openWelcome() }
+            )
             let window = NSWindow(contentViewController: NSHostingController(rootView: content))
             window.title = tr("Keyfari Settings")
             // The content runs under a transparent title bar, so the sidebar reaches the top edge.
@@ -174,6 +189,39 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         NSApp.setActivationPolicy(.regular)
         NSApp.activate(ignoringOtherApps: true)
         settingsWindow?.makeKeyAndOrderFront(nil)
+    }
+
+    // MARK: Welcome guide
+
+    private static let hasSeenWelcomeKey = "hasSeenWelcome"
+
+    /// Opens the guide on the very first launch. Must run before anything stores settings.
+    private func showWelcomeOnFirstLaunch() {
+        let defaults = UserDefaults.standard
+        let shouldWelcome = FirstLaunch.shouldWelcome(
+            hasSeenWelcome: defaults.bool(forKey: Self.hasSeenWelcomeKey),
+            hasStoredSettings: defaults.data(forKey: "settings") != nil
+        )
+        defaults.set(true, forKey: Self.hasSeenWelcomeKey)
+        if shouldWelcome { openWelcome() }
+    }
+
+    @objc private func openWelcome() {
+        if welcomeWindow == nil {
+            let content = WelcomeView(store: store, navigation: WelcomeNavigation()) { [weak self] in
+                self?.welcomeWindow?.close()
+            }
+            let window = NSWindow(contentViewController: NSHostingController(rootView: content))
+            window.title = tr("Welcome to Keyfari")
+            window.styleMask = [.titled, .closable]
+            window.isReleasedWhenClosed = false
+            window.delegate = self
+            window.center()
+            welcomeWindow = window
+        }
+        NSApp.setActivationPolicy(.regular)
+        NSApp.activate(ignoringOtherApps: true)
+        welcomeWindow?.makeKeyAndOrderFront(nil)
     }
 
     // MARK: Permission
@@ -210,6 +258,7 @@ extension AppDelegate: NSMenuDelegate {
         }
         settingsMenuItem?.title = tr("Settings…")
         updateMenuItem?.title = tr("Check for Updates…")
+        welcomeMenuItem?.title = tr("Welcome Guide…")
         quitMenuItem?.title = tr("Quit Keyfari")
         guard let item = ignoreMenuItem else { return }
         let frontmost = NSWorkspace.shared.frontmostApplication
@@ -226,10 +275,18 @@ extension AppDelegate: NSMenuDelegate {
 }
 
 extension AppDelegate: NSWindowDelegate {
-    /// Back to a menu bar app once the settings window is gone.
+    /// Back to a menu bar app once the last of its windows is gone.
     func windowWillClose(_ notification: Notification) {
-        guard (notification.object as? NSWindow) === settingsWindow else { return }
-        ShortcutRecording.shared.stop()
-        NSApp.setActivationPolicy(.accessory)
+        guard let closing = notification.object as? NSWindow else { return }
+        if closing === settingsWindow {
+            ShortcutRecording.shared.stop()
+        } else if closing === welcomeWindow {
+            // The guide starts from its first step the next time.
+            welcomeWindow = nil
+        } else {
+            return
+        }
+        let stillOpen = [settingsWindow, welcomeWindow].contains { $0 != nil && $0 !== closing && $0?.isVisible == true }
+        if !stillOpen { NSApp.setActivationPolicy(.accessory) }
     }
 }

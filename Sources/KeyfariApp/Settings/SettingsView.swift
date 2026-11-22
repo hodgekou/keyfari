@@ -11,6 +11,8 @@ struct SettingsView: View {
     @Bindable var navigation: SettingsNavigation
     /// Runs the update check the user asked for. Nil where there is nothing to check, as in a rendered preview.
     var checkForUpdates: (@MainActor () -> Void)?
+    /// Opens the welcome guide again. Nil where there is no application to open it, as in a rendered preview.
+    var openWelcome: (@MainActor () -> Void)?
 
     var body: some View {
         HStack(spacing: 0) {
@@ -114,6 +116,11 @@ struct SettingsView: View {
         }
         Card("Startup", symbol: "power", tint: tint) {
             ToggleRow("Launch at login", detail: "Start Keyfari when you log in", isOn: $store.settings.launchAtLogin, tint: tint)
+            RowDivider()
+            SettingRow("Welcome guide", detail: "Permissions, shortcuts and first choices, step by step") {
+                Button(tr("Show Guide")) { openWelcome?() }
+                    .buttonStyle(.bordered)
+            }
         }
         Card("Updates", symbol: "arrow.down.circle.fill", tint: tint) {
             ToggleRow(

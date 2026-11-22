@@ -147,6 +147,13 @@ import Testing
         #expect(settings.validated().repeatClickShortcut == nil)
     }
 
+    @Test func theWelcomeGuideIsForAFirstLaunchOnly() {
+        #expect(FirstLaunch.shouldWelcome(hasSeenWelcome: false, hasStoredSettings: false))
+        #expect(!FirstLaunch.shouldWelcome(hasSeenWelcome: true, hasStoredSettings: false))
+        // Someone who used the app before the guide existed.
+        #expect(!FirstLaunch.shouldWelcome(hasSeenWelcome: false, hasStoredSettings: true))
+    }
+
     @Test func shortcutDisplayAndMatching() {
         let shortcut = Shortcut(keyCode: KeyCode.space, modifiers: [.command, .shift])
         #expect(shortcut.displayString == "⇧⌘Space")

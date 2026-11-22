@@ -285,6 +285,40 @@ public enum Localizer {
         "Not granted": Entry(chinese: "未授权", japanese: "未許可"),
         "Request…": Entry(chinese: "申请…", japanese: "リクエスト…"),
 
+        // Welcome guide
+        "Welcome to Keyfari": Entry(chinese: "欢迎使用 Keyfari", japanese: "Keyfari へようこそ"),
+        "Step %d of %d": Entry(chinese: "第 %d 步,共 %d 步", japanese: "ステップ %d / %d"),
+        "Back": Entry(chinese: "上一步", japanese: "戻る"),
+        "Continue": Entry(chinese: "继续", japanese: "続ける"),
+        "Done": Entry(chinese: "完成", japanese: "完了"),
+        "Keyfari reads what is on screen and clicks for you. macOS only lets it do that with the Accessibility permission.": Entry(
+            chinese: "Keyfari 读取屏幕上的内容并替你点击。macOS 只在授予辅助功能权限后才允许这样做。",
+            japanese: "Keyfari は画面上の内容を読み取り、代わりにクリックします。macOS がそれを許可するのは、アクセシビリティ権限があるときだけです。"),
+        "In System Settings, switch Keyfari on in the list. Keyfari is not signed with an Apple Developer ID, so macOS asks for this again after every update.":
+            Entry(
+                chinese: "在系统设置的列表里打开 Keyfari 的开关。Keyfari 没有使用 Apple 开发者证书签名,所以每次更新后 macOS 都会要求重新授权。",
+                japanese: "システム設定のリストで Keyfari をオンにしてください。Keyfari は Apple の Developer ID で署名されていないため、アップデートのたびに macOS が再度許可を求めます。"),
+        "Three shortcuts do the work. Try them in any other application once this window is closed.": Entry(
+            chinese: "三个快捷键就够用了。关闭这个窗口后,在任意其他应用里试试。", japanese: "3 つのショートカットで操作できます。このウインドウを閉じたら、ほかのアプリで試してみてください。"),
+        "Every button, link and menu item gets a label. Type the label to click": Entry(
+            chinese: "每个按钮、链接和菜单项都会出现标签,敲出标签即可点击", japanese: "ボタン、リンク、メニュー項目にラベルが付きます。ラベルを入力してクリック"),
+        "Type part of an element's text, then Return": Entry(chinese: "输入元素上的部分文字,再按回车", japanese: "要素のテキストの一部を入力して Return"),
+        "Scroll with the keyboard; Esc leaves": Entry(chinese: "用键盘滚动,按 Esc 退出", japanese: "キーボードでスクロール。Esc で終了"),
+        "On the last letter of a label, hold Shift for a right click, Command for a double click, Option to only move the pointer. Esc always leaves.":
+            Entry(
+                chinese: "敲标签的最后一个字母时,按住 Shift 是右键,按住 Command 是双击,按住 Option 只移动指针。任何时候按 Esc 都可以退出。",
+                japanese: "ラベルの最後の文字で Shift を押すと右クリック、Command でダブルクリック、Option でポインタの移動のみ。Esc でいつでも終了できます。"),
+        "A few choices. All of them can be changed later in the settings.": Entry(
+            chinese: "几个可选项,以后都可以在设置里修改。", japanese: "いくつかの選択項目です。あとで設定からすべて変更できます。"),
+        "Optional. Lets Keyfari label text that applications do not expose": Entry(
+            chinese: "可选。让 Keyfari 给应用没有暴露的文字打标签", japanese: "任意。アプリが公開していないテキストにもラベルを付けられます"),
+        "Keyfari lives in the menu bar. Its menu opens the settings and this guide again.": Entry(
+            chinese: "Keyfari 常驻菜单栏,从它的菜单可以打开设置,也可以再次打开这个引导。", japanese: "Keyfari はメニューバーに常駐します。メニューから設定やこのガイドをもう一度開けます。"),
+        "Welcome Guide…": Entry(chinese: "使用引导…", japanese: "ガイド…"),
+        "Welcome guide": Entry(chinese: "使用引导", japanese: "ガイド"),
+        "Permissions, shortcuts and first choices, step by step": Entry(chinese: "一步步了解权限、快捷键和常用选项", japanese: "権限、ショートカット、最初の設定を順に案内"),
+        "Show Guide": Entry(chinese: "打开引导", japanese: "ガイドを開く"),
+
         // Menu bar
         "Show Hints": Entry(chinese: "显示标签", japanese: "ヒントを表示"),
         "Scroll Mode": Entry(chinese: "滚动模式", japanese: "スクロールモード"),

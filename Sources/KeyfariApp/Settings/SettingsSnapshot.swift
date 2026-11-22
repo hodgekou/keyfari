@@ -5,7 +5,7 @@ import AppKit
 import SwiftUI
 import KeyfariCore
 
-/// Renders the settings panes off screen, for checking the layout during development.
+/// Renders the settings panes and the welcome guide off screen, for checking the layout during development.
 @MainActor
 enum SettingsSnapshot {
     static func render(to directory: URL) {
@@ -44,6 +44,19 @@ enum SettingsSnapshot {
                 guard let bitmap = host.bitmapImageRepForCachingDisplay(in: host.bounds) else { continue }
                 host.cacheDisplay(in: host.bounds, to: bitmap)
                 let url = directory.appendingPathComponent("settings-\(language.rawValue)-\(pane.rawValue).png")
+                try? bitmap.representation(using: .png, properties: [:])?.write(to: url)
+            }
+            for step in 0..<WelcomeNavigation.stepCount {
+                let navigation = WelcomeNavigation()
+                navigation.step = step
+                let host = NSHostingView(rootView: WelcomeView(store: store, navigation: navigation, onDone: {}))
+                host.frame = NSRect(origin: .zero, size: host.fittingSize)
+                let window = NSWindow(contentRect: host.frame, styleMask: [.borderless], backing: .buffered, defer: false)
+                window.contentView = host
+                host.layoutSubtreeIfNeeded()
+                guard let bitmap = host.bitmapImageRepForCachingDisplay(in: host.bounds) else { continue }
+                host.cacheDisplay(in: host.bounds, to: bitmap)
+                let url = directory.appendingPathComponent("welcome-\(language.rawValue)-\(step + 1).png")
                 try? bitmap.representation(using: .png, properties: [:])?.write(to: url)
             }
         }
