@@ -21,7 +21,7 @@ jobs:
     runs-on: macos-latest
     timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Show the toolchain
         run: swift --version
       - name: Build without warnings
@@ -34,7 +34,7 @@ jobs:
     runs-on: macos-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Check formatting and style
         run: scripts/lint.sh
       - name: Check headers, translations, documented paths and versions
@@ -45,7 +45,7 @@ jobs:
     runs-on: macos-latest
     timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Build the universal app
         run: KEYFARI_UNIVERSAL=1 scripts/bundle.sh release
       - name: Verify the bundle
@@ -73,6 +73,6 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Run ShellCheck
         run: shellcheck scripts/*.sh
