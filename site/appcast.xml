@@ -6,6 +6,22 @@
     <description>Releases of Keyfari.</description>
     <language>en</language>
     <item>
+      <title>0.4.1</title>
+      <pubDate>Sun, 22 Nov 2026 10:57:50 +0000</pubDate>
+      <link>https://github.com/hodgekou/keyfari/releases/tag/v0.4.1</link>
+      <sparkle:version>0.4.1</sparkle:version>
+      <sparkle:shortVersionString>0.4.1</sparkle:shortVersionString>
+      <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
+      <description><![CDATA[
+<h3>Changed</h3>
+<ul>
+<li>Nothing in the app itself changed. The README and the landing page were rewritten to put installation and first use first, and to say what Keyfari offers next to Vimac and Homerow.</li>
+<li>This is the first release that copies of 0.4.0 can install by themselves, and the first update between two releases signed with the same certificate, so macOS should keep the Accessibility and Screen Recording permissions across it.</li>
+</ul>
+]]></description>
+      <enclosure url="https://github.com/hodgekou/keyfari/releases/download/v0.4.1/Keyfari-0.4.1.dmg" sparkle:edSignature="t6G+sC4f/BprXsFgQyM2HEhDi1DcIl8tDm7lk0GfGxXesr/71RHBcGrr0IaM+7ygRrqrrvbZB7wBOw9wylF6Dw==" length="3550208" type="application/octet-stream"/>
+    </item>
+    <item>
       <title>0.4.0</title>
       <pubDate>Sun, 22 Nov 2026 09:45:38 +0000</pubDate>
       <link>https://github.com/hodgekou/keyfari/releases/tag/v0.4.0</link>
