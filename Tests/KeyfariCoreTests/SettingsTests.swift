@@ -104,6 +104,21 @@ import Testing
         #expect(!decoded.hintAllWindows)
     }
 
+    @Test func updatesAreCheckedUnlessSwitchedOffAndOnlyARealVersionIsSkipped() throws {
+        var settings = Settings()
+        #expect(settings.updateCheckEnabled)
+        #expect(settings.skippedVersion == nil)
+
+        settings.updateCheckEnabled = false
+        settings.skippedVersion = "v0.3.0"
+        let decoded = try JSONDecoder().decode(Settings.self, from: JSONEncoder().encode(settings))
+        #expect(!decoded.updateCheckEnabled)
+        #expect(decoded.validated().skippedVersion == "0.3.0")
+
+        settings.skippedVersion = "the next one"
+        #expect(settings.validated().skippedVersion == nil)
+    }
+
     @Test func shortcutDisplayAndMatching() {
         let shortcut = Shortcut(keyCode: KeyCode.space, modifiers: [.command, .shift])
         #expect(shortcut.displayString == "⇧⌘Space")

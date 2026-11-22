@@ -34,9 +34,10 @@ The regular labels appear at once; the detected ones follow in well under a seco
 - **Customisable**: shortcuts, label characters, themes (including Liquid Glass on macOS 26+), size and corner radius, scroll speed, click chains, ignored applications, launch at login.
 - **Stable labels**: an element keeps the label you last clicked it with. The Stable Labels pane lists what Keyfari remembered; type other letters there to choose a label yourself, or forget it.
 - **Usage statistics**: clicks, active days, most used apps and an estimate of the time saved. Everything stays on this Mac, and the statistics can be switched off.
+- **Update check**: once a day Keyfari looks for a newer version and offers to open its download page. You can skip a version or switch the check off.
 - **Interface in English, Chinese and Japanese**, following the system language unless you choose one.
 
-Not yet: detection of icon-only buttons, automatic updates.
+Not yet: detection of icon-only buttons. Keyfari tells you about a new version but does not install it; download it from the releases page or use Homebrew.
 
 More at [hodgekou.github.io/keyfari](https://hodgekou.github.io/keyfari/).
 
@@ -76,7 +77,7 @@ The bundle is signed ad hoc by default, so macOS asks for the permissions again 
 
 ## Privacy
 
-Keyfari has no telemetry and makes no network requests. Screenshots taken for text detection are processed on the device with Apple's Vision framework and exist only in memory. Settings, remembered labels and the usage statistics are stored locally in the user defaults; the statistics hold counts per day and per application, nothing about what was clicked.
+Keyfari has no telemetry. It makes one network request: once a day it asks GitHub for the newest release of this project, so it can tell you when there is one. The request carries no identifier and nothing about you or your Mac, nothing is downloaded, and the check can be switched off in the settings; then Keyfari makes no network requests at all. Screenshots taken for text detection are processed on the device with Apple's Vision framework and exist only in memory. Settings, remembered labels and the usage statistics are stored locally in the user defaults; the statistics hold counts per day and per application, nothing about what was clicked.
 
 ## Project layout
 

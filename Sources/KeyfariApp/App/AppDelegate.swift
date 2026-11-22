@@ -14,9 +14,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var permissionTimer: Timer?
     private let store = SettingsStore()
     private lazy var modes = ModeCoordinator(store: store)
+    private lazy var updates = UpdateChecker(store: store)
     private var ignoreMenuItem: NSMenuItem?
     private var settingsMenuItem: NSMenuItem?
     private var quitMenuItem: NSMenuItem?
+    private var updateMenuItem: NSMenuItem?
     private var modeMenuItems: [(item: NSMenuItem, title: String, shortcut: KeyPath<KeyfariCore.Settings, Shortcut>)] = []
     private var settingsWindow: NSWindow?
     #if DEBUG
@@ -27,6 +29,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         // Alerts and the settings window then show the real icon too.
         NSApp.applicationIconImage = Brand.icon
         setUpStatusItem()
+        updates.start()
         #if DEBUG
         // `--open-settings` opens the settings window at launch, for checking it without clicking through the menu.
         if CommandLine.arguments.contains("--open-settings") {
@@ -91,6 +94,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         settings.target = self
         menu.addItem(settings)
         settingsMenuItem = settings
+        let update = NSMenuItem(title: "Check for Updates…", action: #selector(checkForUpdates), keyEquivalent: "")
+        update.image = Self.menuSymbol("arrow.down.circle")
+        update.target = self
+        menu.addItem(update)
+        updateMenuItem = update
         menu.delegate = self
         menu.addItem(.separator())
         let quit = NSMenuItem(title: "Quit Keyfari", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q")
@@ -142,9 +150,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         store.toggleIgnored(bundleID: bundleID)
     }
 
+    @objc private func checkForUpdates() {
+        updates.checkNow()
+    }
+
     @objc private func openSettings() {
         if settingsWindow == nil {
-            let content = SettingsView(store: store, navigation: SettingsNavigation())
+            let content = SettingsView(store: store, navigation: SettingsNavigation(), checkForUpdates: { [weak self] in self?.updates.checkNow() })
             let window = NSWindow(contentViewController: NSHostingController(rootView: content))
             window.title = tr("Keyfari Settings")
             // The content runs under a transparent title bar, so the sidebar reaches the top edge.
@@ -197,6 +209,7 @@ extension AppDelegate: NSMenuDelegate {
             entry.item.title = "\(tr(entry.title))    \(settings[keyPath: entry.shortcut].displayString)"
         }
         settingsMenuItem?.title = tr("Settings…")
+        updateMenuItem?.title = tr("Check for Updates…")
         quitMenuItem?.title = tr("Quit Keyfari")
         guard let item = ignoreMenuItem else { return }
         let frontmost = NSWorkspace.shared.frontmostApplication

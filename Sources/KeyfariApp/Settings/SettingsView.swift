@@ -9,6 +9,8 @@ import SwiftUI
 struct SettingsView: View {
     @Bindable var store: SettingsStore
     @Bindable var navigation: SettingsNavigation
+    /// Runs the update check the user asked for. Nil where there is nothing to check, as in a rendered preview.
+    var checkForUpdates: (@MainActor () -> Void)?
 
     var body: some View {
         HStack(spacing: 0) {
@@ -104,6 +106,23 @@ struct SettingsView: View {
         }
         Card("Startup", symbol: "power", tint: tint) {
             ToggleRow("Launch at login", detail: "Start Keyfari when you log in", isOn: $store.settings.launchAtLogin, tint: tint)
+        }
+        Card("Updates", symbol: "arrow.down.circle.fill", tint: tint) {
+            ToggleRow(
+                "Check for updates", detail: "Once a day, asks GitHub for the newest version. Nothing about you or this Mac is sent",
+                isOn: $store.settings.updateCheckEnabled, tint: tint)
+            RowDivider()
+            SettingRow(tr("Version %@", UpdateChecker.currentVersion?.description ?? "–")) {
+                Button(tr("Check Now")) { checkForUpdates?() }
+                    .buttonStyle(.bordered)
+            }
+            if let skipped = store.effective.skippedVersion {
+                RowDivider()
+                SettingRow(tr("Version %@ is skipped", skipped)) {
+                    Button(tr("Stop Skipping")) { store.settings.skippedVersion = nil }
+                        .buttonStyle(.bordered)
+                }
+            }
         }
         TimelineView(.periodic(from: .now, by: 1)) { _ in
             permissions(tint: tint)
