@@ -52,8 +52,8 @@ To add a language, add a case to `Language` and `AppLanguage`, a field to `Local
 Debug builds only:
 
 - `pkill -USR1 -x Keyfari` toggles hint mode and `pkill -USR2 -x Keyfari` toggles scroll mode, so a mode can be driven from a terminal. A release build ignores both signals.
-- `Keyfari --open-settings` opens the settings window at launch.
-- `Keyfari --render-settings <directory>` writes a PNG of every settings pane in every language and exits. It uses a throwaway defaults domain, so it neither reads nor changes your settings.
+- `Keyfari --open-settings` opens the settings window at launch, and `Keyfari --open-welcome` the welcome guide.
+- `Keyfari --render-settings <directory>` writes a PNG of every settings pane and every step of the welcome guide in every language and exits. It uses a throwaway defaults domain, so it neither reads nor changes your settings.
 
 Logs go to the unified log:
 
