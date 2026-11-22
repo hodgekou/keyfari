@@ -20,12 +20,14 @@ final class SearchModeController {
     private let interceptor: KeyInterceptor
     private let settings: Settings
     private let target: @MainActor () -> ModeTarget?
+    private let recordClick: @MainActor (String, Int) -> Void
     private let onShortcut: @MainActor (KeyStroke) -> Bool
     private let onExit: @MainActor () -> Void
 
     private var task: Task<Void, Never>?
     private var visionTask: Task<Void, Never>?
     private var elements: [ElementSnapshot] = []
+    private var bundleID = ""
     private var session: SearchSession?
     /// The key strokes that changed the session, replayed when detection adds elements.
     private var appliedStrokes: [KeyStroke] = []
@@ -40,6 +42,7 @@ final class SearchModeController {
         interceptor: KeyInterceptor,
         settings: Settings,
         target: @escaping @MainActor () -> ModeTarget?,
+        recordClick: @escaping @MainActor (String, Int) -> Void,
         onShortcut: @escaping @MainActor (KeyStroke) -> Bool,
         onExit: @escaping @MainActor () -> Void
     ) {
@@ -49,6 +52,7 @@ final class SearchModeController {
         self.interceptor = interceptor
         self.settings = settings
         self.target = target
+        self.recordClick = recordClick
         self.onShortcut = onShortcut
         self.onExit = onExit
     }
@@ -96,6 +100,7 @@ final class SearchModeController {
             }
             let application = target.application
             let pid = application.processIdentifier
+            self.bundleID = application.bundleIdentifier ?? ""
             let found =
                 (try? await query.hintableElements(
                     pid: pid,
@@ -165,6 +170,7 @@ final class SearchModeController {
             // Only Return is intercepted while armed. Its auto-repeat must not count as a second press.
             guard !stroke.isRepeat else { return }
             MouseSynthesizer.secondClick(at: point)
+            recordClick(bundleID, 1)
             stop()
             return
         }
@@ -198,6 +204,7 @@ final class SearchModeController {
         session = nil
         overlay.hide()
         MouseSynthesizer.perform(action, at: point)
+        recordClick(bundleID, action.clickCount)
 
         if settings.chainClicks, action != .moveOnly, !element.acceptsText {
             elements = []

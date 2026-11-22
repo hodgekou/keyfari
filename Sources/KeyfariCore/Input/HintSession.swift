@@ -8,6 +8,15 @@ public enum ClickAction: Equatable, Sendable {
     case commandLeft
     case moveOnly
 
+    /// Number of click events this action sends; moving the pointer alone is not a click.
+    public var clickCount: Int {
+        switch self {
+        case .double: 2
+        case .moveOnly: 0
+        case .left, .right, .commandLeft: 1
+        }
+    }
+
     /// The action selected by the modifiers held on the final label key.
     public init(modifiers: Modifiers) {
         if modifiers.contains(.shift) {

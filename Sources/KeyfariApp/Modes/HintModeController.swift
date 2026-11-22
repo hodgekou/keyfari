@@ -33,6 +33,7 @@ final class HintModeController {
     private let settings: Settings
     private let memory: LabelMemory?
     private let target: @MainActor () -> ModeTarget?
+    private let recordClick: @MainActor (String, Int) -> Void
     private let onShortcut: @MainActor (KeyStroke) -> Bool
     private let onExit: @MainActor () -> Void
 
@@ -57,6 +58,7 @@ final class HintModeController {
         settings: Settings,
         memory: LabelMemory?,
         target: @escaping @MainActor () -> ModeTarget?,
+        recordClick: @escaping @MainActor (String, Int) -> Void,
         onShortcut: @escaping @MainActor (KeyStroke) -> Bool,
         onExit: @escaping @MainActor () -> Void
     ) {
@@ -67,6 +69,7 @@ final class HintModeController {
         self.settings = settings
         self.memory = memory
         self.target = target
+        self.recordClick = recordClick
         self.onShortcut = onShortcut
         self.onExit = onExit
     }
@@ -228,10 +231,12 @@ final class HintModeController {
             clearState()
             overlay.hide()
             MouseSynthesizer.perform(action, at: element.clickPoint)
+            recordClick(bundleID, action.clickCount)
             runQuery(after: Self.chainDelay)
         } else {
             stop()
             MouseSynthesizer.perform(action, at: element.clickPoint)
+            recordClick(bundleID, action.clickCount)
         }
     }
 }

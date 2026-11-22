@@ -35,6 +35,8 @@ public struct Settings: Codable, Equatable, Sendable {
     public var keySequenceResetDelay = 0.25
     public var visionMode = VisionMode.always
     public var language = AppLanguage.system
+    /// Collect aggregate usage counts on this Mac only.
+    public var statisticsEnabled = false
     /// Pixels scrolled per frame while a scroll key is held.
     public var scrollSpeed = 20
     /// Speed factor applied while Shift is held.
@@ -65,6 +67,7 @@ public struct Settings: Codable, Equatable, Sendable {
         keySequenceResetDelay = try container.decodeIfPresent(Double.self, forKey: .keySequenceResetDelay) ?? fallback.keySequenceResetDelay
         visionMode = (try? container.decodeIfPresent(VisionMode.self, forKey: .visionMode)) ?? fallback.visionMode
         language = (try? container.decodeIfPresent(AppLanguage.self, forKey: .language)) ?? fallback.language
+        statisticsEnabled = try container.decodeIfPresent(Bool.self, forKey: .statisticsEnabled) ?? fallback.statisticsEnabled
         scrollSpeed = try container.decodeIfPresent(Int.self, forKey: .scrollSpeed) ?? fallback.scrollSpeed
         dashMultiplier = try container.decodeIfPresent(Double.self, forKey: .dashMultiplier) ?? fallback.dashMultiplier
         reverseHorizontal = try container.decodeIfPresent(Bool.self, forKey: .reverseHorizontal) ?? fallback.reverseHorizontal

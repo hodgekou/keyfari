@@ -4,6 +4,10 @@ All notable changes to Keyfari are recorded here. The format follows [Keep a Cha
 
 ## [Unreleased]
 
+### Added
+
+- Add opt-in local usage statistics for successful clicks, active days and frequently used apps.
+
 ### Removed
 
 - Remove hold-Space activation and its settings, event interceptor and state machine.
