@@ -20,6 +20,9 @@ final class SettingsStore {
     /// Called after the settings changed.
     @ObservationIgnored var onChange: (@MainActor () -> Void)?
 
+    /// Called after the setting for the daily update check changed.
+    @ObservationIgnored var onUpdateCheckChange: (@MainActor () -> Void)?
+
     /// The values as edited, which may be temporarily invalid while the user types.
     var settings: Settings {
         didSet {
@@ -29,6 +32,9 @@ final class SettingsStore {
                 applyLaunchAtLogin()
             }
             applyLanguage()
+            if settings.updateCheckEnabled != oldValue.updateCheckEnabled {
+                onUpdateCheckChange?()
+            }
             onChange?()
         }
     }

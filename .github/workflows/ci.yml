@@ -50,7 +50,8 @@ jobs:
         run: KEYFARI_UNIVERSAL=1 scripts/bundle.sh release
       - name: Verify the bundle
         run: |
-          codesign --verify --strict build/Keyfari.app
+          codesign --verify --deep --strict build/Keyfari.app
+          test -d build/Keyfari.app/Contents/Frameworks/Sparkle.framework
           archs="$(lipo -archs build/Keyfari.app/Contents/MacOS/Keyfari)"
           echo "Architectures: $archs"
           case "$archs" in *arm64*x86_64* | *x86_64*arm64*) ;; *) echo "::error::The app is not universal"; exit 1 ;; esac

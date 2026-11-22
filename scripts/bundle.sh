@@ -45,10 +45,34 @@ cp "$root/Resources/Info.plist" "$app/Contents/Info.plist"
 cp "$root/Resources/AppIcon.icns" "$app/Contents/Resources/AppIcon.icns"
 cp -R "$root/Resources/Sounds" "$app/Contents/Resources/Sounds"
 
+# Sparkle, which installs updates, is a prebuilt framework that the package manager downloads.
+sparkle="$root/.build/artifacts/sparkle/Sparkle/Sparkle.xcframework/macos-arm64_x86_64/Sparkle.framework"
+if [ ! -d "$sparkle" ]; then
+  echo "Sparkle.framework is missing at $sparkle" >&2
+  exit 66
+fi
+mkdir -p "$app/Contents/Frameworks"
+# ditto keeps the symbolic links a framework is made of.
+ditto "$sparkle" "$app/Contents/Frameworks/Sparkle.framework"
+# The binary looks for the framework next to the build products; in the bundle it is here.
+install_name_tool -add_rpath "@executable_path/../Frameworks" "$app/Contents/MacOS/Keyfari"
+
 if [ -n "${KEYFARI_VERSION:-}" ]; then
   /usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString $KEYFARI_VERSION" "$app/Contents/Info.plist"
+  # Sparkle compares this one to tell a newer version from an older one.
+  /usr/libexec/PlistBuddy -c "Set :CFBundleVersion $KEYFARI_VERSION" "$app/Contents/Info.plist"
 fi
 
+# Signed from the inside out: the helpers inside the framework, the framework, then the app.
+framework="$app/Contents/Frameworks/Sparkle.framework"
+for helper in \
+  "$framework/Versions/B/XPCServices/Installer.xpc" \
+  "$framework/Versions/B/XPCServices/Downloader.xpc" \
+  "$framework/Versions/B/Autoupdate" \
+  "$framework/Versions/B/Updater.app"; do
+  codesign --force --sign "$identity" "$helper"
+done
+codesign --force --sign "$identity" "$framework"
 codesign --force --sign "$identity" --identifier app.keyfari.Keyfari "$app"
 
 echo "Built $app"

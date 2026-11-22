@@ -8,6 +8,8 @@ on:
 
 permissions:
   contents: write
+  # To start the workflow that publishes the update feed with the site.
+  actions: write
 
 jobs:
   release:
@@ -56,14 +58,37 @@ jobs:
           gh release create "$GITHUB_REF_NAME" "build/Keyfari-$VERSION.dmg"
           --title "Keyfari $VERSION" --notes-file build/notes.md
 
-      - name: Point the Homebrew cask at the release
+      - name: Sign the update
+        env:
+          SPARKLE_PRIVATE_KEY: ${{ secrets.SPARKLE_PRIVATE_KEY }}
+        run: |
+          # Without the key the release still goes out; installed copies just do not learn of it.
+          if [ -z "$SPARKLE_PRIVATE_KEY" ]; then
+            echo "::warning::No SPARKLE_PRIVATE_KEY secret, so this release is not added to the update feed"
+            exit 0
+          fi
+          # The key goes in on standard input and never touches the disk or the log.
+          signature="$(printf '%s' "$SPARKLE_PRIVATE_KEY" \
+            | .build/artifacts/sparkle/Sparkle/bin/sign_update --ed-key-file - -p "build/Keyfari-$VERSION.dmg")"
+          echo "SIGNATURE=$signature" >> "$GITHUB_ENV"
+
+      - name: Point the Homebrew cask and the update feed at the release
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           sha="$(shasum -a 256 "build/Keyfari-$VERSION.dmg" | cut -d ' ' -f 1)"
           git fetch origin main
           git checkout main
           sed -i '' -E "s/^  version \".*\"/  version \"$VERSION\"/; s/^  sha256 \".*\"/  sha256 \"$sha\"/" Casks/keyfari.rb
-          if git diff --quiet; then exit 0; fi
+          if [ -n "${SIGNATURE:-}" ]; then
+            scripts/update-appcast.py "$VERSION" "build/Keyfari-$VERSION.dmg" "$SIGNATURE"
+            git add site/appcast.xml
+          fi
+          if git diff --quiet HEAD; then exit 0; fi
           git config user.name "hz.kou"
           git config user.email "49755533+hodgekou@users.noreply.github.com"
-          git commit -am "Point the cask at $VERSION"
+          git commit -am "Point the cask and the update feed at $VERSION"
           git push origin main
+          # A push made by a workflow does not start other workflows, so the site, which
+          # carries the feed, is published by asking for it.
+          gh workflow run site.yml --ref main

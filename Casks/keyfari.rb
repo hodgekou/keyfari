@@ -7,6 +7,8 @@ cask "keyfari" do
   desc "Keyboard-driven navigation with hint labels"
   homepage "https://github.com/hodgekou/keyfari"
 
+  # Keyfari updates itself, so Homebrew leaves the installed version alone.
+  auto_updates true
   depends_on macos: :sonoma
 
   app "Keyfari.app"

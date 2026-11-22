@@ -35,10 +35,10 @@ The regular labels appear at once; the detected ones follow in well under a seco
 - **Customisable**: shortcuts, label characters, themes (including Liquid Glass on macOS 26+), size and corner radius, scroll speed, click chains, ignored applications, launch at login.
 - **Stable labels**: an element keeps the label you last clicked it with. The Stable Labels pane lists what Keyfari remembered; type other letters there to choose a label yourself, or forget it.
 - **Usage statistics**: clicks, active days, most used apps and an estimate of the time saved. Everything stays on this Mac, and the statistics can be switched off.
-- **Update check**: once a day Keyfari looks for a newer version and offers to open its download page. You can skip a version or switch the check off.
+- **Updates**: once a day Keyfari looks for a newer version, shows what changed and, if you agree, downloads and installs it. You can skip a version or switch the check off.
 - **Interface in English, Chinese and Japanese**, following the system language unless you choose one.
 
-Icon-only buttons are detected only experimentally, from their shapes, when they line up like a toolbar; switch it on in the AI Detection pane. Keyfari tells you about a new version but does not install it; download it from the releases page or use Homebrew.
+Icon-only buttons are detected only experimentally, from their shapes, when they line up like a toolbar; switch it on in the AI Detection pane.
 
 More at [hodgekou.github.io/keyfari](https://hodgekou.github.io/keyfari/).
 
@@ -54,7 +54,7 @@ brew install --cask keyfari
 
 Homebrew may ask you to trust this tap. If your Homebrew version does not support `brew trust`, omit that command.
 
-Keyfari is not signed with an Apple Developer ID, so macOS blocks it the first time. Open it once, then go to **System Settings > Privacy & Security** and choose **Open Anyway**. Because the signature is not stable, macOS also asks for the permissions again after each update.
+Keyfari is not signed with an Apple Developer ID, so macOS blocks it the first time. Open it once, then go to **System Settings > Privacy & Security** and choose **Open Anyway**. Because the signature is not stable, macOS also asks for the permissions again after each update, including the ones Keyfari installs itself.
 
 On first launch, grant **Accessibility** permission so Keyfari can read other apps' interfaces and send clicks. On-screen text detection also requires **Screen Recording** permission; it stays idle until you grant it.
 
@@ -78,7 +78,7 @@ The bundle is signed ad hoc by default, so macOS asks for the permissions again 
 
 ## Privacy
 
-Keyfari has no telemetry. It makes one network request: once a day it asks GitHub for the newest release of this project, so it can tell you when there is one. The request carries no identifier and nothing about you or your Mac, nothing is downloaded, and the check can be switched off in the settings; then Keyfari makes no network requests at all. Screenshots taken for text detection are processed on the device with Apple's Vision framework and exist only in memory. Settings, remembered labels and the usage statistics are stored locally in the user defaults; the statistics hold counts per day and per application, nothing about what was clicked.
+Keyfari has no telemetry. Its only network requests are for updates: once a day it reads the project's update feed, and it downloads a new version when you choose to install it. The requests carry no identifier and nothing about you or your Mac, an update is only installed if it carries the project's signature, and the check can be switched off in the settings; then Keyfari makes no network requests at all. Screenshots taken for text detection are processed on the device with Apple's Vision framework and exist only in memory. Settings, remembered labels and the usage statistics are stored locally in the user defaults; the statistics hold counts per day and per application, nothing about what was clicked.
 
 ## Project layout
 

@@ -131,7 +131,8 @@ struct SettingsView: View {
                 Button(tr("Check Now")) { checkForUpdates?() }
                     .buttonStyle(.bordered)
             }
-            if let skipped = store.effective.skippedVersion {
+            // A build that installs updates itself keeps skipped versions in the update window.
+            if !AppUpdater.installsUpdates, let skipped = store.effective.skippedVersion {
                 RowDivider()
                 SettingRow(tr("Version %@ is skipped", skipped)) {
                     Button(tr("Stop Skipping")) { store.settings.skippedVersion = nil }

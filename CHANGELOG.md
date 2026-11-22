@@ -16,6 +16,7 @@ All notable changes to Keyfari are recorded here. The format follows [Keep a Cha
 - Hint mode can drag: hold Control and Shift on the last letter of a label to pick that element up, then type the label of where to drop it. Nothing is sent until the second label is typed, so `Esc` in between does nothing.
 - A welcome guide opens on the first launch: it shows whether the Accessibility permission is granted, the three shortcuts, and the first choices to make. It can be opened again from the menu and from the General pane.
 - Experimental: text detection can also label small shapes that line up like the icons of a toolbar. It uses the system's contour detection only, with no model, so it misses lone icons and may label decoration. Off by default, in the AI Detection pane.
+- Keyfari installs updates itself, with [Sparkle](https://sparkle-project.org): it shows what is new, downloads the update, checks the project's signature on it, installs it and restarts. This replaces the offer to open the download page. Versions up to 0.2.0 do not have it and need one last manual update.
 
 ## [0.2.0] - 2026-11-22
 
