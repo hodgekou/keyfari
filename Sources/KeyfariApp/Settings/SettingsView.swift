@@ -71,7 +71,6 @@ struct SettingsView: View {
                 case .desktops:
                     desktops
                     missionControl
-                case .activation: activation
                 case .vision: vision
                 case .stats: stats
                 }
@@ -299,41 +298,14 @@ struct SettingsView: View {
             RowDivider()
             VStack(alignment: .leading, spacing: 10) {
                 KeyHint(keys: store.effective.hintShortcut.displayParts, text: "Show or hide the labels in Mission Control")
-                KeyHint(keys: ["A", "S"], text: "Type a label to select a window or desktop")
-                KeyHint(keys: ["Return"], text: "Open the selection")
+                KeyHint(keys: ["A", "S"], text: "Type a label to open its window or desktop")
                 KeyHint(keys: ["Esc"], text: "Leave Mission Control")
             }
             .padding(12)
             RowDivider()
             Notice(
-                "With several displays, labels appear on the display under the pointer. Arrow keys and the system's shortcuts keep working.",
+                "With several displays, every display gets labels. Arrow keys and the system's shortcuts keep working.",
                 symbol: "info.circle.fill", tint: tint)
-        }
-    }
-
-    @ViewBuilder
-    private var activation: some View {
-        let tint = SettingsPane.activation.tint
-        Card("Key sequences", symbol: "character.cursor.ibeam", tint: tint) {
-            SettingRow("Show hints", detail: "For example fd") {
-                TextField(tr("off"), text: $store.settings.hintKeySequence)
-                    .textFieldStyle(.roundedBorder)
-                    .font(.system(size: 13, design: .monospaced))
-                    .frame(width: 90)
-            }
-            RowDivider()
-            SettingRow("Scroll mode", detail: "For example jk") {
-                TextField(tr("off"), text: $store.settings.scrollKeySequence)
-                    .textFieldStyle(.roundedBorder)
-                    .font(.system(size: 13, design: .monospaced))
-                    .frame(width: 90)
-            }
-            RowDivider()
-            SliderRow("Timeout", value: $store.settings.keySequenceResetDelay, range: 0.1...1, step: 0.05, tint: tint) {
-                String(format: "%.2f s", $0)
-            }
-            RowDivider()
-            Notice("At least two characters, and neither sequence may start with the other.", symbol: "info.circle.fill", tint: tint)
         }
     }
 

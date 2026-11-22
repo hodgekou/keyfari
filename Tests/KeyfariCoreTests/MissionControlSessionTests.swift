@@ -13,54 +13,28 @@ import Testing
         MissionControlSession(labels: ["AA", "AS", "S", "D"])
     }
 
-    @Test func aCompleteLabelSelectsWithoutOpening() {
+    @Test func aCompleteLabelOpensItsItemAtOnce() {
         var session = session()
-        #expect(session.handle(KeyStroke(keyCode: s)) == .focused(index: 2))
-        #expect(session.focused == 2)
+        #expect(session.handle(KeyStroke(keyCode: s)) == .matched(index: 2))
     }
 
-    @Test func returnOpensTheSelection() {
-        var session = session()
-        _ = session.handle(KeyStroke(keyCode: a))
-        #expect(session.handle(KeyStroke(keyCode: s)) == .focused(index: 1))
-        #expect(session.handle(KeyStroke(keyCode: KeyCode.return)) == .confirmed(index: 1))
-        #expect(session.handle(KeyStroke(keyCode: KeyCode.keypadEnter)) == .confirmed(index: 1))
-    }
-
-    @Test func returnWithoutASelectionIsRejected() {
-        var session = session()
-        #expect(session.handle(KeyStroke(keyCode: KeyCode.return)) == .rejected)
-        _ = session.handle(KeyStroke(keyCode: a))
-        #expect(session.handle(KeyStroke(keyCode: KeyCode.return)) == .rejected)
-        #expect(session.prefix == "A")
-    }
-
-    @Test func narrowsAndRejectsKeysThatMatchNothing() {
+    @Test func narrowsThenOpens() {
         var session = session()
         #expect(session.handle(KeyStroke(keyCode: a)) == .updated(prefix: "A"))
+        #expect(session.handle(KeyStroke(keyCode: s)) == .matched(index: 1))
+    }
+
+    @Test func rejectsKeysThatMatchNothingAndKeepsThePrefix() {
+        var session = session()
+        _ = session.handle(KeyStroke(keyCode: a))
         #expect(session.handle(KeyStroke(keyCode: d)) == .rejected)
         #expect(session.prefix == "A")
         #expect(session.handle(KeyStroke(keyCode: f)) == .rejected)
     }
 
-    @Test func aLetterAfterASelectionStartsANewLabel() {
-        var session = session()
-        _ = session.handle(KeyStroke(keyCode: s))
-        #expect(session.handle(KeyStroke(keyCode: d)) == .focused(index: 3))
-        #expect(session.handle(KeyStroke(keyCode: a)) == .updated(prefix: "A"))
-        #expect(session.focused == nil)
-        // A letter that matches nothing leaves the selection alone.
-        _ = session.handle(KeyStroke(keyCode: s))
-        #expect(session.handle(KeyStroke(keyCode: f)) == .rejected)
-        #expect(session.focused == 1)
-    }
-
-    @Test func deleteDropsTheSelectionAndTheLastLetter() {
+    @Test func deleteRemovesTheLastLetter() {
         var session = session()
         _ = session.handle(KeyStroke(keyCode: a))
-        _ = session.handle(KeyStroke(keyCode: s))
-        #expect(session.handle(KeyStroke(keyCode: KeyCode.delete)) == .updated(prefix: "A"))
-        #expect(session.focused == nil)
         #expect(session.handle(KeyStroke(keyCode: KeyCode.delete)) == .updated(prefix: ""))
         #expect(session.handle(KeyStroke(keyCode: KeyCode.delete)) == .ignored)
     }
@@ -77,14 +51,15 @@ import Testing
         #expect(session.handle(KeyStroke(keyCode: s, isRepeat: true)) == .ignored)
         #expect(session.handle(KeyStroke(keyCode: s, modifiers: .command)) == .ignored)
         #expect(session.handle(KeyStroke(keyCode: one)) == .ignored)
-        _ = session.handle(KeyStroke(keyCode: s))
-        #expect(session.handle(KeyStroke(keyCode: KeyCode.return, isRepeat: true)) == .ignored)
     }
 
-    @Test func readsLettersAndControlKeysButLeavesTheArrowsAlone() {
+    @Test func readsLettersAndControlKeysButLeavesTheRestToMissionControl() {
         let keys = MissionControlSession.keyCodes
-        #expect(keys.isSuperset(of: [a, s, KeyCode.return, KeyCode.keypadEnter, KeyCode.delete, KeyCode.escape]))
-        #expect(keys.isDisjoint(with: [KeyCode.leftArrow, KeyCode.rightArrow, KeyCode.upArrow, KeyCode.downArrow, KeyCode.space, KeyCode.tab, one]))
+        #expect(keys.isSuperset(of: [a, s, KeyCode.delete, KeyCode.escape]))
+        #expect(
+            keys.isDisjoint(with: [
+                KeyCode.leftArrow, KeyCode.rightArrow, KeyCode.upArrow, KeyCode.downArrow, KeyCode.space, KeyCode.tab, KeyCode.return, one,
+            ]))
     }
 
     @Test func aDesktopNameInTheCollapsedBarSitsOnTheLeftEdgeOfItsFrame() {
@@ -97,15 +72,6 @@ import Testing
         let bar = CGRect(x: 0, y: 0, width: 1470, height: 160)
         let button = CGRect(x: 600, y: 20, width: 168, height: 110)
         #expect(MissionControlLayout.spaceLabelPoint(button: button, bar: bar) == CGPoint(x: 684, y: 75))
-    }
-
-    @Test func theCurrentDisplayIsTheOneUnderThePointer() {
-        let displays = [CGRect(x: 0, y: 0, width: 1440, height: 900), CGRect(x: 1440, y: 0, width: 1920, height: 1080)]
-        #expect(MissionControlLayout.currentDisplay(pointer: CGPoint(x: 2000, y: 500), displayFrames: displays) == 1)
-        #expect(MissionControlLayout.currentDisplay(pointer: CGPoint(x: 10, y: 10), displayFrames: displays) == 0)
-        // Off every display: the first one.
-        #expect(MissionControlLayout.currentDisplay(pointer: CGPoint(x: -50, y: 5000), displayFrames: displays) == 0)
-        #expect(MissionControlLayout.currentDisplay(pointer: .zero, displayFrames: []) == nil)
     }
 
     @Test func readingOrderGoesRowByRow() {

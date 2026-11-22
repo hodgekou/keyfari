@@ -129,17 +129,6 @@ public final class OverlayController {
         }
     }
 
-    /// Shows one selected label on its own, with an outline around what it stands for.
-    public func showSelection(_ item: HintItem, frame: CGRect) {
-        draw {
-            if let placement = place(frame) {
-                let rect = CGRect(origin: placement.origin, size: placement.size).insetBy(dx: -3, dy: -3)
-                addGradientBorder(rect, colors: [Self.green, HintStyle.palette[5]], width: 3, cornerRadius: 8, to: placement.host)
-            }
-            addEntry(label: item.label, at: item.point, isFocused: true, typedCount: 0)
-        }
-    }
-
     /// Adds labels to the ones already shown, for elements that were found later.
     /// `typedPrefix` is what the user has typed so far; labels that do not start with it stay hidden.
     public func appendHints(_ items: [HintItem], typedPrefix: String) {

@@ -67,7 +67,6 @@ public enum Localizer {
         "General": Entry(chinese: "通用", japanese: "一般"),
         "Hints": Entry(chinese: "标签", japanese: "ヒント"),
         "Scrolling": Entry(chinese: "滚动", japanese: "スクロール"),
-        "Activation": Entry(chinese: "激活方式", japanese: "起動方法"),
         "AI Detection": Entry(chinese: "AI 识别", japanese: "AI 検出"),
         "Stats": Entry(chinese: "统计", japanese: "統計"),
         "Desktops": Entry(chinese: "桌面", japanese: "デスクトップ"),
@@ -76,7 +75,6 @@ public enum Localizer {
             chinese: "快捷键、启动、权限与忽略的应用", japanese: "ショートカット、起動、権限、除外するアプリ"),
         "How labels look and behave": Entry(chinese: "标签的外观与行为", japanese: "ラベルの外観と動作"),
         "Speed and direction": Entry(chinese: "速度与方向", japanese: "速度と方向"),
-        "Activate modes with key sequences": Entry(chinese: "使用按键序列激活模式", japanese: "キーシーケンスでモードを開始"),
         "Local, opt-in activity counts": Entry(chinese: "可选的本地使用统计", japanese: "任意で記録するローカル使用統計"),
         "Find text that apps do not expose": Entry(chinese: "找出应用没有暴露的文字", japanese: "アプリが公開していないテキストを見つける"),
         "Keyboard navigation": Entry(chinese: "键盘导航", japanese: "キーボード操作"),
@@ -209,24 +207,12 @@ public enum Localizer {
         "Label windows and desktops as soon as Mission Control opens": Entry(
             chinese: "打开调度中心时立即给窗口和桌面打标签", japanese: "Mission Control を開くとすぐにウインドウとデスクトップにラベルを付ける"),
         "Show or hide the labels in Mission Control": Entry(chinese: "在调度中心里显示或隐藏标签", japanese: "Mission Control でラベルを表示/非表示"),
-        "Type a label to select a window or desktop": Entry(chinese: "输入标签以选中窗口或桌面", japanese: "ラベルを入力してウインドウまたはデスクトップを選択"),
-        "Open the selection": Entry(chinese: "打开选中的项目", japanese: "選択した項目を開く"),
+        "Type a label to open its window or desktop": Entry(chinese: "输入标签即可打开对应的窗口或桌面", japanese: "ラベルを入力するとそのウインドウまたはデスクトップを開く"),
         "Leave Mission Control": Entry(chinese: "退出调度中心", japanese: "Mission Control を終了"),
-        "With several displays, labels appear on the display under the pointer. Arrow keys and the system's shortcuts keep working.": Entry(
-            chinese: "连接多台显示器时,标签显示在指针所在的显示器上。方向键和系统快捷键照常可用。",
-            japanese: "複数のディスプレイがある場合、ラベルはポインタのあるディスプレイに表示されます。矢印キーとシステムのショートカットはそのまま使えます。"
+        "With several displays, every display gets labels. Arrow keys and the system's shortcuts keep working.": Entry(
+            chinese: "连接多台显示器时,每台显示器上都会显示标签。方向键和系统快捷键照常可用。",
+            japanese: "複数のディスプレイがある場合、すべてのディスプレイにラベルが表示されます。矢印キーとシステムのショートカットはそのまま使えます。"
         ),
-
-        // Activation
-        "Key sequences": Entry(chinese: "按键序列", japanese: "キーシーケンス"),
-        "For example fd": Entry(chinese: "例如 fd", japanese: "例: fd"),
-        "For example jk": Entry(chinese: "例如 jk", japanese: "例: jk"),
-        "Timeout": Entry(chinese: "超时", japanese: "タイムアウト"),
-        "At least two characters, and neither sequence may start with the other.": Entry(
-            chinese: "至少两个字符,且两个序列不能互为前缀。",
-            japanese: "2 文字以上で、一方がもう一方の先頭と一致しないようにしてください。"
-        ),
-        "off": Entry(chinese: "关闭", japanese: "オフ"),
 
         // AI detection
         "On-screen text detection": Entry(chinese: "屏幕文字识别", japanese: "画面上のテキスト検出"),
