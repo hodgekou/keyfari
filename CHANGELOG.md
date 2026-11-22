@@ -8,6 +8,8 @@ All notable changes to Keyfari are recorded here. The format follows [Keep a Cha
 
 - Scroll mode: the arrow keys can scroll instead of selecting a scroll area, the area numbers can be hidden, and the mode can leave by itself after a time without a key.
 - A label that the pointer would cover is drawn next to the pointer instead.
+- The menu bar icon can be hidden; opening Keyfari again then opens the settings.
+- "Copy" under Troubleshooting in the General pane puts versions, displays, permissions and the names of changed settings on the clipboard, for a bug report.
 
 ### Removed
 

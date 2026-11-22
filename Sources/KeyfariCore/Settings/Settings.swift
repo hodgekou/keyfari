@@ -81,6 +81,8 @@ public struct Settings: Codable, Equatable, Sendable {
     /// Bundle identifiers of applications in which no mode activates.
     public var ignoredBundleIDs: [String] = []
     public var launchAtLogin = false
+    /// Show the icon in the menu bar. Hidden, the settings are reached by opening the app again.
+    public var showMenuBarIcon = true
     /// Look for a newer version once a day.
     public var updateCheckEnabled = true
 
@@ -122,6 +124,7 @@ public struct Settings: Codable, Equatable, Sendable {
         reverseVertical = try container.decodeIfPresent(Bool.self, forKey: .reverseVertical) ?? fallback.reverseVertical
         ignoredBundleIDs = try container.decodeIfPresent([String].self, forKey: .ignoredBundleIDs) ?? fallback.ignoredBundleIDs
         launchAtLogin = try container.decodeIfPresent(Bool.self, forKey: .launchAtLogin) ?? fallback.launchAtLogin
+        showMenuBarIcon = try container.decodeIfPresent(Bool.self, forKey: .showMenuBarIcon) ?? fallback.showMenuBarIcon
         updateCheckEnabled = try container.decodeIfPresent(Bool.self, forKey: .updateCheckEnabled) ?? fallback.updateCheckEnabled
     }
 
