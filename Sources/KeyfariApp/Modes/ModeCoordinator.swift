@@ -24,7 +24,6 @@ final class ModeCoordinator {
     private let hotkeys = GlobalHotkeys()
     private let overlay = OverlayController()
     private let interceptor = KeyInterceptor()
-    private let labelMemory = LabelMemory()
     private var keySequence: KeySequenceActivator?
     private var active: (mode: Mode, stop: @MainActor () -> Void)?
 
@@ -118,7 +117,7 @@ final class ModeCoordinator {
             applyStyle(settings)
             let controller = HintModeController(
                 query: AXElementQuery(), vision: vision(settings), overlay: overlay, interceptor: interceptor, settings: settings,
-                memory: settings.stableLabels ? labelMemory : nil,
+                memory: store.labelMemory,
                 target: target, recordClick: recordClick, onShortcut: onShortcut, onExit: onExit
             )
             started = controller.start()

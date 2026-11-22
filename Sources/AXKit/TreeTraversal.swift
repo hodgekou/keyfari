@@ -149,7 +149,8 @@ final class TreeTraversal {
 
     /// The nodes that should get a label.
     func hintableSnapshots(root: Int, source: ElementSource) -> [ElementSnapshot] {
-        Hintability.hintableIndices(
+        let identities = stableIdentities()
+        return Hintability.hintableIndices(
             roles: nodes.map(\.role),
             actions: nodes.map(\.actions),
             children: nodes.map(\.children),
@@ -162,8 +163,28 @@ final class TreeTraversal {
                 clippedFrame: node.clippedFrame,
                 actions: node.actions,
                 searchText: node.searchText,
-                source: source
+                source: source,
+                stableIdentity: identities[index]
             )
         }
+    }
+
+    /// A path of role and accessible text. Identical siblings intentionally share a path;
+    /// callers can then reject ambiguous bindings instead of guessing which one moved.
+    private func stableIdentities() -> [String] {
+        var ancestors = [[String]](repeating: [], count: nodes.count)
+        for index in nodes.indices {
+            let component = identityComponent(nodes[index])
+            for child in nodes[index].children where nodes.indices.contains(child) {
+                ancestors[child] = ancestors[index] + [component]
+            }
+        }
+        return nodes.indices.map { index in
+            (ancestors[index] + [identityComponent(nodes[index])]).joined(separator: "/")
+        }
+    }
+
+    private func identityComponent(_ node: Node) -> String {
+        "\(node.role)|\(SearchSession.normalize(node.searchText))"
     }
 }

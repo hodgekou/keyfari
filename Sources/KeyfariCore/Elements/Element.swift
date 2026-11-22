@@ -4,7 +4,7 @@
 
 import CoreGraphics
 
-public enum ElementSource: Sendable {
+public enum ElementSource: Sendable, Equatable {
     case window
     case menuBar
     case menuBarExtra
@@ -22,6 +22,8 @@ public struct ElementSnapshot: Sendable, Equatable {
     public let actions: [String]
     public let searchText: String
     public let source: ElementSource
+    /// Accessibility ancestry path used to distinguish repeated labels where possible.
+    public let stableIdentity: String?
 
     public init(
         role: String,
@@ -29,7 +31,8 @@ public struct ElementSnapshot: Sendable, Equatable {
         clippedFrame: CGRect? = nil,
         actions: [String] = [],
         searchText: String = "",
-        source: ElementSource = .window
+        source: ElementSource = .window,
+        stableIdentity: String? = nil
     ) {
         self.role = role
         self.frame = frame
@@ -37,6 +40,7 @@ public struct ElementSnapshot: Sendable, Equatable {
         self.actions = actions
         self.searchText = searchText
         self.source = source
+        self.stableIdentity = stableIdentity
     }
 
     /// Where a click lands and where the label is drawn.

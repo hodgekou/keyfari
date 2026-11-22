@@ -156,6 +156,13 @@ public enum Localizer {
         "Behaviour": Entry(chinese: "行为", japanese: "動作"),
         "Keep labels stable": Entry(chinese: "保持标签稳定", japanese: "ラベルを固定する"),
         "An element keeps the label it had when you last clicked it": Entry(chinese: "点过的元素下次仍使用同一个标签", japanese: "一度クリックした要素には次回も同じラベルを付ける"),
+        "Fixed label bindings": Entry(chinese: "固定标签绑定", japanese: "固定ラベルの割り当て"),
+        "In hint mode, hold Control and Option while typing a label to bind it to that element. Fixed labels take priority over automatic label memory. Only uniquely identifiable accessibility controls can be pinned.":
+            Entry(
+                chinese: "在提示模式中，按住 Control 和 Option 并输入标签，即可将该标签绑定到对应控件。固定标签优先于自动记忆；只有身份唯一的辅助功能控件可以固定。",
+                japanese: "ヒントモードで Control と Option を押しながらラベルを入力すると、その要素に固定できます。固定ラベルは自動記憶より優先されます。固定できるのは一意に識別できるアクセシビリティ要素のみです。"
+            ),
+        "No fixed labels yet": Entry(chinese: "还没有固定标签", japanese: "固定ラベルはありません"),
         "Chain clicks": Entry(chinese: "连续点击", japanese: "連続クリック"),
         "Stay in the mode after a click, until Esc or a text field": Entry(
             chinese: "点击后不退出模式,直到按 Esc 或点到输入框", japanese: "クリック後もモードを続ける(Esc またはテキスト欄をクリックするまで)"),
