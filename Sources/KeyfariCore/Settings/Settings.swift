@@ -48,15 +48,10 @@ public struct Settings: Codable, Equatable, Sendable {
     public var chainClicks = false
     /// Give an element the label it had the last time it was clicked.
     public var stableLabels = true
-    /// Typed sequences that activate a mode. Empty means off.
-    public var hintKeySequence = ""
-    public var scrollKeySequence = ""
-    /// How long the next key of a sequence may take, in seconds.
-    public var keySequenceResetDelay = 0.25
     public var visionMode = VisionMode.always
     public var language = AppLanguage.system
     /// Collect aggregate usage counts on this Mac only.
-    public var statisticsEnabled = false
+    public var usageStatisticsEnabled = true
     public var successSoundEnabled = false
     public var warningSoundEnabled = false
     /// Pixels scrolled per frame while a scroll key is held.
@@ -87,12 +82,9 @@ public struct Settings: Codable, Equatable, Sendable {
         missionControlAutoHints = try container.decodeIfPresent(Bool.self, forKey: .missionControlAutoHints) ?? fallback.missionControlAutoHints
         chainClicks = try container.decodeIfPresent(Bool.self, forKey: .chainClicks) ?? fallback.chainClicks
         stableLabels = try container.decodeIfPresent(Bool.self, forKey: .stableLabels) ?? fallback.stableLabels
-        hintKeySequence = try container.decodeIfPresent(String.self, forKey: .hintKeySequence) ?? fallback.hintKeySequence
-        scrollKeySequence = try container.decodeIfPresent(String.self, forKey: .scrollKeySequence) ?? fallback.scrollKeySequence
-        keySequenceResetDelay = try container.decodeIfPresent(Double.self, forKey: .keySequenceResetDelay) ?? fallback.keySequenceResetDelay
         visionMode = (try? container.decodeIfPresent(VisionMode.self, forKey: .visionMode)) ?? fallback.visionMode
         language = (try? container.decodeIfPresent(AppLanguage.self, forKey: .language)) ?? fallback.language
-        statisticsEnabled = try container.decodeIfPresent(Bool.self, forKey: .statisticsEnabled) ?? fallback.statisticsEnabled
+        usageStatisticsEnabled = try container.decodeIfPresent(Bool.self, forKey: .usageStatisticsEnabled) ?? fallback.usageStatisticsEnabled
         successSoundEnabled = try container.decodeIfPresent(Bool.self, forKey: .successSoundEnabled) ?? fallback.successSoundEnabled
         warningSoundEnabled = try container.decodeIfPresent(Bool.self, forKey: .warningSoundEnabled) ?? fallback.warningSoundEnabled
         scrollSpeed = try container.decodeIfPresent(Int.self, forKey: .scrollSpeed) ?? fallback.scrollSpeed
@@ -141,13 +133,6 @@ public struct Settings: Codable, Equatable, Sendable {
         }
         if !(1...100).contains(scrollSpeed) { result.scrollSpeed = fallback.scrollSpeed }
         if !(0.25...10).contains(dashMultiplier) { result.dashMultiplier = fallback.dashMultiplier }
-        if !(0.1...1).contains(keySequenceResetDelay) { result.keySequenceResetDelay = fallback.keySequenceResetDelay }
-
-        // A sequence that is too short or collides with the other one is switched off.
-        let sequences = KeySequenceMatcher.usable([hintKeySequence, scrollKeySequence])
-        result.hintKeySequence = sequences[0] ?? ""
-        result.scrollKeySequence = sequences[1] ?? ""
-
         var seen = Set<String>()
         result.ignoredBundleIDs =
             ignoredBundleIDs

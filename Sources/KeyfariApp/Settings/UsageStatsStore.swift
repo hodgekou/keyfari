@@ -12,13 +12,15 @@ struct AppClickStats: Identifiable {
     var id: String { bundleID }
 }
 
-/// Stores only aggregate click counts and active dates on this Mac.
+/// Stores only aggregate action and click counts and active dates on this Mac.
 @MainActor
 @Observable
 final class UsageStatsStore {
     private struct Snapshot: Codable {
         var clicksByDay: [String: Int] = [:]
         var clicksByApp: [String: Int] = [:]
+        /// Missing in data written before actions were counted; the clicks stand in for it then.
+        var actions: Int?
     }
 
     private static let key = "usageStats"
@@ -37,6 +39,11 @@ final class UsageStatsStore {
 
     var totalClicks: Int {
         snapshot.clicksByDay.values.reduce(0, +)
+    }
+
+    /// How many times a mode did something for the user. A double click is one action.
+    var totalActions: Int {
+        snapshot.actions ?? totalClicks
     }
 
     var activeDays: Int {
@@ -80,11 +87,20 @@ final class UsageStatsStore {
             }
     }
 
-    func recordClick(bundleID: String, count: Int) {
-        guard count > 0 else { return }
-        snapshot.clicksByDay[dayKey(.now), default: 0] += count
-        if !bundleID.isEmpty {
-            snapshot.clicksByApp[bundleID, default: 0] += count
+    /// Records the clicks an action sent, which are none when it only moved the pointer or opened
+    /// something without a click.
+    /// - Parameter isNewAction: false for the second click of a double click that is sent later,
+    ///   which belongs to the action already counted.
+    func record(bundleID: String, clicks: Int, isNewAction: Bool) {
+        if isNewAction {
+            snapshot.actions = totalActions + 1
+        } else if snapshot.actions == nil {
+            // Pin the count down before the clicks grow, or they would stand in for one action more.
+            snapshot.actions = totalClicks
+        }
+        snapshot.clicksByDay[dayKey(.now), default: 0] += max(clicks, 0)
+        if !bundleID.isEmpty, clicks > 0 {
+            snapshot.clicksByApp[bundleID, default: 0] += clicks
         }
         save()
     }

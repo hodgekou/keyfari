@@ -169,22 +169,32 @@ final class TreeTraversal {
         }
     }
 
-    /// A path of role and accessible text. Identical siblings intentionally share a path;
-    /// callers can then reject ambiguous bindings instead of guessing which one moved.
+    /// Each node's place in the tree: the roles on the way down from the root, each with its
+    /// position among the siblings of the same role, such as `AXWindow[0]/AXToolbar[0]/AXButton[2]`.
+    ///
+    /// It deliberately leaves out all text. Titles and values of ancestors change with the
+    /// document, and an element that has text of its own is recognised by that instead.
     private func stableIdentities() -> [String] {
-        var ancestors = [[String]](repeating: [], count: nodes.count)
-        for index in nodes.indices {
-            let component = identityComponent(nodes[index])
-            for child in nodes[index].children where nodes.indices.contains(child) {
-                ancestors[child] = ancestors[index] + [component]
+        var paths = [String](repeating: "", count: nodes.count)
+        var isChild = [Bool](repeating: false, count: nodes.count)
+        for node in nodes {
+            for child in node.children where nodes.indices.contains(child) {
+                isChild[child] = true
             }
         }
-        return nodes.indices.map { index in
-            (ancestors[index] + [identityComponent(nodes[index])]).joined(separator: "/")
+        for index in nodes.indices where !isChild[index] {
+            paths[index] = "\(nodes[index].role)[0]"
         }
-    }
-
-    private func identityComponent(_ node: Node) -> String {
-        "\(node.role)|\(SearchSession.normalize(node.searchText))"
+        // A node is recorded before its descendants, so every parent's path exists when it is needed.
+        for index in nodes.indices {
+            var seen: [String: Int] = [:]
+            for child in nodes[index].children where nodes.indices.contains(child) {
+                let role = nodes[child].role
+                let position = seen[role, default: 0]
+                seen[role] = position + 1
+                paths[child] = "\(paths[index])/\(role)[\(position)]"
+            }
+        }
+        return paths
     }
 }

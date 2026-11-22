@@ -67,7 +67,6 @@ public enum Localizer {
         "General": Entry(chinese: "通用", japanese: "一般"),
         "Hints": Entry(chinese: "标签", japanese: "ヒント"),
         "Scrolling": Entry(chinese: "滚动", japanese: "スクロール"),
-        "Activation": Entry(chinese: "激活方式", japanese: "起動方法"),
         "AI Detection": Entry(chinese: "AI 识别", japanese: "AI 検出"),
         "Stats": Entry(chinese: "统计", japanese: "統計"),
         "Desktops": Entry(chinese: "桌面", japanese: "デスクトップ"),
@@ -76,8 +75,7 @@ public enum Localizer {
             chinese: "快捷键、启动、权限与忽略的应用", japanese: "ショートカット、起動、権限、除外するアプリ"),
         "How labels look and behave": Entry(chinese: "标签的外观与行为", japanese: "ラベルの外観と動作"),
         "Speed and direction": Entry(chinese: "速度与方向", japanese: "速度と方向"),
-        "Activate modes with key sequences": Entry(chinese: "使用按键序列激活模式", japanese: "キーシーケンスでモードを開始"),
-        "Local, opt-in activity counts": Entry(chinese: "可选的本地使用统计", japanese: "任意で記録するローカル使用統計"),
+        "Activity counts that stay on this Mac": Entry(chinese: "仅保存在本机的使用统计", japanese: "この Mac にのみ保存される使用統計"),
         "Find text that apps do not expose": Entry(chinese: "找出应用没有暴露的文字", japanese: "アプリが公開していないテキストを見つける"),
         "Keyboard navigation": Entry(chinese: "键盘导航", japanese: "キーボード操作"),
         "Keyfari Settings": Entry(chinese: "Keyfari 设置", japanese: "Keyfari 設定"),
@@ -125,8 +123,13 @@ public enum Localizer {
         "No clicks recorded yet": Entry(chinese: "还没有点击记录", japanese: "クリック記録はまだありません"),
         "%d clicks": Entry(chinese: "%d 次点击", japanese: "%d 回のクリック"),
         "Clear statistics": Entry(chinese: "清除统计数据", japanese: "統計データを消去"),
-        "Statistics are off. No usage is recorded until you turn them on. Only aggregate counts are stored locally.": Entry(
-            chinese: "统计已关闭。启用后才会开始记录，仅在本机保存汇总数据。", japanese: "統計はオフです。有効にするまで記録されません。集計データのみこの Mac に保存されます。"),
+        "Statistics are off, so nothing is recorded. When they are on, only aggregate counts are stored, on this Mac.": Entry(
+            chinese: "统计已关闭,不会记录任何内容。开启后仅在本机保存汇总数据。", japanese: "統計はオフのため、何も記録されません。オンにすると集計データのみがこの Mac に保存されます。"),
+        "Time saved": Entry(chinese: "节省的时间", japanese: "節約した時間"),
+        "Across %d keyboard actions": Entry(chinese: "来自 %d 次键盘操作", japanese: "キーボード操作 %d 回分"),
+        "%d h %d min": Entry(chinese: "%d 小时 %d 分钟", japanese: "%d 時間 %d 分"),
+        "%d min %d s": Entry(chinese: "%d 分 %d 秒", japanese: "%d 分 %d 秒"),
+        "%d s": Entry(chinese: "%d 秒", japanese: "%d 秒"),
         "No applications are ignored": Entry(chinese: "没有忽略任何应用", japanese: "除外しているアプリはありません"),
         "Shortcuts do nothing while one of these applications is in front.": Entry(
             chinese: "这些应用在前台时,快捷键不起作用。",
@@ -158,13 +161,24 @@ public enum Localizer {
         "Behaviour": Entry(chinese: "行为", japanese: "動作"),
         "Keep labels stable": Entry(chinese: "保持标签稳定", japanese: "ラベルを固定する"),
         "An element keeps the label it had when you last clicked it": Entry(chinese: "点过的元素下次仍使用同一个标签", japanese: "一度クリックした要素には次回も同じラベルを付ける"),
-        "Fixed label bindings": Entry(chinese: "固定标签绑定", japanese: "固定ラベルの割り当て"),
-        "In hint mode, hold Control and Option while typing a label to bind it to that element. Fixed labels take priority over automatic label memory. Only uniquely identifiable accessibility controls can be pinned.":
+        "Stable Labels": Entry(chinese: "固定标签", japanese: "固定ラベル"),
+        "The same label for the same element, every time": Entry(chinese: "同一个元素每次都用同一个标签", japanese: "同じ要素にはいつも同じラベル"),
+        "Stable labels": Entry(chinese: "固定标签", japanese: "固定ラベル"),
+        "Remembered labels": Entry(chinese: "已记住的标签", japanese: "記憶したラベル"),
+        "When you click something by its label, Keyfari remembers that label and shows it again next time. Type other letters into a field and press Return to choose the label yourself.":
             Entry(
-                chinese: "在提示模式中，按住 Control 和 Option 并输入标签，即可将该标签绑定到对应控件。固定标签优先于自动记忆；只有身份唯一的辅助功能控件可以固定。",
-                japanese: "ヒントモードで Control と Option を押しながらラベルを入力すると、その要素に固定できます。固定ラベルは自動記憶より優先されます。固定できるのは一意に識別できるアクセシビリティ要素のみです。"
+                chinese: "用标签点击某个元素后,Keyfari 会记住这个标签,下次仍然显示它。在输入框里改成别的字母并按回车,就可以自己指定标签。",
+                japanese: "ラベルで要素をクリックすると、Keyfari はそのラベルを記憶し、次回も同じものを表示します。欄に別の文字を入力して Return を押すと、自分でラベルを決められます。"
             ),
-        "No fixed labels yet": Entry(chinese: "还没有固定标签", japanese: "固定ラベルはありません"),
+        "No labels remembered yet": Entry(chinese: "还没有记住任何标签", japanese: "記憶したラベルはまだありません"),
+        "%d more labels are remembered": Entry(chinese: "另外还记住了 %d 个标签", japanese: "ほかに %d 個のラベルを記憶しています"),
+        "Forget all labels": Entry(chinese: "清除全部标签", japanese: "すべてのラベルを消去"),
+        "Chosen": Entry(chinese: "自定义", japanese: "指定済み"),
+        "Save": Entry(chinese: "保存", japanese: "保存"),
+        "%@ is not saved: a label may only use your label characters, %@.": Entry(
+            chinese: "%@ 未保存:标签只能使用你设置的标签字符 %@。", japanese: "%@ は保存されません。ラベルに使えるのはラベルの文字 %@ だけです。"),
+        "%@ is not saved: it would clash with the label %@ chosen for another element of this application.": Entry(
+            chinese: "%@ 未保存:它与本应用中另一个元素的自定义标签 %@ 冲突。", japanese: "%@ は保存されません。このアプリの別の要素に指定したラベル %@ と衝突します。"),
         "Chain clicks": Entry(chinese: "连续点击", japanese: "連続クリック"),
         "Stay in the mode after a click, until Esc or a text field": Entry(
             chinese: "点击后不退出模式,直到按 Esc 或点到输入框", japanese: "クリック後もモードを続ける(Esc またはテキスト欄をクリックするまで)"),
@@ -209,24 +223,12 @@ public enum Localizer {
         "Label windows and desktops as soon as Mission Control opens": Entry(
             chinese: "打开调度中心时立即给窗口和桌面打标签", japanese: "Mission Control を開くとすぐにウインドウとデスクトップにラベルを付ける"),
         "Show or hide the labels in Mission Control": Entry(chinese: "在调度中心里显示或隐藏标签", japanese: "Mission Control でラベルを表示/非表示"),
-        "Type a label to select a window or desktop": Entry(chinese: "输入标签以选中窗口或桌面", japanese: "ラベルを入力してウインドウまたはデスクトップを選択"),
-        "Open the selection": Entry(chinese: "打开选中的项目", japanese: "選択した項目を開く"),
+        "Type a label to open its window or desktop": Entry(chinese: "输入标签即可打开对应的窗口或桌面", japanese: "ラベルを入力するとそのウインドウまたはデスクトップを開く"),
         "Leave Mission Control": Entry(chinese: "退出调度中心", japanese: "Mission Control を終了"),
-        "With several displays, labels appear on the display under the pointer. Arrow keys and the system's shortcuts keep working.": Entry(
-            chinese: "连接多台显示器时,标签显示在指针所在的显示器上。方向键和系统快捷键照常可用。",
-            japanese: "複数のディスプレイがある場合、ラベルはポインタのあるディスプレイに表示されます。矢印キーとシステムのショートカットはそのまま使えます。"
+        "With several displays, every display gets labels. Arrow keys and the system's shortcuts keep working.": Entry(
+            chinese: "连接多台显示器时,每台显示器上都会显示标签。方向键和系统快捷键照常可用。",
+            japanese: "複数のディスプレイがある場合、すべてのディスプレイにラベルが表示されます。矢印キーとシステムのショートカットはそのまま使えます。"
         ),
-
-        // Activation
-        "Key sequences": Entry(chinese: "按键序列", japanese: "キーシーケンス"),
-        "For example fd": Entry(chinese: "例如 fd", japanese: "例: fd"),
-        "For example jk": Entry(chinese: "例如 jk", japanese: "例: jk"),
-        "Timeout": Entry(chinese: "超时", japanese: "タイムアウト"),
-        "At least two characters, and neither sequence may start with the other.": Entry(
-            chinese: "至少两个字符,且两个序列不能互为前缀。",
-            japanese: "2 文字以上で、一方がもう一方の先頭と一致しないようにしてください。"
-        ),
-        "off": Entry(chinese: "关闭", japanese: "オフ"),
 
         // AI detection
         "On-screen text detection": Entry(chinese: "屏幕文字识别", japanese: "画面上のテキスト検出"),

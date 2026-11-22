@@ -67,11 +67,11 @@ struct SettingsView: View {
                 switch pane {
                 case .general: general
                 case .hints: hints
+                case .labels: labels
                 case .scrolling: scrolling
                 case .desktops:
                     desktops
                     missionControl
-                case .activation: activation
                 case .vision: vision
                 case .stats: stats
                 }
@@ -181,51 +181,20 @@ struct SettingsView: View {
         }
         Card("Behaviour", symbol: "hand.tap.fill", tint: tint) {
             ToggleRow(
-                "Keep labels stable", detail: "An element keeps the label it had when you last clicked it", isOn: $store.settings.stableLabels,
-                tint: tint)
-            RowDivider()
-            ToggleRow(
                 "Chain clicks", detail: "Stay in the mode after a click, until Esc or a text field", isOn: $store.settings.chainClicks, tint: tint)
         }
-        Card("Fixed label bindings", symbol: "pin.fill", tint: tint) {
-            VStack(alignment: .leading, spacing: 8) {
-                Text(
-                    tr(
-                        "In hint mode, hold Control and Option while typing a label to bind it to that element. Fixed labels take priority over automatic label memory. Only uniquely identifiable accessibility controls can be pinned."
-                    )
-                )
-                .font(.system(size: 11)).foregroundStyle(.secondary)
-                .fixedSize(horizontal: false, vertical: true)
-                .padding(.horizontal, 12).padding(.top, 10)
-                let bindings = store.labelMemory.pinnedBindings
-                if bindings.isEmpty {
-                    Text(tr("No fixed labels yet"))
-                        .font(.system(size: 12)).foregroundStyle(.secondary)
-                        .padding(.horizontal, 12).padding(.bottom, 10)
-                } else {
-                    ForEach(bindings) { binding in
-                        HStack(spacing: 10) {
-                            Text(binding.label)
-                                .font(.system(size: 13, weight: .semibold, design: .monospaced))
-                                .frame(width: 46, alignment: .leading)
-                            VStack(alignment: .leading, spacing: 2) {
-                                Text(binding.targetDescription).font(.system(size: 12)).lineLimit(1)
-                                Text(applicationName(binding.bundleID) + " · " + binding.bundleID)
-                                    .font(.system(size: 10)).foregroundStyle(.secondary).lineLimit(1)
-                            }
-                            Spacer(minLength: 4)
-                            Button {
-                                store.labelMemory.removePin(id: binding.id)
-                            } label: {
-                                Image(systemName: "minus.circle.fill").foregroundStyle(.red.opacity(0.85))
-                            }
-                            .buttonStyle(.plain)
-                            .help(tr("Remove"))
-                        }
-                        .padding(.horizontal, 12).padding(.vertical, 7)
-                    }
-                }
-            }
+    }
+
+    @ViewBuilder
+    private var labels: some View {
+        let tint = SettingsPane.labels.tint
+        Card("Stable labels", symbol: "pin.fill", tint: tint) {
+            ToggleRow(
+                "Keep labels stable", detail: "An element keeps the label it had when you last clicked it", isOn: $store.settings.stableLabels,
+                tint: tint)
+        }
+        Card("Remembered labels", symbol: "list.bullet", tint: tint) {
+            StableLabelsList(store: store, editing: navigation.labelEditing, tint: tint)
         }
     }
 
@@ -299,41 +268,14 @@ struct SettingsView: View {
             RowDivider()
             VStack(alignment: .leading, spacing: 10) {
                 KeyHint(keys: store.effective.hintShortcut.displayParts, text: "Show or hide the labels in Mission Control")
-                KeyHint(keys: ["A", "S"], text: "Type a label to select a window or desktop")
-                KeyHint(keys: ["Return"], text: "Open the selection")
+                KeyHint(keys: ["A", "S"], text: "Type a label to open its window or desktop")
                 KeyHint(keys: ["Esc"], text: "Leave Mission Control")
             }
             .padding(12)
             RowDivider()
             Notice(
-                "With several displays, labels appear on the display under the pointer. Arrow keys and the system's shortcuts keep working.",
+                "With several displays, every display gets labels. Arrow keys and the system's shortcuts keep working.",
                 symbol: "info.circle.fill", tint: tint)
-        }
-    }
-
-    @ViewBuilder
-    private var activation: some View {
-        let tint = SettingsPane.activation.tint
-        Card("Key sequences", symbol: "character.cursor.ibeam", tint: tint) {
-            SettingRow("Show hints", detail: "For example fd") {
-                TextField(tr("off"), text: $store.settings.hintKeySequence)
-                    .textFieldStyle(.roundedBorder)
-                    .font(.system(size: 13, design: .monospaced))
-                    .frame(width: 90)
-            }
-            RowDivider()
-            SettingRow("Scroll mode", detail: "For example jk") {
-                TextField(tr("off"), text: $store.settings.scrollKeySequence)
-                    .textFieldStyle(.roundedBorder)
-                    .font(.system(size: 13, design: .monospaced))
-                    .frame(width: 90)
-            }
-            RowDivider()
-            SliderRow("Timeout", value: $store.settings.keySequenceResetDelay, range: 0.1...1, step: 0.05, tint: tint) {
-                String(format: "%.2f s", $0)
-            }
-            RowDivider()
-            Notice("At least two characters, and neither sequence may start with the other.", symbol: "info.circle.fill", tint: tint)
         }
     }
 
@@ -366,12 +308,23 @@ struct SettingsView: View {
         Card("Usage statistics", symbol: "chart.bar.fill", tint: tint) {
             ToggleRow(
                 "Enable usage statistics", detail: "Counts stay on this Mac and are never sent anywhere",
-                isOn: $store.settings.statisticsEnabled, tint: tint
+                isOn: $store.settings.usageStatisticsEnabled, tint: tint
             )
         }
 
-        if store.effective.statisticsEnabled {
+        if store.effective.usageStatisticsEnabled {
             let usage = store.usageStats
+            Card("Time saved", symbol: "clock.fill", tint: tint) {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(timeSaved(actions: usage.totalActions))
+                        .font(.system(size: 28, weight: .bold, design: .rounded))
+                        .foregroundStyle(tint)
+                    Text(tr("Across %d keyboard actions", usage.totalActions))
+                        .font(.system(size: 11)).foregroundStyle(.secondary)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(12)
+            }
             Card("Activity", symbol: "calendar", tint: tint) {
                 HStack(spacing: 8) {
                     statMetric("Total clicks", value: "\(usage.totalClicks)")
@@ -406,10 +359,17 @@ struct SettingsView: View {
             .buttonStyle(.bordered)
         } else {
             Notice(
-                "Statistics are off. No usage is recorded until you turn them on. Only aggregate counts are stored locally.",
+                "Statistics are off, so nothing is recorded. When they are on, only aggregate counts are stored, on this Mac.",
                 symbol: "lock.shield.fill", tint: tint
             )
         }
+    }
+
+    private func timeSaved(actions: Int) -> String {
+        let parts = TimeSaved.parts(actions: actions)
+        if parts.hours > 0 { return tr("%d h %d min", parts.hours, parts.minutes) }
+        if parts.minutes > 0 { return tr("%d min %d s", parts.minutes, parts.seconds) }
+        return tr("%d s", parts.seconds)
     }
 
     private func statMetric(_ title: String, value: String) -> some View {
@@ -460,10 +420,6 @@ struct SettingsView: View {
     }
 
     // MARK: Bindings
-
-    private func applicationName(_ bundleID: String) -> String {
-        ApplicationInfo(bundleID: bundleID).name
-    }
 
     private var scrollSpeed: Binding<Double> {
         Binding(

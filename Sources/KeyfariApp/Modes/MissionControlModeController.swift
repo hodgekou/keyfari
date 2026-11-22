@@ -7,7 +7,7 @@ import KeyfariCore
 import OverlayKit
 import os
 
-/// Labels the windows and desktops of Mission Control: type a label to select, Return to open.
+/// Labels the windows and desktops of Mission Control: type a label to open its item.
 @MainActor
 final class MissionControlModeController {
     /// How often the overview is read again. It changes while it opens, when the Spaces bar
@@ -20,6 +20,7 @@ final class MissionControlModeController {
     private let overlay: OverlayController
     private let interceptor: KeyInterceptor
     private let settings: Settings
+    private let recordAction: @MainActor () -> Void
     private let onShortcut: @MainActor (KeyStroke) -> Bool
     private let onExit: @MainActor () -> Void
 
@@ -34,12 +35,14 @@ final class MissionControlModeController {
         overlay: OverlayController,
         interceptor: KeyInterceptor,
         settings: Settings,
+        recordAction: @escaping @MainActor () -> Void,
         onShortcut: @escaping @MainActor (KeyStroke) -> Bool,
         onExit: @escaping @MainActor () -> Void
     ) {
         self.overlay = overlay
         self.interceptor = interceptor
         self.settings = settings
+        self.recordAction = recordAction
         self.onShortcut = onShortcut
         self.onExit = onExit
     }
@@ -85,7 +88,8 @@ final class MissionControlModeController {
                     }
                 } else {
                     wasShowing = true
-                    let current = Self.currentTargets(displays)
+                    // Every display shows its own overview, and all of them get labels at once.
+                    let current = displays.flatMap(\.targets)
                     // Labels are drawn once two readings agree, so they do not chase an animation.
                     if current == previous, current != self.targets {
                         self.present(current)
@@ -95,13 +99,6 @@ final class MissionControlModeController {
                 try? await Task.sleep(for: Self.pollInterval)
             }
         }
-    }
-
-    /// The items of the display the pointer is on. Other displays keep their overview unlabelled.
-    private static func currentTargets(_ displays: [MissionControlDisplay]) -> [MissionControlTarget] {
-        let pointer = CGEvent(source: nil)?.location ?? .zero
-        guard let index = MissionControlLayout.currentDisplay(pointer: pointer, displayFrames: displays.map(\.frame)) else { return [] }
-        return displays[index].targets
     }
 
     private func present(_ found: [MissionControlTarget]) {
@@ -114,11 +111,7 @@ final class MissionControlModeController {
             return
         }
         session = MissionControlSession(labels: labels)
-        showAll()
-    }
-
-    private func showAll() {
-        overlay.showHints(zip(labels, targets).map { HintItem(label: $0, point: $1.labelPoint) })
+        overlay.showHints(zip(labels, found).map { HintItem(label: $0, point: $1.labelPoint) })
     }
 
     private func handle(_ stroke: KeyStroke) {
@@ -134,11 +127,8 @@ final class MissionControlModeController {
 
         switch event {
         case let .updated(prefix):
-            showAll()
             overlay.update(prefix: prefix)
-        case let .focused(index):
-            overlay.showSelection(HintItem(label: labels[index], point: targets[index].labelPoint), frame: targets[index].frame)
-        case let .confirmed(index):
+        case let .matched(index):
             open(targets[index])
         case .rejected:
             SoundFeedback.warningIfEnabled(settings.warningSoundEnabled)
@@ -153,10 +143,12 @@ final class MissionControlModeController {
         let playsSound = settings.successSoundEnabled
         let warns = settings.warningSoundEnabled
         let log = log
+        let recordAction = recordAction
         stop()
         Task {
             let pressed = await Task.detached { target.press() }.value
             if pressed {
+                recordAction()
                 if playsSound { SoundFeedback.success() }
             } else {
                 log.error("Mission Control did not accept the selection")

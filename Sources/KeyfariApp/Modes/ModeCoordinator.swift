@@ -39,7 +39,6 @@ final class ModeCoordinator {
     private let overlay = OverlayController()
     private let interceptor = KeyInterceptor()
     private lazy var spaces = SpaceController(store: store)
-    private var keySequence: KeySequenceActivator?
     /// Decides whether the hint shortcut means hint mode or Mission Control.
     private var pendingActivation: Task<Void, Never>?
     /// Shows the labels when Mission Control opens, while that setting is on.
@@ -101,35 +100,15 @@ final class ModeCoordinator {
         }
     }
 
-    /// Starts or stops the optional activators to match the settings.
+    /// Registers the shortcuts and starts or stops the Mission Control watch to match the settings.
     func applySettings() {
         let settings = store.effective
-        keySequence?.stop()
-        keySequence = nil
         missionControlWatch?.cancel()
         missionControlWatch = nil
         guard AXPermission.isGranted else { return }
         registerShortcuts(settings)
         if settings.missionControlAutoHints {
             watchMissionControl()
-        }
-
-        let isSuppressed: @MainActor () -> Bool = { [weak self] in
-            guard let self else { return true }
-            return self.active != nil || self.eligibleApplication() == nil
-        }
-
-        let bindings = [(settings.hintKeySequence, Mode.hint), (settings.scrollKeySequence, Mode.scroll)]
-            .filter { !$0.0.isEmpty }
-        if !bindings.isEmpty {
-            let activator = KeySequenceActivator(
-                sequences: bindings.map(\.0),
-                resetDelay: settings.keySequenceResetDelay,
-                isSuppressed: isSuppressed
-            ) { [weak self] index in
-                self?.toggle(bindings[index].1)
-            }
-            if activator.start() { keySequence = activator }
         }
     }
 
@@ -183,8 +162,8 @@ final class ModeCoordinator {
 
         let settings = store.effective
         let target: @MainActor () -> ModeTarget? = { [weak self] in self?.currentTarget() }
-        let recordClick: @MainActor (String, Int) -> Void = { [weak self] bundleID, count in
-            self?.store.recordClick(bundleID: bundleID, count: count)
+        let recordClick: @MainActor (String, Int, Bool) -> Void = { [weak self] bundleID, count, isNewAction in
+            self?.store.recordAction(bundleID: bundleID, clicks: count, isNewAction: isNewAction)
         }
         let onShortcut: @MainActor (KeyStroke) -> Bool = { [weak self] stroke in
             self?.handleShortcut(stroke) ?? false
@@ -225,6 +204,7 @@ final class ModeCoordinator {
             applyStyle(settings)
             let controller = MissionControlModeController(
                 overlay: overlay, interceptor: interceptor, settings: settings,
+                recordAction: { [weak self] in self?.store.recordAction(bundleID: "", clicks: 0, isNewAction: true) },
                 onShortcut: onShortcut, onExit: onExit
             )
             started = controller.start()

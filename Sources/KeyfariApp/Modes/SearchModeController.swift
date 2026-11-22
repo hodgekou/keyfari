@@ -20,7 +20,7 @@ final class SearchModeController {
     private let interceptor: KeyInterceptor
     private let settings: Settings
     private let target: @MainActor () -> ModeTarget?
-    private let recordClick: @MainActor (String, Int) -> Void
+    private let recordClick: @MainActor (String, Int, Bool) -> Void
     private let onShortcut: @MainActor (KeyStroke) -> Bool
     private let onExit: @MainActor () -> Void
 
@@ -42,7 +42,7 @@ final class SearchModeController {
         interceptor: KeyInterceptor,
         settings: Settings,
         target: @escaping @MainActor () -> ModeTarget?,
-        recordClick: @escaping @MainActor (String, Int) -> Void,
+        recordClick: @escaping @MainActor (String, Int, Bool) -> Void,
         onShortcut: @escaping @MainActor (KeyStroke) -> Bool,
         onExit: @escaping @MainActor () -> Void
     ) {
@@ -171,7 +171,7 @@ final class SearchModeController {
             guard !stroke.isRepeat else { return }
             MouseSynthesizer.secondClick(at: point)
             playSuccessSound(clickCount: 1)
-            recordClick(bundleID, 1)
+            recordClick(bundleID, 1, false)
             stop()
             return
         }
@@ -206,7 +206,7 @@ final class SearchModeController {
         overlay.hide()
         MouseSynthesizer.perform(action, at: point)
         playSuccessSound(clickCount: action.clickCount)
-        recordClick(bundleID, action.clickCount)
+        recordClick(bundleID, action.clickCount, true)
 
         if settings.chainClicks, action != .moveOnly, !element.acceptsText {
             elements = []

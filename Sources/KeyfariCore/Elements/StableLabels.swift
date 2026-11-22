@@ -1,44 +1,52 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /// Keeps the label of an element the same from one activation to the next.
 public enum StableLabels {
-    /// A key that identifies an element across activations, or nil when it has no text to tell it apart.
+    /// The longest label a user may choose for an element.
+    public static let maximumCustomLength = 3
+
+    /// A key that identifies an element across activations, or nil when nothing tells it apart.
+    ///
+    /// An element with text is known by its role and that text, wherever it sits: the window
+    /// title, the open document or a banner above it must not make it a different element.
+    /// One without text, such as a toolbar icon, is known by its place in the window instead.
     public static func fingerprint(of element: ElementSnapshot) -> String? {
         let text = SearchSession.normalize(element.searchText)
-        if let stableIdentity = element.stableIdentity, !stableIdentity.isEmpty {
-            return "\(stableIdentity)|\(element.role)|\(text)"
-        }
-        guard !text.isEmpty else { return nil }
-        return "\(element.role)|\(text)"
+        if !text.isEmpty { return "\(element.role)|\(text)" }
+        if let path = element.stableIdentity, !path.isEmpty { return "\(element.role)@\(path)" }
+        return nil
     }
 
-    /// Generates labels for `fingerprints.count` elements, giving each element its remembered
-    /// label when that label exists in the generated set and is still free.
+    /// Generates labels for `fingerprints.count` elements.
     ///
-    /// Fixed labels take priority; generated and remembered labels avoid every fixed-label prefix.
+    /// An element with a label the user chose gets that label. Otherwise it gets its remembered
+    /// label when that one is in the generated set and still free. Where several elements share
+    /// a fingerprint the first one wins. Generated labels avoid every chosen label, so no label
+    /// on screen is the beginning of another.
+    /// - Parameters:
+    ///   - memory: the label each fingerprint had when it was last used.
+    ///   - custom: the labels the user chose, by fingerprint. They take priority over `memory`.
     public static func assign(
         fingerprints: [String?],
         alphabet: String,
         memory: [String: String],
-        pinned: [String: String] = [:]
+        custom: [String: String] = [:]
     ) -> [String] {
         var result = [String?](repeating: nil, count: fingerprints.count)
-        var fingerprintCounts: [String: Int] = [:]
-        for fingerprint in fingerprints.compactMap({ $0 }) {
-            fingerprintCounts[fingerprint, default: 0] += 1
-        }
+        let letters = Set(alphabet.uppercased())
 
-        var usedPins: [String] = []
+        var chosen: [String] = []
+        var seen = Set<String>()
         for (index, fingerprint) in fingerprints.enumerated() {
-            guard let fingerprint, fingerprintCounts[fingerprint] == 1,
-                let label = pinned[fingerprint], label.allSatisfy({ alphabet.lowercased().contains($0.lowercased()) }),
-                !usedPins.contains(where: { $0.hasPrefix(label) || label.hasPrefix($0) })
+            guard let fingerprint, let label = custom[fingerprint], seen.insert(fingerprint).inserted,
+                !label.isEmpty, label.allSatisfy(letters.contains),
+                !chosen.contains(where: { $0.hasPrefix(label) || label.hasPrefix($0) })
             else { continue }
             result[index] = label
-            usedPins.append(label)
+            chosen.append(label)
         }
 
         let remainingCount = result.filter { $0 == nil }.count
-        let generated = availableLabels(count: remainingCount, alphabet: alphabet, avoiding: usedPins)
+        let generated = availableLabels(count: remainingCount, alphabet: alphabet, avoiding: chosen)
         var free = Set(generated)
 
         for (index, fingerprint) in fingerprints.enumerated() {
@@ -49,6 +57,34 @@ public enum StableLabels {
 
         var remaining = generated.filter(free.contains).makeIterator()
         return result.map { $0 ?? remaining.next() ?? "" }
+    }
+
+    public enum CustomLabelProblem: Equatable, Sendable {
+        case empty
+        case tooLong
+        /// It uses a character that is not among the label characters.
+        case notInAlphabet
+        /// It begins another chosen label of the same application, or the other way round,
+        /// so one of the two could never be typed.
+        case conflicts(with: String)
+    }
+
+    /// Brings typed text into the form of a label: uppercase letters only.
+    public static func normalized(customLabel text: String) -> String {
+        String(text.uppercased().filter(\.isLetter))
+    }
+
+    /// Why `label` cannot be chosen for an element, or nil when it can.
+    /// - Parameter otherCustomLabels: the labels chosen for the other elements of the same application.
+    public static func problem(withCustomLabel label: String, alphabet: String, otherCustomLabels: [String]) -> CustomLabelProblem? {
+        guard !label.isEmpty else { return .empty }
+        guard label.count <= maximumCustomLength else { return .tooLong }
+        let letters = Set(alphabet.uppercased())
+        guard label.allSatisfy(letters.contains) else { return .notInAlphabet }
+        if let other = otherCustomLabels.first(where: { $0.hasPrefix(label) || label.hasPrefix($0) }) {
+            return .conflicts(with: other)
+        }
+        return nil
     }
 
     private static func availableLabels(count: Int, alphabet: String, avoiding reserved: [String]) -> [String] {

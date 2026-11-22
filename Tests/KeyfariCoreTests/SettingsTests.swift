@@ -84,6 +84,18 @@ import Testing
         #expect(decoded.missionControlAutoHints)
     }
 
+    @Test func usageStatisticsAreOnUnlessSwitchedOff() throws {
+        #expect(Settings().usageStatisticsEnabled)
+        // The key the opt-in setting used before is not read, so an earlier build's "off" does not carry over.
+        let earlier = try JSONDecoder().decode(Settings.self, from: Data(#"{"statisticsEnabled": false}"#.utf8))
+        #expect(earlier.usageStatisticsEnabled)
+
+        var settings = Settings()
+        settings.usageStatisticsEnabled = false
+        let decoded = try JSONDecoder().decode(Settings.self, from: JSONEncoder().encode(settings))
+        #expect(!decoded.usageStatisticsEnabled)
+    }
+
     @Test func shortcutDisplayAndMatching() {
         let shortcut = Shortcut(keyCode: KeyCode.space, modifiers: [.command, .shift])
         #expect(shortcut.displayString == "⇧⌘Space")
