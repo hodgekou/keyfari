@@ -17,18 +17,59 @@ public enum ScrollEvent: Equatable, Sendable {
     case ignored
 }
 
+/// The letters that scroll. The other keys of scroll mode are fixed.
+public struct ScrollKeys: Equatable, Sendable {
+    public let left: Character
+    public let down: Character
+    public let up: Character
+    public let right: Character
+    public let halfPageDown: Character
+    public let halfPageUp: Character
+
+    public static let standardScroll = "hjkl"
+    public static let standardHalfPage = "du"
+    public static let standard = ScrollKeys(left: "h", down: "j", up: "k", right: "l", halfPageDown: "d", halfPageUp: "u")
+
+    private init(left: Character, down: Character, up: Character, right: Character, halfPageDown: Character, halfPageUp: Character) {
+        self.left = left
+        self.down = down
+        self.up = up
+        self.right = right
+        self.halfPageDown = halfPageDown
+        self.halfPageUp = halfPageUp
+    }
+
+    /// Reads the keys from the two settings, or returns nil when they cannot be used.
+    /// - Parameters:
+    ///   - scroll: four letters for left, down, up and right.
+    ///   - halfPage: two letters for half a page down and up.
+    ///
+    /// All six must be different letters, and none may be `g`, which goes to the top and the bottom.
+    public init?(scroll: String, halfPage: String) {
+        let scroll = Array(scroll.lowercased())
+        let halfPage = Array(halfPage.lowercased())
+        let all = scroll + halfPage
+        guard scroll.count == 4, halfPage.count == 2, Set(all).count == all.count,
+            all.allSatisfy({ $0.isLetter && $0.isASCII && $0 != "g" })
+        else { return nil }
+        self.init(left: scroll[0], down: scroll[1], up: scroll[2], right: scroll[3], halfPageDown: halfPage[0], halfPageUp: halfPage[1])
+    }
+}
+
 /// The input state machine of scroll mode.
 public struct ScrollSession: Sendable {
     /// How long the second `g` of `gg` may take, in seconds.
     public static let sequenceTimeout = 0.5
 
     public let areaCount: Int
+    public let keys: ScrollKeys
     public private(set) var areaIndex = 0
     private var firstGTime: Double?
     private var scrollingKey: UInt16?
 
-    public init(areaCount: Int) {
+    public init(areaCount: Int, keys: ScrollKeys = .standard) {
         self.areaCount = max(areaCount, 1)
+        self.keys = keys
     }
 
     /// `time` is a monotonic timestamp in seconds.
@@ -68,12 +109,12 @@ public struct ScrollSession: Sendable {
         }
 
         switch character {
-        case "h": return start(.left, stroke, dash: shift)
-        case "j": return start(.down, stroke, dash: shift)
-        case "k": return start(.up, stroke, dash: shift)
-        case "l": return start(.right, stroke, dash: shift)
-        case "d": return .halfPage(.down)
-        case "u": return .halfPage(.up)
+        case keys.left: return start(.left, stroke, dash: shift)
+        case keys.down: return start(.down, stroke, dash: shift)
+        case keys.up: return start(.up, stroke, dash: shift)
+        case keys.right: return start(.right, stroke, dash: shift)
+        case keys.halfPageDown: return .halfPage(.down)
+        case keys.halfPageUp: return .halfPage(.up)
         case "g":
             if shift { return .bottom }
             if let pendingG, time - pendingG <= Self.sequenceTimeout { return .top }

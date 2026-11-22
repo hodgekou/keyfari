@@ -236,10 +236,31 @@ struct SettingsView: View {
             RowDivider()
             ToggleRow("Reverse vertical", detail: nil, isOn: $store.settings.reverseVertical, tint: tint)
         }
+        let keys = store.effective
         Card("Keys", symbol: "keyboard", tint: tint) {
+            SettingRow("Scroll keys", detail: "Four letters: left, down, up, right") {
+                TextField(ScrollKeys.standardScroll, text: $store.settings.scrollKeys)
+                    .textFieldStyle(.roundedBorder)
+                    .font(.system(size: 13, design: .monospaced))
+                    .frame(width: 90)
+            }
+            RowDivider()
+            SettingRow("Half-page keys", detail: "Two letters: down, up") {
+                TextField(ScrollKeys.standardHalfPage, text: $store.settings.halfPageKeys)
+                    .textFieldStyle(.roundedBorder)
+                    .font(.system(size: 13, design: .monospaced))
+                    .frame(width: 90)
+            }
+            if ScrollKeys(scroll: store.settings.scrollKeys, halfPage: store.settings.halfPageKeys) == nil {
+                RowDivider()
+                Notice(
+                    "The six letters must all be different, and G is taken. The standard keys are in use for now.",
+                    symbol: "exclamationmark.triangle.fill", tint: .orange)
+            }
+            RowDivider()
             VStack(alignment: .leading, spacing: 10) {
-                KeyHint(keys: ["H", "J", "K", "L"], text: "Scroll left, down, up, right")
-                KeyHint(keys: ["D", "U"], text: "Half a page down, up")
+                KeyHint(keys: keys.scrollKeys.map { String($0).uppercased() }, text: "Scroll left, down, up, right")
+                KeyHint(keys: keys.halfPageKeys.map { String($0).uppercased() }, text: "Half a page down, up")
                 KeyHint(keys: ["G", "G"], text: "Top  ·  Shift-G for the bottom")
                 KeyHint(keys: ["Tab"], text: "Next scroll area  ·  0–9 to jump")
             }

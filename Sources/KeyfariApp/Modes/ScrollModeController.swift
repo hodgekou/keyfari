@@ -58,7 +58,10 @@ final class ScrollModeController {
                 return
             }
             self.areas = found
-            self.session = ScrollSession(areaCount: found.count)
+            self.session = ScrollSession(
+                areaCount: found.count,
+                keys: ScrollKeys(scroll: settings.scrollKeys, halfPage: settings.halfPageKeys) ?? .standard
+            )
             self.select(0)
         }
         return true

@@ -119,6 +119,18 @@ import Testing
         #expect(settings.validated().skippedVersion == nil)
     }
 
+    @Test func unusableScrollKeysFallBackTogether() {
+        var settings = Settings()
+        settings.scrollKeys = "DHTN"
+        settings.halfPageKeys = "EU"
+        #expect(settings.validated().scrollKeys == "dhtn")
+        #expect(settings.validated().halfPageKeys == "eu")
+
+        settings.halfPageKeys = "du"
+        #expect(settings.validated().scrollKeys == "hjkl")
+        #expect(settings.validated().halfPageKeys == "du")
+    }
+
     @Test func shortcutDisplayAndMatching() {
         let shortcut = Shortcut(keyCode: KeyCode.space, modifiers: [.command, .shift])
         #expect(shortcut.displayString == "⇧⌘Space")

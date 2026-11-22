@@ -10,6 +10,7 @@ All notable changes to Keyfari are recorded here. The format follows [Keep a Cha
 - The Stable Labels pane lists the remembered labels by how often they were used, most used first, and shows the count.
 - Keyfari checks once a day whether a newer version exists and offers to open its download page. A version can be skipped, and the check can be switched off in the General pane or from the offer itself. It is the only network request the app makes; nothing is downloaded and nothing about the user is sent. "Check for Updates…" in the menu checks at once.
 - Search mode searches every visible window on every display too, after the focused window's elements, and brings a window in the background forward before clicking in it.
+- The letters that scroll, and the two for half a page, can be changed in the Scrolling pane.
 
 ## [0.2.0] - 2026-11-22
 
