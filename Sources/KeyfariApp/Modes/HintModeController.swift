@@ -94,6 +94,8 @@ final class HintModeController {
     /// The frontmost application of this query.
     private var bundleID = ""
     private var session: HintSession?
+    /// Where a drag starts, once the user picked an element up. The next label ends the drag.
+    private var dragStart: Target?
     private var isActive = false
 
     /// - Parameters:
@@ -160,6 +162,7 @@ final class HintModeController {
 
     private func clearState() {
         session = nil
+        dragStart = nil
         targets = []
         labels = []
         reservedLabels = []
@@ -418,7 +421,18 @@ final class HintModeController {
             SoundFeedback.warningIfEnabled(settings.warningSoundEnabled)
         case .rotate:
             overlay.rotate()
+        case let .pickedUp(index):
+            // Nothing is sent yet: the drag happens once its end is known, so Esc undoes it for free.
+            dragStart = targets[index]
+            current.clearPrefix()
+            session = current
+            overlay.update(prefix: "")
+            overlay.markDragStart(at: targets[index].element.clickPoint)
         case let .matched(index, action):
+            if let start = dragStart {
+                drag(from: start, to: targets[index])
+                return
+            }
             let target = targets[index]
             if settings.stableLabels, !target.isSecondary {
                 memory?.remember(labels[index], for: target.element, bundleID: target.bundleID)
@@ -428,6 +442,17 @@ final class HintModeController {
             stop()
         case .ignored:
             break
+        }
+    }
+
+    private func drag(from start: Target, to end: Target) {
+        let recordClick = recordClick
+        let playsSound = settings.successSoundEnabled
+        stop()
+        Task {
+            await MouseSynthesizer.drag(from: start.element.clickPoint, to: end.element.clickPoint)
+            if playsSound { SoundFeedback.success() }
+            recordClick(start.bundleID, 1, true)
         }
     }
 

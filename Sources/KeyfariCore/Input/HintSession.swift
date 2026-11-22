@@ -40,6 +40,8 @@ public enum HintEvent: Equatable, Sendable {
     case rejected
     /// Cycle the stacking order of overlapping labels.
     case rotate
+    /// The element is the start of a drag: nothing is clicked, and the next label names where it ends.
+    case pickedUp(index: Int)
     case matched(index: Int, action: ClickAction)
     case exit
     case ignored
@@ -47,6 +49,9 @@ public enum HintEvent: Equatable, Sendable {
 
 /// The input state machine of label click mode.
 public struct HintSession: Sendable {
+    /// Held on the last letter of a label to start a drag there.
+    public static let pickUpModifiers: Modifiers = [.control, .shift]
+
     public private(set) var labels: [String]
     public private(set) var prefix = ""
 
@@ -59,6 +64,11 @@ public struct HintSession: Sendable {
     /// existing labels they must still be prefix-free.
     public mutating func append(labels more: [String]) {
         labels.append(contentsOf: more)
+    }
+
+    /// Forgets what was typed, so a second label can follow the first.
+    public mutating func clearPrefix() {
+        prefix = ""
     }
 
     public var visible: [Int] {
@@ -91,6 +101,9 @@ public struct HintSession: Sendable {
         guard !matching.isEmpty else { return .rejected }
 
         if let index = matching.first(where: { labels[$0] == candidate }) {
+            if stroke.modifiers == Self.pickUpModifiers {
+                return .pickedUp(index: index)
+            }
             return .matched(index: index, action: ClickAction(modifiers: stroke.modifiers))
         }
         prefix = candidate

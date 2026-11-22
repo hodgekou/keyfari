@@ -129,6 +129,24 @@ public final class OverlayController {
         }
     }
 
+    /// Marks the place a drag starts from with a ring, on top of whatever is shown.
+    public func markDragStart(at point: CGPoint) {
+        guard let placement = place(CGRect(origin: point, size: .zero)) else { return }
+        let radius: CGFloat = 13
+        let ring = CAShapeLayer()
+        ring.frame = CGRect(x: placement.origin.x - radius, y: placement.origin.y - radius, width: radius * 2, height: radius * 2)
+        ring.path = CGPath(ellipseIn: CGRect(x: 2, y: 2, width: radius * 2 - 4, height: radius * 2 - 4), transform: nil)
+        ring.fillColor = Self.green.withAlphaComponent(0.25).cgColor
+        ring.strokeColor = Self.green.cgColor
+        ring.lineWidth = 3
+        ring.zPosition = 20_000
+        CATransaction.begin()
+        CATransaction.setDisableActions(true)
+        placement.host.addSublayer(ring)
+        CATransaction.commit()
+        decorations.append(ring)
+    }
+
     /// Adds labels to the ones already shown, for elements that were found later.
     /// `typedPrefix` is what the user has typed so far; labels that do not start with it stay hidden.
     public func appendHints(_ items: [HintItem], typedPrefix: String) {
