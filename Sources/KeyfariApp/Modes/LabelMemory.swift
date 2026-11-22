@@ -40,6 +40,12 @@ final class LabelMemory {
         save()
     }
 
+    /// Replaces every remembered label, as when settings are imported.
+    func replaceAll(with entries: [StableLabelEntry]) {
+        book = StableLabelBook(entries: entries)
+        save()
+    }
+
     func removeAll() {
         book.removeAll()
         save()

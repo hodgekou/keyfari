@@ -13,6 +13,9 @@ struct SettingsView: View {
     var checkForUpdates: (@MainActor () -> Void)?
     /// Puts the diagnostic information on the clipboard.
     var copyDiagnostics: (@MainActor () -> Void)?
+    /// Save the settings and remembered labels to a file, and read them back from one.
+    var exportSettings: (@MainActor () -> Void)?
+    var importSettings: (@MainActor () -> Void)?
     /// Opens the welcome guide again. Nil where there is no application to open it, as in a rendered preview.
     var openWelcome: (@MainActor () -> Void)?
 
@@ -127,6 +130,16 @@ struct SettingsView: View {
             ToggleRow(
                 "Show menu bar icon", detail: "When hidden, open Keyfari again to get back to these settings",
                 isOn: $store.settings.showMenuBarIcon, tint: tint)
+        }
+        Card("Backup", symbol: "externaldrive.fill", tint: tint) {
+            SettingRow("Settings and remembered labels", detail: "Save them to a file to take to another Mac. Statistics are not included") {
+                HStack(spacing: 8) {
+                    Button(tr("Export…")) { exportSettings?() }
+                        .buttonStyle(.bordered)
+                    Button(tr("Import…")) { importSettings?() }
+                        .buttonStyle(.bordered)
+                }
+            }
         }
         Card("Troubleshooting", symbol: "stethoscope", tint: tint) {
             SettingRow("Diagnostic information", detail: "Versions, displays, permissions and the names of changed settings, for a bug report") {
