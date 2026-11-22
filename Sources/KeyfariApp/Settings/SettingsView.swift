@@ -184,6 +184,46 @@ struct SettingsView: View {
             ToggleRow(
                 "Chain clicks", detail: "Stay in the mode after a click, until Esc or a text field", isOn: $store.settings.chainClicks, tint: tint)
         }
+        Card("Fixed label bindings", symbol: "pin.fill", tint: tint) {
+            VStack(alignment: .leading, spacing: 8) {
+                Text(
+                    tr(
+                        "In hint mode, hold Control and Option while typing a label to bind it to that element. Fixed labels take priority over automatic label memory. Only uniquely identifiable accessibility controls can be pinned."
+                    )
+                )
+                .font(.system(size: 11)).foregroundStyle(.secondary)
+                .fixedSize(horizontal: false, vertical: true)
+                .padding(.horizontal, 12).padding(.top, 10)
+                let bindings = store.labelMemory.pinnedBindings
+                if bindings.isEmpty {
+                    Text(tr("No fixed labels yet"))
+                        .font(.system(size: 12)).foregroundStyle(.secondary)
+                        .padding(.horizontal, 12).padding(.bottom, 10)
+                } else {
+                    ForEach(bindings) { binding in
+                        HStack(spacing: 10) {
+                            Text(binding.label)
+                                .font(.system(size: 13, weight: .semibold, design: .monospaced))
+                                .frame(width: 46, alignment: .leading)
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(binding.targetDescription).font(.system(size: 12)).lineLimit(1)
+                                Text(applicationName(binding.bundleID) + " · " + binding.bundleID)
+                                    .font(.system(size: 10)).foregroundStyle(.secondary).lineLimit(1)
+                            }
+                            Spacer(minLength: 4)
+                            Button {
+                                store.labelMemory.removePin(id: binding.id)
+                            } label: {
+                                Image(systemName: "minus.circle.fill").foregroundStyle(.red.opacity(0.85))
+                            }
+                            .buttonStyle(.plain)
+                            .help(tr("Remove"))
+                        }
+                        .padding(.horizontal, 12).padding(.vertical, 7)
+                    }
+                }
+            }
+        }
     }
 
     @ViewBuilder
@@ -361,6 +401,10 @@ struct SettingsView: View {
     }
 
     // MARK: Bindings
+
+    private func applicationName(_ bundleID: String) -> String {
+        ApplicationInfo(bundleID: bundleID).name
+    }
 
     private var scrollSpeed: Binding<Double> {
         Binding(

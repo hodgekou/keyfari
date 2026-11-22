@@ -15,6 +15,7 @@ final class SettingsStore {
     @ObservationIgnored private let defaults: UserDefaults
     @ObservationIgnored private let log = Logger(subsystem: "app.keyfari.Keyfari", category: "settings")
     let usageStats: UsageStatsStore
+    let labelMemory: LabelMemory
 
     /// Called after the settings changed.
     @ObservationIgnored var onChange: (@MainActor () -> Void)?
@@ -38,6 +39,7 @@ final class SettingsStore {
     init(defaults: UserDefaults = .standard) {
         self.defaults = defaults
         usageStats = UsageStatsStore(defaults: defaults)
+        labelMemory = LabelMemory(defaults: defaults)
         if let data = defaults.data(forKey: Self.key),
             let stored = try? JSONDecoder().decode(Settings.self, from: data)
         {

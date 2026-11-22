@@ -40,6 +40,8 @@ public enum HintEvent: Equatable, Sendable {
     case rejected
     /// Cycle the stacking order of overlapping labels.
     case rotate
+    /// Pin the matching label to this element instead of clicking it.
+    case pin(index: Int)
     case matched(index: Int, action: ClickAction)
     case exit
     case ignored
@@ -91,6 +93,9 @@ public struct HintSession: Sendable {
         guard !matching.isEmpty else { return .rejected }
 
         if let index = matching.first(where: { labels[$0] == candidate }) {
+            if stroke.modifiers == [.control, .option] {
+                return .pin(index: index)
+            }
             return .matched(index: index, action: ClickAction(modifiers: stroke.modifiers))
         }
         prefix = candidate
