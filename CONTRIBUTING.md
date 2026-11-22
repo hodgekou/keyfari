@@ -88,10 +88,12 @@ To set the key up once, as a maintainer:
 ```sh
 swift build                                               # downloads Sparkle and its tools
 .build/artifacts/sparkle/Sparkle/bin/generate_keys        # creates the key in your keychain and prints the public half
-.build/artifacts/sparkle/Sparkle/bin/generate_keys -x sparkle-private-key.txt   # exports the private half
+.build/artifacts/sparkle/Sparkle/bin/generate_keys -x ~/sparkle-private-key.txt   # exports the private half, outside the repository
+gh secret set SPARKLE_PRIVATE_KEY --repo hodgekou/keyfari < ~/sparkle-private-key.txt
+rm ~/sparkle-private-key.txt
 ```
 
-Put the public key into `Resources/Info.plist`, store the contents of the exported file as the secret `SPARKLE_PRIVATE_KEY`, and delete the file.
+Put the public key into `Resources/Info.plist`. Export the private half to a place outside the repository, as above, so it cannot be committed by accident; a key that was ever pushed is burnt and has to be replaced.
 
 ## Licence
 

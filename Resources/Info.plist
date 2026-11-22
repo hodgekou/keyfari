@@ -37,7 +37,7 @@
 	<key>SUFeedURL</key>
 	<string>https://hodgekou.github.io/keyfari/appcast.xml</string>
 	<key>SUPublicEDKey</key>
-	<string>wqJI+Th1uTRW8NIU/KIIcdUm2OK57Xd4G03HB7DK9u8=</string>
+	<string></string>
 	<key>NSHumanReadableCopyright</key>
 	<string>GPL-3.0. Based on Vimac, Copyright © 2019–2021 Dexter Leng.</string>
 </dict>

@@ -5,3 +5,7 @@ build/
 xcuserdata/
 DerivedData/
 .DS_Store
+# Exported signing keys must never be committed.
+*private-key*
+*.pem
+*.p12
