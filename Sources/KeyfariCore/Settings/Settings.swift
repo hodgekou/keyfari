@@ -30,6 +30,24 @@ public enum HintTheme: String, Codable, Sendable, CaseIterable {
     }
 }
 
+/// What one application does differently from the general settings. Nil follows the general setting.
+public struct AppOverride: Codable, Equatable, Sendable {
+    public var visionMode: VisionMode?
+    public var iconDetection: Bool?
+    public var compatibilityMode: Bool?
+
+    public init(visionMode: VisionMode? = nil, iconDetection: Bool? = nil, compatibilityMode: Bool? = nil) {
+        self.visionMode = visionMode
+        self.iconDetection = iconDetection
+        self.compatibilityMode = compatibilityMode
+    }
+
+    /// Whether it changes nothing, in which case it need not be kept.
+    public var isEmpty: Bool {
+        visionMode == nil && iconDetection == nil && compatibilityMode == nil
+    }
+}
+
 /// User preferences. Stored as one JSON document.
 public struct Settings: Codable, Equatable, Sendable {
     public var hintAlphabet = HintLabelGenerator.defaultAlphabet
@@ -58,6 +76,11 @@ public struct Settings: Codable, Equatable, Sendable {
     /// Also label shapes in the window's pixels that look like icon buttons. Experimental.
     public var iconDetection = false
     public var language = AppLanguage.system
+    /// Tell applications that an assistive app is present, which some need before they expose
+    /// their interface. It can disturb window managers, so it is off unless asked for.
+    public var compatibilityMode = false
+    /// Settings that single applications override, by bundle identifier.
+    public var appOverrides: [String: AppOverride] = [:]
     /// Collect aggregate usage counts on this Mac only.
     public var usageStatisticsEnabled = true
     public var successSoundEnabled = false
@@ -109,6 +132,8 @@ public struct Settings: Codable, Equatable, Sendable {
         stableLabels = try container.decodeIfPresent(Bool.self, forKey: .stableLabels) ?? fallback.stableLabels
         visionMode = (try? container.decodeIfPresent(VisionMode.self, forKey: .visionMode)) ?? fallback.visionMode
         iconDetection = try container.decodeIfPresent(Bool.self, forKey: .iconDetection) ?? fallback.iconDetection
+        compatibilityMode = try container.decodeIfPresent(Bool.self, forKey: .compatibilityMode) ?? fallback.compatibilityMode
+        appOverrides = (try? container.decodeIfPresent([String: AppOverride].self, forKey: .appOverrides)) ?? fallback.appOverrides
         language = (try? container.decodeIfPresent(AppLanguage.self, forKey: .language)) ?? fallback.language
         usageStatisticsEnabled = try container.decodeIfPresent(Bool.self, forKey: .usageStatisticsEnabled) ?? fallback.usageStatisticsEnabled
         successSoundEnabled = try container.decodeIfPresent(Bool.self, forKey: .successSoundEnabled) ?? fallback.successSoundEnabled
@@ -134,6 +159,17 @@ public struct Settings: Codable, Equatable, Sendable {
         case .previous: \.previousSpaceShortcut
         case .next: \.nextSpaceShortcut
         }
+    }
+
+    /// The settings in force while the application `bundleID` is in front: the general ones
+    /// with that application's overrides on top.
+    public func resolved(for bundleID: String?) -> Settings {
+        guard let bundleID, let override = appOverrides[bundleID] else { return self }
+        var result = self
+        if let visionMode = override.visionMode { result.visionMode = visionMode }
+        if let iconDetection = override.iconDetection { result.iconDetection = iconDetection }
+        if let compatibilityMode = override.compatibilityMode { result.compatibilityMode = compatibilityMode }
+        return result
     }
 
     /// A copy in which every out-of-range value is replaced by its default.
@@ -175,6 +211,9 @@ public struct Settings: Codable, Equatable, Sendable {
         if !(0...60).contains(scrollIdleTimeout) { result.scrollIdleTimeout = fallback.scrollIdleTimeout }
         if !(1...100).contains(scrollSpeed) { result.scrollSpeed = fallback.scrollSpeed }
         if !(0.25...10).contains(dashMultiplier) { result.dashMultiplier = fallback.dashMultiplier }
+        // An override that changes nothing, or belongs to no application, is not kept.
+        result.appOverrides = appOverrides.filter { !$0.key.filter { !$0.isWhitespace }.isEmpty && !$0.value.isEmpty }
+
         var seen = Set<String>()
         result.ignoredBundleIDs =
             ignoredBundleIDs

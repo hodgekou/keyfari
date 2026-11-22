@@ -177,6 +177,9 @@ struct SettingsView: View {
         Card("Ignored applications", symbol: "nosign", tint: tint) {
             IgnoredApplicationsList(store: store, tint: tint)
         }
+        Card("Per-application settings", symbol: "slider.horizontal.3", tint: tint) {
+            AppOverridesList(store: store, tint: tint)
+        }
         Card("Sound effects", symbol: "speaker.wave.2.fill", tint: tint) {
             ToggleRow(
                 "Click sounds", detail: "Play a sound after a successful click", isOn: $store.settings.successSoundEnabled,
@@ -238,6 +241,10 @@ struct SettingsView: View {
                 isOn: $store.settings.hintAllWindows, tint: tint)
             RowDivider()
             ToggleRow("Label the Dock", detail: "The icons in the Dock get labels while it shows", isOn: $store.settings.hintDock, tint: tint)
+            RowDivider()
+            ToggleRow(
+                "Compatibility mode", detail: "For Firefox and others that show their interface only to assistive apps. May disturb window managers",
+                isOn: $store.settings.compatibilityMode, tint: tint)
             RowDivider()
             ToggleRow(
                 "Chain clicks", detail: "Stay in the mode after a click, until Esc or a text field", isOn: $store.settings.chainClicks, tint: tint)

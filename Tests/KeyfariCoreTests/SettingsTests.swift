@@ -137,6 +137,32 @@ import Testing
         #expect(settings.validated().scrollIdleTimeout == 0)
     }
 
+    @Test func anApplicationOverridesOnlyWhatItNames() {
+        var settings = Settings()
+        settings.visionMode = .always
+        settings.appOverrides = ["org.mozilla.firefox": AppOverride(visionMode: .off, compatibilityMode: true)]
+
+        let firefox = settings.resolved(for: "org.mozilla.firefox")
+        #expect(firefox.visionMode == .off)
+        #expect(firefox.compatibilityMode)
+        #expect(!firefox.iconDetection)
+        // Everything else is the general setting.
+        #expect(firefox.hintAlphabet == settings.hintAlphabet)
+
+        #expect(settings.resolved(for: "com.apple.Safari") == settings)
+        #expect(settings.resolved(for: nil) == settings)
+    }
+
+    @Test func overridesThatChangeNothingAreNotKept() throws {
+        var settings = Settings()
+        #expect(!settings.compatibilityMode)
+        settings.appOverrides = ["a": AppOverride(), "  ": AppOverride(iconDetection: true), "b": AppOverride(iconDetection: false)]
+        #expect(settings.validated().appOverrides == ["b": AppOverride(iconDetection: false)])
+
+        let decoded = try JSONDecoder().decode(Settings.self, from: JSONEncoder().encode(settings.validated()))
+        #expect(decoded.appOverrides == ["b": AppOverride(iconDetection: false)])
+    }
+
     @Test func shortcutDisplayAndMatching() {
         let shortcut = Shortcut(keyCode: KeyCode.space, modifiers: [.command, .shift])
         #expect(shortcut.displayString == "⇧⌘Space")

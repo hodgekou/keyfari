@@ -20,6 +20,8 @@ public struct AXElementQuery: ElementQuerying {
     public var messagingTimeout: Float = 0.25
     /// How long the very first activation waits for the menu bar extras of other applications.
     public var extrasDeadline: Duration = .milliseconds(150)
+    /// Whether to announce an assistive app to the frontmost application; see `AppAccessibilityActivator`.
+    public var usesEnhancedInterface = false
     /// Whether the icons in the Dock get labels too.
     public var includesDock = true
 
@@ -36,7 +38,7 @@ public struct AXElementQuery: ElementQuerying {
 
         let application = AXElement.application(pid: pid)
         application.setMessagingTimeout(seconds: messagingTimeout)
-        AppAccessibilityActivator.prepare(application: application, pid: pid, bundleURL: bundleURL)
+        AppAccessibilityActivator.prepare(application: application, pid: pid, bundleURL: bundleURL, enhanced: usesEnhancedInterface)
 
         var elements = Self.menuBarItems(of: application)
 
