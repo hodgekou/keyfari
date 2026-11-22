@@ -63,13 +63,16 @@ public struct ScrollSession: Sendable {
 
     public let areaCount: Int
     public let keys: ScrollKeys
+    /// Whether the arrow keys scroll, instead of going from one scroll area to the next.
+    public let arrowsScroll: Bool
     public private(set) var areaIndex = 0
     private var firstGTime: Double?
     private var scrollingKey: UInt16?
 
-    public init(areaCount: Int, keys: ScrollKeys = .standard) {
+    public init(areaCount: Int, keys: ScrollKeys = .standard, arrowsScroll: Bool = false) {
         self.areaCount = max(areaCount, 1)
         self.keys = keys
+        self.arrowsScroll = arrowsScroll
     }
 
     /// `time` is a monotonic timestamp in seconds.
@@ -91,9 +94,13 @@ public struct ScrollSession: Sendable {
         case KeyCode.tab:
             return select(areaIndex + (shift ? -1 : 1))
         case KeyCode.downArrow:
-            return select(areaIndex + 1)
+            return arrowsScroll ? start(.down, stroke, dash: shift) : select(areaIndex + 1)
         case KeyCode.upArrow:
-            return select(areaIndex - 1)
+            return arrowsScroll ? start(.up, stroke, dash: shift) : select(areaIndex - 1)
+        case KeyCode.leftArrow where arrowsScroll:
+            return start(.left, stroke, dash: shift)
+        case KeyCode.rightArrow where arrowsScroll:
+            return start(.right, stroke, dash: shift)
         default:
             break
         }

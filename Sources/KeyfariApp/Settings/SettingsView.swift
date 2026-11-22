@@ -247,6 +247,25 @@ struct SettingsView: View {
             RowDivider()
             ToggleRow("Reverse vertical", detail: nil, isOn: $store.settings.reverseVertical, tint: tint)
         }
+        Card("Behaviour", symbol: "hand.tap.fill", tint: tint) {
+            SettingRow("Arrow keys", detail: "Go to another scroll area, or scroll like the scroll keys") {
+                Picker("", selection: $store.settings.arrowKeysScroll) {
+                    Text(tr("Select")).tag(false)
+                    Text(tr("Scroll")).tag(true)
+                }
+                .pickerStyle(.segmented)
+                .labelsHidden()
+                .frame(width: 180)
+            }
+            RowDivider()
+            ToggleRow(
+                "Show scroll area numbers", detail: "The number next to the outline, for jumping with 0–9",
+                isOn: $store.settings.showScrollAreaNumbers, tint: tint)
+            RowDivider()
+            SliderRow("Leave when idle", value: $store.settings.scrollIdleTimeout, range: 0...30, step: 1, tint: tint) {
+                $0 == 0 ? tr("Never") : tr("%d s", Int($0))
+            }
+        }
         let keys = store.effective
         Card("Keys", symbol: "keyboard", tint: tint) {
             SettingRow("Scroll keys", detail: "Four letters: left, down, up, right") {

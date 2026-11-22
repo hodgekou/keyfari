@@ -104,4 +104,19 @@ import Testing
         #expect(session.keyDown(KeyStroke(keyCode: g, modifiers: .shift), at: 0) == .bottom)
         #expect(session.keyDown(KeyStroke(keyCode: n, modifiers: .control), at: 0) == .selectArea(0))
     }
+
+    @Test func arrowKeysSelectAreasUnlessToldToScroll() {
+        var selecting = ScrollSession(areaCount: 3)
+        #expect(selecting.keyDown(KeyStroke(keyCode: KeyCode.downArrow), at: 0) == .selectArea(1))
+        #expect(selecting.keyDown(KeyStroke(keyCode: KeyCode.leftArrow), at: 0) == .ignored)
+
+        var scrolling = ScrollSession(areaCount: 3, arrowsScroll: true)
+        #expect(scrolling.keyDown(KeyStroke(keyCode: KeyCode.downArrow), at: 0) == .start(.down, dash: false))
+        #expect(scrolling.keyUp(keyCode: KeyCode.downArrow) == .stop)
+        #expect(scrolling.keyDown(KeyStroke(keyCode: KeyCode.upArrow, modifiers: .shift), at: 0) == .start(.up, dash: true))
+        #expect(scrolling.keyDown(KeyStroke(keyCode: KeyCode.leftArrow), at: 0) == .start(.left, dash: false))
+        #expect(scrolling.keyDown(KeyStroke(keyCode: KeyCode.rightArrow), at: 0) == .start(.right, dash: false))
+        // The areas are still reached with Tab.
+        #expect(scrolling.keyDown(KeyStroke(keyCode: KeyCode.tab), at: 0) == .selectArea(1))
+    }
 }

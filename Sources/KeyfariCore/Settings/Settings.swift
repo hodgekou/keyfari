@@ -66,6 +66,12 @@ public struct Settings: Codable, Equatable, Sendable {
     public var scrollKeys = ScrollKeys.standardScroll
     /// Two letters that scroll half a page down and up.
     public var halfPageKeys = ScrollKeys.standardHalfPage
+    /// Whether the arrow keys scroll, instead of going from one scroll area to the next.
+    public var arrowKeysScroll = false
+    /// Show each scroll area's number next to its outline.
+    public var showScrollAreaNumbers = true
+    /// Leave scroll mode after this many seconds without a key. Zero means never.
+    public var scrollIdleTimeout = 0.0
     /// Pixels scrolled per frame while a scroll key is held.
     public var scrollSpeed = 20
     /// Speed factor applied while Shift is held.
@@ -107,6 +113,9 @@ public struct Settings: Codable, Equatable, Sendable {
         warningSoundEnabled = try container.decodeIfPresent(Bool.self, forKey: .warningSoundEnabled) ?? fallback.warningSoundEnabled
         scrollKeys = try container.decodeIfPresent(String.self, forKey: .scrollKeys) ?? fallback.scrollKeys
         halfPageKeys = try container.decodeIfPresent(String.self, forKey: .halfPageKeys) ?? fallback.halfPageKeys
+        arrowKeysScroll = try container.decodeIfPresent(Bool.self, forKey: .arrowKeysScroll) ?? fallback.arrowKeysScroll
+        showScrollAreaNumbers = try container.decodeIfPresent(Bool.self, forKey: .showScrollAreaNumbers) ?? fallback.showScrollAreaNumbers
+        scrollIdleTimeout = try container.decodeIfPresent(Double.self, forKey: .scrollIdleTimeout) ?? fallback.scrollIdleTimeout
         scrollSpeed = try container.decodeIfPresent(Int.self, forKey: .scrollSpeed) ?? fallback.scrollSpeed
         dashMultiplier = try container.decodeIfPresent(Double.self, forKey: .dashMultiplier) ?? fallback.dashMultiplier
         reverseHorizontal = try container.decodeIfPresent(Bool.self, forKey: .reverseHorizontal) ?? fallback.reverseHorizontal
@@ -160,6 +169,7 @@ public struct Settings: Codable, Equatable, Sendable {
             result.scrollKeys = scrollKeys.lowercased()
             result.halfPageKeys = halfPageKeys.lowercased()
         }
+        if !(0...60).contains(scrollIdleTimeout) { result.scrollIdleTimeout = fallback.scrollIdleTimeout }
         if !(1...100).contains(scrollSpeed) { result.scrollSpeed = fallback.scrollSpeed }
         if !(0.25...10).contains(dashMultiplier) { result.dashMultiplier = fallback.dashMultiplier }
         var seen = Set<String>()
