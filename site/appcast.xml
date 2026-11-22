@@ -6,6 +6,36 @@
     <description>Releases of Keyfari.</description>
     <language>en</language>
     <item>
+      <title>0.4.0</title>
+      <pubDate>Sun, 22 Nov 2026 09:45:38 +0000</pubDate>
+      <link>https://github.com/hodgekou/keyfari/releases/tag/v0.4.0</link>
+      <sparkle:version>0.4.0</sparkle:version>
+      <sparkle:shortVersionString>0.4.0</sparkle:shortVersionString>
+      <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
+      <description><![CDATA[
+<h3>Added</h3>
+<ul>
+<li>Scroll mode: the arrow keys can scroll instead of selecting a scroll area, the area numbers can be hidden, and the mode can leave by itself after a time without a key.</li>
+<li>A label that the pointer would cover is drawn next to the pointer instead.</li>
+<li>The menu bar icon can be hidden; opening Keyfari again then opens the settings.</li>
+<li>&quot;Copy&quot; under Troubleshooting in the General pane puts versions, displays, permissions and the names of changed settings on the clipboard, for a bug report.</li>
+<li>The Stats pane shows a calendar of the last half year, one square a day, shaded by how much Keyfari was used.</li>
+<li>The settings and the remembered labels can be exported to a file and imported again, for moving to another Mac. Statistics are not part of the file.</li>
+<li>A compatibility mode makes applications such as Firefox, which show their interface only to assistive apps, usable. It is off by default because it can disturb window managers.</li>
+<li>Single applications can override text detection, icon detection and the compatibility mode, under &quot;Per-application settings&quot; in the General pane.</li>
+</ul>
+<h3>Changed</h3>
+<ul>
+<li>Releases now share a stable signing identity so Accessibility and Screen Recording permissions persist across updates. When upgrading from 0.3.0 or earlier, macOS may ask you to grant these permissions once more.</li>
+</ul>
+<h3>Removed</h3>
+<ul>
+<li>Remove the offer to open the download page for a new version. Every release installs updates itself now; a build without the update key no longer looks for updates.</li>
+</ul>
+]]></description>
+      <enclosure url="https://github.com/hodgekou/keyfari/releases/download/v0.4.0/Keyfari-0.4.0.dmg" sparkle:edSignature="g7e7pExIVQj4JlgGfyBfs7TJtvg/aMUJyZJFl0oQqSOgP1WnzpUGMF4Ju9M28p0OI+6LCWac0bjkvSRsqpzaBQ==" length="3550208" type="application/octet-stream"/>
+    </item>
+    <item>
       <title>0.3.0</title>
       <pubDate>Sun, 22 Nov 2026 08:01:51 +0000</pubDate>
       <link>https://github.com/hodgekou/keyfari/releases/tag/v0.3.0</link>
