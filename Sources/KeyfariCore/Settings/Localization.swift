@@ -226,6 +226,15 @@ public enum Localizer {
             chinese: "不只是当前窗口。其他显示器上的窗口使用较长的标签", japanese: "フォーカスのあるウインドウ以外にも。ほかのディスプレイのウインドウには長めのラベルが付きます"),
         "Label the Dock": Entry(chinese: "给 Dock 打标签", japanese: "Dock にラベルを付ける"),
         "The icons in the Dock get labels while it shows": Entry(chinese: "程序坞显示时,里面的图标也有标签", japanese: "Dock が表示されているあいだ、アイコンにもラベルが付きます"),
+        "Compatibility mode": Entry(chinese: "兼容模式", japanese: "互換モード"),
+        "For Firefox and others that show their interface only to assistive apps. May disturb window managers": Entry(
+            chinese: "用于 Firefox 等只向辅助应用暴露界面的应用。可能干扰窗口管理工具", japanese: "Firefox など、支援アプリにだけ画面を公開するアプリ向け。ウインドウ管理ツールに影響することがあります"),
+        "Per-application settings": Entry(chinese: "按应用设置", japanese: "アプリごとの設定"),
+        "Same as general": Entry(chinese: "跟随通用设置", japanese: "一般設定に従う"),
+        "On": Entry(chinese: "开启", japanese: "オン"),
+        "An application listed here uses its own choices while it is in front. What is left at “Same as general” follows the settings above.": Entry(
+            chinese: "列在这里的应用位于前台时使用它自己的选择,保持“跟随通用设置”的项目仍按上面的设置。",
+            japanese: "ここに追加したアプリは、最前面にあるあいだ独自の設定を使います。「一般設定に従う」のままの項目は上の設定に従います。"),
         "Chain clicks": Entry(chinese: "连续点击", japanese: "連続クリック"),
         "Stay in the mode after a click, until Esc or a text field": Entry(
             chinese: "点击后不退出模式,直到按 Esc 或点到输入框", japanese: "クリック後もモードを続ける(Esc またはテキスト欄をクリックするまで)"),

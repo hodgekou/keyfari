@@ -170,7 +170,8 @@ final class ModeCoordinator {
             return refuse("the frontmost application is missing, ignored, or Keyfari itself")
         }
 
-        let settings = store.effective
+        // The frontmost application may do some things its own way.
+        let settings = store.effective.resolved(for: application?.bundleIdentifier)
         let target: @MainActor () -> ModeTarget? = { [weak self] in self?.currentTarget() }
         let recordClick: @MainActor (String, Int, Bool) -> Void = { [weak self] bundleID, count, isNewAction in
             self?.store.recordAction(bundleID: bundleID, clicks: count, isNewAction: isNewAction)
@@ -240,9 +241,9 @@ final class ModeCoordinator {
         guard let target = currentTarget() else {
             return refuse("the frontmost application is missing, ignored, or Keyfari itself")
         }
-        let settings = store.effective
-        let query = elementQuery(settings)
         let application = target.application
+        let settings = store.effective.resolved(for: application.bundleIdentifier)
+        let query = elementQuery(settings)
         let frontmost = application.bundleIdentifier ?? ""
 
         repeatTask?.cancel()
@@ -273,6 +274,7 @@ final class ModeCoordinator {
     private func elementQuery(_ settings: Settings) -> AXElementQuery {
         var query = AXElementQuery()
         query.includesDock = settings.hintDock
+        query.usesEnhancedInterface = settings.compatibilityMode
         return query
     }
 
