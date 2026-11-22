@@ -96,6 +96,14 @@ import Testing
         #expect(!decoded.usageStatisticsEnabled)
     }
 
+    @Test func allVisibleWindowsAreLabelledUnlessSwitchedOff() throws {
+        #expect(Settings().hintAllWindows)
+        var settings = Settings()
+        settings.hintAllWindows = false
+        let decoded = try JSONDecoder().decode(Settings.self, from: JSONEncoder().encode(settings))
+        #expect(!decoded.hintAllWindows)
+    }
+
     @Test func shortcutDisplayAndMatching() {
         let shortcut = Shortcut(keyCode: KeyCode.space, modifiers: [.command, .shift])
         #expect(shortcut.displayString == "⇧⌘Space")

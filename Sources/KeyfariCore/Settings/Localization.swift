@@ -179,6 +179,9 @@ public enum Localizer {
             chinese: "%@ 未保存:标签只能使用你设置的标签字符 %@。", japanese: "%@ は保存されません。ラベルに使えるのはラベルの文字 %@ だけです。"),
         "%@ is not saved: it would clash with the label %@ chosen for another element of this application.": Entry(
             chinese: "%@ 未保存:它与本应用中另一个元素的自定义标签 %@ 冲突。", japanese: "%@ は保存されません。このアプリの別の要素に指定したラベル %@ と衝突します。"),
+        "Label all visible windows": Entry(chinese: "给所有可见窗口打标签", japanese: "見えているすべてのウインドウにラベルを付ける"),
+        "Not only the focused one. Windows on other displays get longer labels": Entry(
+            chinese: "不只是当前窗口。其他显示器上的窗口使用较长的标签", japanese: "フォーカスのあるウインドウ以外にも。ほかのディスプレイのウインドウには長めのラベルが付きます"),
         "Chain clicks": Entry(chinese: "连续点击", japanese: "連続クリック"),
         "Stay in the mode after a click, until Esc or a text field": Entry(
             chinese: "点击后不退出模式,直到按 Esc 或点到输入框", japanese: "クリック後もモードを続ける(Esc またはテキスト欄をクリックするまで)"),

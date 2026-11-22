@@ -80,6 +80,45 @@ import Testing
         #expect(labels == ["D", "S"])
     }
 
+    @Test func theFirstElementsGetTheShortLabels() {
+        // Six elements over three letters: some labels have one letter, the rest two.
+        let labels = StableLabels.assign(fingerprints: [String?](repeating: nil, count: 6), alphabet: "sdf", memory: [:])
+        #expect(Set(labels).count == 6)
+        #expect(labels.map(\.count) == labels.map(\.count).sorted())
+        #expect(labels.first?.count == 1)
+        #expect(labels.last?.count == 2)
+    }
+
+    @Test func noFirstLabelStartsWithTheExcludedLead() {
+        let labels = StableLabels.assign(
+            fingerprints: (0..<30).map { "e\($0)" }, alphabet: "sdfj", memory: ["e0": "JS"], excludedLead: "j")
+        #expect(Set(labels).count == 30)
+        #expect(labels.allSatisfy { !$0.isEmpty && !$0.hasPrefix("J") })
+    }
+
+    @Test func secondaryLabelsStartWithTheLeadAndHaveAtLeastThreeLetters() {
+        #expect(StableLabels.secondaryLead(alphabet: "sdfj") == "J")
+        let first = StableLabels.assign(fingerprints: (0..<10).map { "e\($0)" }, alphabet: "sdfj", memory: [:], excludedLead: "J")
+        let second = StableLabels.secondaryLabels(count: 20, alphabet: "sdfj", lead: "J", avoiding: first)
+        #expect(second.count == 20)
+        #expect(second.allSatisfy { $0.hasPrefix("J") && $0.count >= 3 })
+
+        // Together the two sets still hold no label that begins another.
+        let all = first + second
+        #expect(Set(all).count == all.count)
+        for label in all {
+            #expect(!all.contains { $0 != label && $0.hasPrefix(label) })
+        }
+    }
+
+    @Test func secondaryLabelsSteerClearOfAChosenLabelWithTheSameLead() {
+        let second = StableLabels.secondaryLabels(count: 14, alphabet: "sdfj", lead: "J", avoiding: ["JSS", "D"])
+        #expect(second.count == 14)
+        #expect(!second.contains("JSS"))
+        #expect(second.allSatisfy { !$0.hasPrefix("JSS") && !"JSS".hasPrefix($0) })
+        #expect(StableLabels.secondaryLabels(count: 0, alphabet: "sdfj", lead: "J", avoiding: []).isEmpty)
+    }
+
     @Test func typedTextBecomesUppercaseLetters() {
         #expect(StableLabels.normalized(customLabel: " s1d ") == "SD")
     }
