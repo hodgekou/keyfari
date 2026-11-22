@@ -4,11 +4,12 @@ All notable changes to Keyfari are recorded here. The format follows [Keep a Cha
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-11-22
+
 ### Added
 
 - Hint mode labels every visible window on every display, not only the focused one. Windows on the display under the pointer share the short labels and appear together with the focused window; windows on other displays follow with longer labels that start with the last label character. A window in the background is brought forward before it is clicked. Text detection still reads the focused window only. The setting "Label all visible windows" switches this off.
 - The Stable Labels pane lists the remembered labels by how often they were used, most used first, and shows the count.
-- Keyfari checks once a day whether a newer version exists and offers to open its download page. A version can be skipped, and the check can be switched off in the General pane or from the offer itself. It is the only network request the app makes; nothing is downloaded and nothing about the user is sent. "Check for Updates…" in the menu checks at once.
 - Search mode searches every visible window on every display too, after the focused window's elements, and brings a window in the background forward before clicking in it.
 - The letters that scroll, and the two for half a page, can be changed in the Scrolling pane.
 - Hint mode and search mode cover the icons in the Dock while it shows. The setting "Label the Dock" switches this off.
@@ -16,7 +17,7 @@ All notable changes to Keyfari are recorded here. The format follows [Keep a Cha
 - Hint mode can drag: hold Control and Shift on the last letter of a label to pick that element up, then type the label of where to drop it. Nothing is sent until the second label is typed, so `Esc` in between does nothing.
 - A welcome guide opens on the first launch: it shows whether the Accessibility permission is granted, the three shortcuts, and the first choices to make. It can be opened again from the menu and from the General pane.
 - Experimental: text detection can also label small shapes that line up like the icons of a toolbar. It uses the system's contour detection only, with no model, so it misses lone icons and may label decoration. Off by default, in the AI Detection pane.
-- Keyfari installs updates itself, with [Sparkle](https://sparkle-project.org): it shows what is new, downloads the update, checks the project's signature on it, installs it and restarts. This replaces the offer to open the download page. Versions up to 0.2.0 do not have it and need one last manual update.
+- Keyfari keeps itself up to date, with [Sparkle](https://sparkle-project.org): once a day it looks for a newer version, shows what is new and, if you agree, downloads the update, checks the project's signature on it, installs it and restarts. A version can be skipped, and the check can be switched off in the General pane; "Check for Updates…" in the menu checks at once. These are the only network requests the app makes. Versions up to 0.2.0 do not have this and need one last manual update.
 
 ## [0.2.0] - 2026-11-22
 
