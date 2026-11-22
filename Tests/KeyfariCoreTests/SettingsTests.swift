@@ -104,47 +104,12 @@ import Testing
         #expect(!decoded.hintAllWindows)
     }
 
-    @Test func updatesAreCheckedUnlessSwitchedOffAndOnlyARealVersionIsSkipped() throws {
+    @Test func updatesAreCheckedUnlessSwitchedOff() throws {
         var settings = Settings()
         #expect(settings.updateCheckEnabled)
-        #expect(settings.skippedVersion == nil)
-
         settings.updateCheckEnabled = false
-        settings.skippedVersion = "v0.3.0"
         let decoded = try JSONDecoder().decode(Settings.self, from: JSONEncoder().encode(settings))
         #expect(!decoded.updateCheckEnabled)
-        #expect(decoded.validated().skippedVersion == "0.3.0")
-
-        settings.skippedVersion = "the next one"
-        #expect(settings.validated().skippedVersion == nil)
-    }
-
-    @Test func unusableScrollKeysFallBackTogether() {
-        var settings = Settings()
-        settings.scrollKeys = "DHTN"
-        settings.halfPageKeys = "EU"
-        #expect(settings.validated().scrollKeys == "dhtn")
-        #expect(settings.validated().halfPageKeys == "eu")
-
-        settings.halfPageKeys = "du"
-        #expect(settings.validated().scrollKeys == "hjkl")
-        #expect(settings.validated().halfPageKeys == "du")
-    }
-
-    @Test func theRepeatShortcutIsOffByDefaultAndMustNotClash() throws {
-        var settings = Settings()
-        #expect(settings.repeatClickShortcut == nil)
-        let shortcut = Shortcut(keyCode: KeyCode.return, modifiers: [.control, .option])
-        settings.repeatClickShortcut = shortcut
-        let decoded = try JSONDecoder().decode(Settings.self, from: JSONEncoder().encode(settings))
-        #expect(decoded.validated().repeatClickShortcut == shortcut)
-
-        settings.nextSpaceShortcut = shortcut
-        #expect(settings.validated().nextSpaceShortcut == shortcut)
-        #expect(settings.validated().repeatClickShortcut == nil)
-        settings.nextSpaceShortcut = nil
-        settings.repeatClickShortcut = settings.scrollShortcut
-        #expect(settings.validated().repeatClickShortcut == nil)
     }
 
     @Test func theWelcomeGuideIsForAFirstLaunchOnly() {

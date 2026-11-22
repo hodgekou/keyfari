@@ -61,3 +61,8 @@ jobs:
           git commit -m "Point the cask and the update feed at $VERSION"
           git push origin main
           gh workflow run site.yml --ref main
+
+      - name: Copy the cask to the Homebrew tap
+        env:
+          HOMEBREW_TAP_TOKEN: ${{ secrets.HOMEBREW_TAP_TOKEN }}
+        run: scripts/sync-tap.sh
