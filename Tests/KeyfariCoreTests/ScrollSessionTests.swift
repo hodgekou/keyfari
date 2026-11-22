@@ -77,4 +77,31 @@ import Testing
         #expect(session.keyDown(KeyStroke(keyCode: KeyCode.escape), at: 0) == .exit)
         #expect(session.keyDown(KeyStroke(keyCode: KeyCode.leftBracket, modifiers: .control), at: 0) == .exit)
     }
+
+    @Test func readsCustomKeysAndRefusesUnusableOnes() {
+        let keys = ScrollKeys(scroll: "DHTN", halfPage: "eu")
+        #expect(keys?.left == "d")
+        #expect(keys?.right == "n")
+        #expect(keys?.halfPageDown == "e")
+        #expect(ScrollKeys(scroll: "hjkl", halfPage: "du") == .standard)
+        // Too few, a repeated letter, a letter shared between the two, G, a digit.
+        for (scroll, halfPage) in [("hjk", "du"), ("hjkk", "du"), ("hjkl", "dl"), ("hjgl", "du"), ("hjkl", "d1"), ("hjkl", "d")] {
+            #expect(ScrollKeys(scroll: scroll, halfPage: halfPage) == nil, "\(scroll) \(halfPage) should be refused")
+        }
+    }
+
+    @Test func customKeysScrollAndTheStandardOnesNoLonger() throws {
+        let t: UInt16 = 17, e: UInt16 = 14
+        var session = ScrollSession(areaCount: 1, keys: try #require(ScrollKeys(scroll: "dhtn", halfPage: "eu")))
+        #expect(session.keyDown(KeyStroke(keyCode: d), at: 0) == .start(.left, dash: false))
+        #expect(session.keyDown(KeyStroke(keyCode: h), at: 0) == .start(.down, dash: false))
+        #expect(session.keyDown(KeyStroke(keyCode: t, modifiers: .shift), at: 0) == .start(.up, dash: true))
+        #expect(session.keyDown(KeyStroke(keyCode: n), at: 0) == .start(.right, dash: false))
+        #expect(session.keyDown(KeyStroke(keyCode: e), at: 0) == .halfPage(.down))
+        #expect(session.keyDown(KeyStroke(keyCode: u), at: 0) == .halfPage(.up))
+        #expect(session.keyDown(KeyStroke(keyCode: j), at: 0) == .ignored)
+        // The fixed keys stay.
+        #expect(session.keyDown(KeyStroke(keyCode: g, modifiers: .shift), at: 0) == .bottom)
+        #expect(session.keyDown(KeyStroke(keyCode: n, modifiers: .control), at: 0) == .selectArea(0))
+    }
 }

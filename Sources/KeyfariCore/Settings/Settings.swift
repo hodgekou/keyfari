@@ -56,6 +56,10 @@ public struct Settings: Codable, Equatable, Sendable {
     public var usageStatisticsEnabled = true
     public var successSoundEnabled = false
     public var warningSoundEnabled = false
+    /// Four letters that scroll left, down, up and right.
+    public var scrollKeys = ScrollKeys.standardScroll
+    /// Two letters that scroll half a page down and up.
+    public var halfPageKeys = ScrollKeys.standardHalfPage
     /// Pixels scrolled per frame while a scroll key is held.
     public var scrollSpeed = 20
     /// Speed factor applied while Shift is held.
@@ -94,6 +98,8 @@ public struct Settings: Codable, Equatable, Sendable {
         usageStatisticsEnabled = try container.decodeIfPresent(Bool.self, forKey: .usageStatisticsEnabled) ?? fallback.usageStatisticsEnabled
         successSoundEnabled = try container.decodeIfPresent(Bool.self, forKey: .successSoundEnabled) ?? fallback.successSoundEnabled
         warningSoundEnabled = try container.decodeIfPresent(Bool.self, forKey: .warningSoundEnabled) ?? fallback.warningSoundEnabled
+        scrollKeys = try container.decodeIfPresent(String.self, forKey: .scrollKeys) ?? fallback.scrollKeys
+        halfPageKeys = try container.decodeIfPresent(String.self, forKey: .halfPageKeys) ?? fallback.halfPageKeys
         scrollSpeed = try container.decodeIfPresent(Int.self, forKey: .scrollSpeed) ?? fallback.scrollSpeed
         dashMultiplier = try container.decodeIfPresent(Double.self, forKey: .dashMultiplier) ?? fallback.dashMultiplier
         reverseHorizontal = try container.decodeIfPresent(Bool.self, forKey: .reverseHorizontal) ?? fallback.reverseHorizontal
@@ -139,6 +145,14 @@ public struct Settings: Codable, Equatable, Sendable {
             if !shortcut.isUsable || !taken.insert(shortcut).inserted {
                 result[keyPath: Self.spaceShortcut(direction)] = nil
             }
+        }
+        // The two sets of scroll keys only make sense together.
+        if ScrollKeys(scroll: scrollKeys, halfPage: halfPageKeys) == nil {
+            result.scrollKeys = fallback.scrollKeys
+            result.halfPageKeys = fallback.halfPageKeys
+        } else {
+            result.scrollKeys = scrollKeys.lowercased()
+            result.halfPageKeys = halfPageKeys.lowercased()
         }
         if !(1...100).contains(scrollSpeed) { result.scrollSpeed = fallback.scrollSpeed }
         if !(0.25...10).contains(dashMultiplier) { result.dashMultiplier = fallback.dashMultiplier }

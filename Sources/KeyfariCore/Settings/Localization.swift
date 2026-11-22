@@ -216,6 +216,12 @@ public enum Localizer {
         "Reverse horizontal": Entry(chinese: "反转水平方向", japanese: "左右を反転"),
         "Reverse vertical": Entry(chinese: "反转垂直方向", japanese: "上下を反転"),
         "Keys": Entry(chinese: "按键", japanese: "キー"),
+        "Scroll keys": Entry(chinese: "滚动键", japanese: "スクロールキー"),
+        "Four letters: left, down, up, right": Entry(chinese: "四个字母:左、下、上、右", japanese: "4 文字: 左・下・上・右"),
+        "Half-page keys": Entry(chinese: "半页键", japanese: "半ページキー"),
+        "Two letters: down, up": Entry(chinese: "两个字母:下、上", japanese: "2 文字: 下・上"),
+        "The six letters must all be different, and G is taken. The standard keys are in use for now.": Entry(
+            chinese: "六个字母必须互不相同,且不能使用 G。目前使用默认按键。", japanese: "6 つの文字はすべて異なる必要があり、G は使えません。現在は標準のキーを使用しています。"),
         "Scroll left, down, up, right": Entry(chinese: "向左、下、上、右滚动", japanese: "左・下・上・右にスクロール"),
         "Half a page down, up": Entry(chinese: "向下、向上半页", japanese: "半ページ下・上"),
         "Top  ·  Shift-G for the bottom": Entry(chinese: "到顶部  ·  Shift-G 到底部", japanese: "先頭へ  ·  Shift-G で末尾へ"),
