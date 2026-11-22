@@ -101,6 +101,9 @@ final class ModeCoordinator {
 
         let settings = store.effective
         let target: @MainActor () -> ModeTarget? = { [weak self] in self?.currentTarget() }
+        let recordClick: @MainActor (String, Int) -> Void = { [weak self] bundleID, count in
+            self?.store.recordClick(bundleID: bundleID, count: count)
+        }
         let onShortcut: @MainActor (KeyStroke) -> Bool = { [weak self] stroke in
             self?.handleShortcut(stroke) ?? false
         }
@@ -116,7 +119,7 @@ final class ModeCoordinator {
             let controller = HintModeController(
                 query: AXElementQuery(), vision: vision(settings), overlay: overlay, interceptor: interceptor, settings: settings,
                 memory: settings.stableLabels ? labelMemory : nil,
-                target: target, onShortcut: onShortcut, onExit: onExit
+                target: target, recordClick: recordClick, onShortcut: onShortcut, onExit: onExit
             )
             started = controller.start()
             stop = { controller.stop() }
@@ -124,7 +127,7 @@ final class ModeCoordinator {
             applyStyle(settings)
             let controller = SearchModeController(
                 query: AXElementQuery(), vision: vision(settings), overlay: overlay, interceptor: interceptor, settings: settings,
-                target: target, onShortcut: onShortcut, onExit: onExit
+                target: target, recordClick: recordClick, onShortcut: onShortcut, onExit: onExit
             )
             started = controller.start()
             stop = { controller.stop() }

@@ -69,11 +69,13 @@ public enum Localizer {
         "Scrolling": Entry(chinese: "滚动", japanese: "スクロール"),
         "Activation": Entry(chinese: "激活方式", japanese: "起動方法"),
         "AI Detection": Entry(chinese: "AI 识别", japanese: "AI 検出"),
+        "Stats": Entry(chinese: "统计", japanese: "統計"),
         "Shortcuts, startup, permissions and ignored apps": Entry(
             chinese: "快捷键、启动、权限与忽略的应用", japanese: "ショートカット、起動、権限、除外するアプリ"),
         "How labels look and behave": Entry(chinese: "标签的外观与行为", japanese: "ラベルの外観と動作"),
         "Speed and direction": Entry(chinese: "速度与方向", japanese: "速度と方向"),
-        "Other ways to start a mode": Entry(chinese: "进入模式的其他方式", japanese: "モードを開始するほかの方法"),
+        "Activate modes with key sequences": Entry(chinese: "使用按键序列激活模式", japanese: "キーシーケンスでモードを開始"),
+        "Local, opt-in activity counts": Entry(chinese: "可选的本地使用统计", japanese: "任意で記録するローカル使用統計"),
         "Find text that apps do not expose": Entry(chinese: "找出应用没有暴露的文字", japanese: "アプリが公開していないテキストを見つける"),
         "Keyboard navigation": Entry(chinese: "键盘导航", japanese: "キーボード操作"),
         "Keyfari Settings": Entry(chinese: "Keyfari 设置", japanese: "Keyfari 設定"),
@@ -103,6 +105,21 @@ public enum Localizer {
         "Required for global shortcuts and controlling apps": Entry(
             chinese: "用于全局快捷键和控制其他应用", japanese: "グローバルショートカットとアプリの操作に必要です"),
         "Open System Settings…": Entry(chinese: "打开系统设置…", japanese: "システム設定を開く…"),
+        "Usage statistics": Entry(chinese: "使用统计", japanese: "使用状況の統計"),
+        "Enable usage statistics": Entry(chinese: "启用使用统计", japanese: "使用統計を有効にする"),
+        "Counts stay on this Mac and are never sent anywhere": Entry(
+            chinese: "统计数据仅保存在这台 Mac 上,不会发送到任何地方", japanese: "統計データはこの Mac にのみ保存され、外部に送信されません"),
+        "Activity": Entry(chinese: "活动", japanese: "アクティビティ"),
+        "Total clicks": Entry(chinese: "点击总数", japanese: "クリック合計"),
+        "Current streak": Entry(chinese: "当前连续天数", japanese: "現在の連続日数"),
+        "Longest streak": Entry(chinese: "最长连续天数", japanese: "最長連続日数"),
+        "Active days": Entry(chinese: "活跃天数", japanese: "利用日数"),
+        "Top apps": Entry(chinese: "常用应用", japanese: "よく使うアプリ"),
+        "No clicks recorded yet": Entry(chinese: "还没有点击记录", japanese: "クリック記録はまだありません"),
+        "%d clicks": Entry(chinese: "%d 次点击", japanese: "%d 回のクリック"),
+        "Clear statistics": Entry(chinese: "清除统计数据", japanese: "統計データを消去"),
+        "Statistics are off. No usage is recorded until you turn them on. Only aggregate counts are stored locally.": Entry(
+            chinese: "统计已关闭。启用后才会开始记录，仅在本机保存汇总数据。", japanese: "統計はオフです。有効にするまで記録されません。集計データのみこの Mac に保存されます。"),
         "No applications are ignored": Entry(chinese: "没有忽略任何应用", japanese: "除外しているアプリはありません"),
         "Shortcuts do nothing while one of these applications is in front.": Entry(
             chinese: "这些应用在前台时,快捷键不起作用。",

@@ -4,7 +4,7 @@ import Observation
 import SwiftUI
 
 enum SettingsPane: String, CaseIterable, Identifiable {
-    case general, hints, scrolling, activation, vision
+    case general, hints, scrolling, activation, vision, stats
 
     var id: String { rawValue }
 
@@ -15,6 +15,7 @@ enum SettingsPane: String, CaseIterable, Identifiable {
         case .scrolling: "Scrolling"
         case .activation: "Activation"
         case .vision: "AI Detection"
+        case .stats: "Stats"
         }
     }
 
@@ -23,8 +24,9 @@ enum SettingsPane: String, CaseIterable, Identifiable {
         case .general: "Shortcuts, startup, permissions and ignored apps"
         case .hints: "How labels look and behave"
         case .scrolling: "Speed and direction"
-        case .activation: "Other ways to start a mode"
+        case .activation: "Activate modes with key sequences"
         case .vision: "Find text that apps do not expose"
+        case .stats: "Local, opt-in activity counts"
         }
     }
 
@@ -35,6 +37,7 @@ enum SettingsPane: String, CaseIterable, Identifiable {
         case .scrolling: "arrow.up.arrow.down"
         case .activation: "keyboard.fill"
         case .vision: "sparkles"
+        case .stats: "chart.bar.fill"
         }
     }
 
@@ -45,6 +48,7 @@ enum SettingsPane: String, CaseIterable, Identifiable {
         case .scrolling: Color(red: 0.06, green: 0.65, blue: 0.47)
         case .activation: Color(red: 0.55, green: 0.36, blue: 0.96)
         case .vision: Color(red: 0.93, green: 0.28, blue: 0.60)
+        case .stats: Color(red: 0.22, green: 0.58, blue: 0.42)
         }
     }
 }

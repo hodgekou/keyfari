@@ -70,6 +70,7 @@ struct SettingsView: View {
                 case .scrolling: scrolling
                 case .activation: activation
                 case .vision: vision
+                case .stats: stats
                 }
             }
             .padding(.horizontal, 24)
@@ -246,6 +247,68 @@ struct SettingsView: View {
                 tint: tint
             )
         }
+    }
+
+    @ViewBuilder
+    private var stats: some View {
+        let tint = SettingsPane.stats.tint
+        Card("Usage statistics", symbol: "chart.bar.fill", tint: tint) {
+            ToggleRow(
+                "Enable usage statistics", detail: "Counts stay on this Mac and are never sent anywhere",
+                isOn: $store.settings.statisticsEnabled, tint: tint
+            )
+        }
+
+        if store.effective.statisticsEnabled {
+            let usage = store.usageStats
+            Card("Activity", symbol: "calendar", tint: tint) {
+                HStack(spacing: 8) {
+                    statMetric("Total clicks", value: "\(usage.totalClicks)")
+                    statMetric("Current streak", value: "\(usage.currentStreak)")
+                    statMetric("Longest streak", value: "\(usage.longestStreak)")
+                    statMetric("Active days", value: "\(usage.activeDays)")
+                }
+                .padding(12)
+            }
+            Card("Top apps", symbol: "square.grid.2x2.fill", tint: tint) {
+                if usage.topApps.isEmpty {
+                    Text(tr("No clicks recorded yet"))
+                        .font(.system(size: 12))
+                        .foregroundStyle(.secondary)
+                        .padding(12)
+                } else {
+                    ForEach(Array(usage.topApps.prefix(10).enumerated()), id: \.element.id) { index, app in
+                        if index > 0 { RowDivider() }
+                        SettingRow(app.name) {
+                            Text(tr("%d clicks", app.clicks))
+                                .font(.system(size: 12, weight: .medium, design: .monospaced))
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                }
+            }
+            Button(role: .destructive) {
+                usage.clear()
+            } label: {
+                Text(tr("Clear statistics"))
+            }
+            .buttonStyle(.bordered)
+        } else {
+            Notice(
+                "Statistics are off. No usage is recorded until you turn them on. Only aggregate counts are stored locally.",
+                symbol: "lock.shield.fill", tint: tint
+            )
+        }
+    }
+
+    private func statMetric(_ title: String, value: String) -> some View {
+        VStack(alignment: .leading, spacing: 5) {
+            Text(value).font(.system(size: 20, weight: .bold, design: .rounded))
+            Text(tr(title)).font(.system(size: 10)).foregroundStyle(.secondary)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(10)
+        .background(RoundedRectangle(cornerRadius: 8).fill(Color(nsColor: .windowBackgroundColor)))
     }
 
     private func permissions(tint: Color) -> some View {

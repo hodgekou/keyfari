@@ -27,6 +27,7 @@ The regular labels appear at once; the detected ones follow in well under a seco
 - **On-screen text detection**: recognises text in the window's pixels, on the device, and labels what the accessibility tree does not expose. The regular labels appear at once and the detected ones are added a moment later.
 - **Other ways to activate**: type a key sequence such as `fd`. This is off by default.
 - **Customisable**: shortcuts, label characters, themes, size and corner radius, scroll speed, click chains, stable labels, ignored applications, launch at login.
+- **Optional usage statistics**: count successful keyboard-driven clicks and active days locally; nothing is collected until enabled.
 - **Interface in English, Chinese and Japanese**, following the system language unless you choose one.
 
 Not yet: detection of icon-only buttons, automatic updates.
