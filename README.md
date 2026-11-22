@@ -1,0 +1,102 @@
+# Keyfari
+
+Keyboard-driven navigation for macOS. Press a shortcut, and every button, link and menu item gets a short label; type the label to click it. Scroll with `H J K L`. No mouse needed.
+
+## Text detection
+
+Some windows expose little or nothing to the accessibility tree: canvas-drawn interfaces, games, remote desktops, pictures of an interface. Keyfari can read the window's pixels with Apple's Vision framework, on the device, and label the text it finds.
+
+Both screenshots show hint mode in the same window. The window is Preview displaying a picture of a made-up application, so everything inside it is only pixels.
+
+| Without text detection | With text detection |
+| --- | --- |
+| ![Hint mode without text detection: only Preview's own toolbar has labels](docs/images/hints-without-text-detection.png) | ![Hint mode with text detection: every piece of text in the picture has a label](docs/images/hints-with-text-detection.png) |
+| Only Preview's toolbar, which is real interface, gets labels. | The buttons and entries in the picture get labels too. |
+
+The regular labels appear at once; the detected ones follow in well under a second. Detection finds text, not icons, so a button with no text still goes without a label.
+
+## Settings
+
+![The Hints pane of the settings window, with a live preview of the labels](docs/images/settings.png)
+
+## Features
+
+- **Hint mode** (`⌘⇧Space`): labels on every clickable element of the focused window, the menu bar, menu bar extras and notifications. Type a label to click. Hold `Shift` on the last letter for a right click, `Command` for a double click, `Control` for a command-click, `Option` to only move the cursor. `Delete` removes a letter, `Space` flips overlapping labels, `Esc` leaves.
+- **Search mode** (`⌘⇧/`): type part of an element's text to filter, `Tab` / arrows / `Ctrl-N` `Ctrl-P` to move the focus, `Shift` + label to jump, `Return` to click (twice for a double click), `Shift-Return` right click, `Command-Return` command-click. `*` or `;` matches everything. Chinese text matches its pinyin in full or as initials, so `baocun` and `bc` both find 保存.
+- **Scroll mode** (`⌘⇧J`): `h j k l` scroll, with `Shift` for speed, `d` / `u` half a page, `gg` / `G` top and bottom, `Tab` or `0`–`9` to switch scroll areas, `Esc` leaves.
+- **On-screen text detection**: recognises text in the window's pixels, on the device, and labels what the accessibility tree does not expose. The regular labels appear at once and the detected ones are added a moment later.
+- **Other ways to activate**: hold `Space`, or type a key sequence such as `fd`. Both are off by default.
+- **Customisable**: shortcuts, label characters, themes, size and corner radius, scroll speed, click chains, stable labels, ignored applications, launch at login.
+- **Interface in English, Chinese and Japanese**, following the system language unless you choose one.
+
+Not yet: detection of icon-only buttons, automatic updates.
+
+More at [hodgekou.github.io/keyfari](https://hodgekou.github.io/keyfari/).
+
+## Install
+
+Download the latest disk image from the [releases page](https://github.com/hodgekou/keyfari/releases/latest), open it and drag Keyfari to Applications. Or use Homebrew:
+
+```sh
+brew tap hodgekou/keyfari https://github.com/hodgekou/keyfari
+brew trust hodgekou/keyfari
+brew install --cask keyfari
+```
+
+Homebrew may ask you to trust this tap. If your Homebrew version does not support `brew trust`, omit that command.
+
+Keyfari is not signed with an Apple Developer ID, so macOS blocks it the first time. Open it once, then go to **System Settings > Privacy & Security** and choose **Open Anyway**. Because the signature is not stable, macOS also asks for the permissions again after each update.
+
+On first launch, grant **Accessibility** permission so Keyfari can read other apps' interfaces and send clicks. On-screen text detection also requires **Screen Recording** permission; it stays idle until you grant it.
+
+## Requirements
+
+- macOS 14 or later, Apple silicon or Intel
+- To build from source: a Swift 6 toolchain. The Command Line Tools are enough; Xcode is optional.
+
+## Build from source
+
+```sh
+scripts/bundle.sh          # builds build/Keyfari.app (debug)
+open build/Keyfari.app
+```
+
+Pass `release` for an optimised build.
+
+Keyfari appears in the menu bar.
+
+The bundle is signed ad hoc by default, so macOS asks for the permissions again after every rebuild. Set `KEYFARI_SIGN_IDENTITY` to a code signing identity from your keychain to keep them.
+
+## Privacy
+
+Keyfari has no telemetry and makes no network requests. Screenshots taken for text detection are processed on the device with Apple's Vision framework and exist only in memory. Settings and remembered labels are stored locally in the user defaults.
+
+## Project layout
+
+| Path | Contents |
+| --- | --- |
+| `Sources/KeyfariCore` | Pure logic: label generation, input state machines, settings, translations. No system permissions needed; fully unit tested. |
+| `Sources/AXKit` | Accessibility tree access and traversal. |
+| `Sources/InputKit` | Event taps, hot keys, activators, synthesized mouse and scroll events. |
+| `Sources/OverlayKit` | Transparent per-screen panels that draw labels, the search bar and scroll outlines. |
+| `Sources/ScreenVision` | Screenshot text recognition. |
+| `Sources/KeyfariApp` | The executable: `App` (lifecycle, menu bar), `Modes` (hint, search, scroll), `Settings` (settings window). |
+| `Tests/KeyfariCoreTests` | Unit tests, one file per suite. |
+| `Resources` | `Info.plist` and the application icon. |
+| `scripts` | Building, testing, linting, packaging and drawing the icon. |
+| `site` | The landing page, published to GitHub Pages. |
+| `Casks` | The Homebrew cask. |
+
+## Development
+
+```sh
+scripts/test.sh            # unit tests
+scripts/lint.sh            # formatting and style; --fix rewrites in place
+log stream --predicate 'subsystem == "app.keyfari.Keyfari"'
+```
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for conventions, debugging aids and how to add a translation.
+
+## License
+
+[GPL-3.0](LICENSE), the same license as Vimac. Portions are derived from Vimac, Copyright © 2019–2021 Dexter Leng; the files concerned say so at the top.

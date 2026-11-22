@@ -1,0 +1,362 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Keyfari: keyboard navigation for macOS</title>
+<meta name="description" content="Keyfari labels every button, link and menu item on macOS so you can click it from the keyboard. Free and open source.">
+<meta property="og:title" content="Keyfari">
+<meta property="og:description" content="Click anything on macOS from the keyboard.">
+<meta property="og:image" content="images/hints-with-text-detection.png">
+<link rel="icon" type="image/png" href="icon.png">
+<style>
+  :root {
+    --bg: #ffffff;
+    --surface: #f5f6fa;
+    --text: #1b1e27;
+    --muted: #5d6474;
+    --line: #e3e6ee;
+    --accent: #5b5cf0;
+    --accent-ink: #ffffff;
+    --blue: #3b82f5;
+    --violet: #8c5cf5;
+    --pink: #ed4799;
+    --radius: 14px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #111319;
+      --surface: #1a1d26;
+      --text: #eef0f6;
+      --muted: #a0a7b8;
+      --line: #2a2e3b;
+      --accent: #8587ff;
+      --accent-ink: #10121a;
+    }
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font: 17px/1.6 -apple-system, BlinkMacSystemFont, "Helvetica Neue", "PingFang SC", "Hiragino Sans", sans-serif;
+  }
+  a { color: var(--accent); }
+  img { max-width: 100%; height: auto; display: block; }
+  .wrap { max-width: 1040px; margin: 0 auto; padding: 0 20px; }
+
+  header.bar { display: flex; align-items: center; justify-content: space-between; padding: 18px 0; }
+  .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 18px; }
+  .brand img { width: 34px; height: 34px; }
+  .langs { display: flex; gap: 4px; }
+  .langs button {
+    font: inherit; font-size: 14px; color: var(--muted); background: none;
+    border: 1px solid transparent; border-radius: 8px; padding: 4px 10px; cursor: pointer;
+  }
+  .langs button[aria-pressed="true"] { color: var(--text); border-color: var(--line); background: var(--surface); }
+
+  .hero { text-align: center; padding: 44px 0 36px; }
+  .hero img.icon { width: 132px; height: 132px; margin: 0 auto 8px; }
+  h1 {
+    font-size: clamp(34px, 6vw, 56px); line-height: 1.12; margin: 0 0 14px; letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+  h1 span {
+    background: linear-gradient(100deg, var(--blue), var(--violet), var(--pink));
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .lead { font-size: 20px; color: var(--muted); max-width: 640px; margin: 0 auto 26px; text-wrap: pretty; }
+  .actions { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; }
+  .button {
+    display: inline-block; text-decoration: none; font-weight: 600; padding: 12px 22px;
+    border-radius: 12px; border: 1px solid var(--line); color: var(--text); background: var(--surface);
+  }
+  .button.primary { background: var(--accent); color: var(--accent-ink); border-color: transparent; }
+  .note { font-size: 14px; color: var(--muted); margin-top: 14px; }
+
+  section { padding: 44px 0; border-top: 1px solid var(--line); }
+  h2 { font-size: 28px; line-height: 1.2; margin: 0 0 8px; letter-spacing: -0.01em; }
+  .sub { color: var(--muted); margin: 0 0 26px; max-width: 700px; }
+
+  .compare { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+  figure { margin: 0; }
+  figure img { border-radius: var(--radius); border: 1px solid var(--line); }
+  figcaption { font-size: 15px; color: var(--muted); margin-top: 10px; }
+  figcaption b { color: var(--text); }
+
+  .modes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+  .card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px; }
+  .card h3 { margin: 10px 0 6px; font-size: 19px; }
+  .card p { margin: 0; color: var(--muted); font-size: 15.5px; }
+  .keys { display: flex; gap: 5px; }
+  kbd {
+    font: 600 13px/1 ui-rounded, -apple-system, sans-serif; padding: 6px 8px; border-radius: 7px;
+    background: var(--bg); border: 1px solid var(--line); border-bottom-width: 2px; color: var(--text);
+  }
+
+  ul.features { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px 28px; }
+  ul.features li { padding-left: 26px; position: relative; color: var(--muted); font-size: 16px; }
+  ul.features li::before {
+    content: ""; position: absolute; left: 0; top: 0.55em; width: 12px; height: 12px; border-radius: 4px;
+    background: linear-gradient(135deg, var(--blue), var(--pink));
+  }
+  ul.features b { color: var(--text); font-weight: 600; }
+
+  .install { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+  pre {
+    margin: 12px 0 0; padding: 14px 16px; border-radius: 10px; background: var(--bg); border: 1px solid var(--line);
+    overflow-x: auto; font: 14px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+  .card ol { margin: 8px 0 0; padding-left: 20px; color: var(--muted); font-size: 15.5px; }
+
+  footer { border-top: 1px solid var(--line); padding: 28px 0 44px; color: var(--muted); font-size: 14.5px; }
+  footer p { margin: 0 0 6px; }
+
+  @media (max-width: 760px) {
+    body { font-size: 16px; }
+    .compare, .modes, .install, ul.features { grid-template-columns: minmax(0, 1fr); }
+    .hero { padding-top: 24px; }
+    .lead { font-size: 18px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="bar">
+    <div class="brand"><img src="icon.png" alt=""><span>Keyfari</span></div>
+    <div class="langs" role="group" aria-label="Language">
+      <button type="button" data-lang="en">English</button>
+      <button type="button" data-lang="zh">中文</button>
+      <button type="button" data-lang="ja">日本語</button>
+    </div>
+  </header>
+
+  <main>
+    <div class="hero">
+      <img class="icon" src="icon.png" alt="Keyfari icon" width="132" height="132">
+      <h1 data-i18n-html="title">Click anything on your Mac <span>from the keyboard</span></h1>
+      <p class="lead" data-i18n="lead">Press a shortcut and every button, link and menu item gets a short label. Type the label to click it. Free and open source.</p>
+      <div class="actions">
+        <a class="button primary" href="https://github.com/hodgekou/keyfari/releases/latest" data-i18n="download">Download for macOS</a>
+        <a class="button" href="https://github.com/hodgekou/keyfari" data-i18n="source">View the source</a>
+      </div>
+      <p class="note" data-i18n="requires">Requires macOS 14 or later. Apple silicon and Intel.</p>
+    </div>
+
+    <section>
+      <h2 data-i18n="detectTitle">It also reads what apps do not expose</h2>
+      <p class="sub" data-i18n="detectSub">Some windows tell the system nothing about their contents: canvas-drawn interfaces, games, remote desktops. Keyfari reads the pixels on your Mac and labels the text it finds. Here the window is a picture of a made-up app.</p>
+      <div class="compare">
+        <figure>
+          <img src="images/hints-without-text-detection.png" width="1400" height="951" alt="Hint mode without text detection: only the toolbar has labels" loading="lazy">
+          <figcaption><b data-i18n="withoutTitle">Without text detection.</b> <span data-i18n="withoutText">Only the real toolbar gets labels.</span></figcaption>
+        </figure>
+        <figure>
+          <img src="images/hints-with-text-detection.png" width="1400" height="951" alt="Hint mode with text detection: every piece of text has a label" loading="lazy">
+          <figcaption><b data-i18n="withTitle">With text detection.</b> <span data-i18n="withText">The buttons in the picture get labels too.</span></figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section>
+      <h2 data-i18n="modesTitle">Three modes, three shortcuts</h2>
+      <p class="sub" data-i18n="modesSub">All of them can be changed in the settings.</p>
+      <div class="modes">
+        <div class="card">
+          <div class="keys"><kbd>⌘</kbd><kbd>⇧</kbd><kbd>Space</kbd></div>
+          <h3 data-i18n="hintName">Hints</h3>
+          <p data-i18n="hintText">Labels on everything clickable. Hold Shift on the last letter for a right click, Command for a double click.</p>
+        </div>
+        <div class="card">
+          <div class="keys"><kbd>⌘</kbd><kbd>⇧</kbd><kbd>/</kbd></div>
+          <h3 data-i18n="searchName">Search</h3>
+          <p data-i18n="searchText">Type part of an element's text, then Return. Chinese text matches its pinyin, in full or as initials.</p>
+        </div>
+        <div class="card">
+          <div class="keys"><kbd>⌘</kbd><kbd>⇧</kbd><kbd>J</kbd></div>
+          <h3 data-i18n="scrollName">Scroll</h3>
+          <p data-i18n="scrollText">H J K L to scroll, D and U for half a page, G G for the top. Tab switches between scroll areas.</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2 data-i18n="featuresTitle">Made to stay out of the way</h2>
+      <p class="sub" data-i18n="featuresSub">Keyfari lives in the menu bar and does nothing until you call it.</p>
+      <ul class="features">
+        <li data-i18n-html="f1"><b>Works with any input method.</b> Keys are read by position, so a Chinese or Japanese input method does not get in the way.</li>
+        <li data-i18n-html="f2"><b>Does not steal focus.</b> Open menus and popovers stay open and get labels too.</li>
+        <li data-i18n-html="f3"><b>Private.</b> No telemetry and no network requests. Text detection runs on the device.</li>
+        <li data-i18n-html="f4"><b>Stable labels.</b> An element keeps the label it had when you last clicked it.</li>
+        <li data-i18n-html="f5"><b>Yours to shape.</b> Shortcuts, label letters, themes, scroll speed, ignored apps.</li>
+        <li data-i18n-html="f6"><b>Three languages.</b> English, Chinese and Japanese.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2 data-i18n="settingsTitle">A settings window worth opening</h2>
+      <p class="sub" data-i18n="settingsSub">Change a theme or a size and the preview shows the result at once.</p>
+      <figure><img src="images/settings.png" width="1520" height="1120" alt="The Hints pane of the settings window" loading="lazy"></figure>
+    </section>
+
+    <section>
+      <h2 data-i18n="installTitle">Install</h2>
+      <p class="sub" data-i18n="installSub">Keyfari is not signed with an Apple Developer ID, so macOS blocks it the first time you open it.</p>
+      <div class="install">
+        <div class="card">
+          <h3 data-i18n="dmgTitle">Download</h3>
+          <ol>
+            <li data-i18n-html="dmg1">Get the <a href="https://github.com/hodgekou/keyfari/releases/latest">latest disk image</a> and drag Keyfari to Applications.</li>
+            <li data-i18n="dmg2">Open it once. macOS will refuse.</li>
+            <li data-i18n-html="dmg3">Go to <b>System Settings &gt; Privacy &amp; Security</b> and choose <b>Open Anyway</b>.</li>
+            <li data-i18n="dmg4">Grant the Accessibility permission when asked.</li>
+          </ol>
+        </div>
+        <div class="card">
+          <h3>Homebrew</h3>
+          <pre><code>brew tap hodgekou/keyfari https://github.com/hodgekou/keyfari
+brew trust hodgekou/keyfari
+brew install --cask keyfari</code></pre>
+          <p style="margin-top:12px" data-i18n="brewNote">The same first-launch step applies. macOS asks for the permissions again after each update.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p data-i18n-html="foot1">Keyfari is free software under the <a href="https://github.com/hodgekou/keyfari/blob/main/LICENSE">GPL-3.0</a> license.</p>
+    <p data-i18n-html="foot2">A rewrite of <a href="https://github.com/nchudleigh/vimac">Vimac</a> by Dexter Leng. Not affiliated with Vimac or its author.</p>
+  </footer>
+</div>
+
+<script>
+// English is in the markup. The other languages replace it by key.
+const translations = {
+  zh: {
+    title: '用键盘点击 Mac 上的<span>任何东西</span>',
+    lead: '按下快捷键,每个按钮、链接和菜单项都会出现一个简短的标签,敲出标签就能点击。免费且开源。',
+    download: '下载 macOS 版',
+    source: '查看源码',
+    requires: '需要 macOS 14 或更高版本,支持 Apple 芯片与 Intel。',
+    detectTitle: '应用没有暴露的内容,它也能读',
+    detectSub: '有些窗口不向系统提供任何内容信息,例如画布绘制的界面、游戏、远程桌面。Keyfari 在本机读取画面,为找到的文字打上标签。下图的窗口里是一张虚构应用的图片。',
+    withoutTitle: '关闭文字识别。',
+    withoutText: '只有真实的工具栏有标签。',
+    withTitle: '开启文字识别。',
+    withText: '图片里的按钮也有了标签。',
+    modesTitle: '三种模式,三个快捷键',
+    modesSub: '都可以在设置里修改。',
+    hintName: '标签',
+    hintText: '给所有可点击的元素打标签。敲最后一个字母时按住 Shift 是右键,按住 Command 是双击。',
+    searchName: '搜索',
+    searchText: '输入元素上的部分文字,再按回车。中文可以用拼音全拼或首字母匹配。',
+    scrollName: '滚动',
+    scrollText: 'H J K L 滚动,D 和 U 翻半页,G G 回到顶部,Tab 切换滚动区域。',
+    featuresTitle: '平时不打扰你',
+    featuresSub: 'Keyfari 常驻菜单栏,不呼出就什么都不做。',
+    f1: '<b>兼容任何输入法。</b>按键按物理位置识别,中文或日文输入法不会造成干扰。',
+    f2: '<b>不抢焦点。</b>打开的菜单和弹出框保持原样,同样会有标签。',
+    f3: '<b>注重隐私。</b>没有遥测,不联网。文字识别在本机完成。',
+    f4: '<b>标签稳定。</b>点过的元素下次仍是同一个标签。',
+    f5: '<b>可以定制。</b>快捷键、标签字母、主题、滚动速度、忽略的应用。',
+    f6: '<b>三种语言。</b>英文、中文和日文。',
+    settingsTitle: '好用的设置窗口',
+    settingsSub: '修改主题或字号,预览立刻显示效果。',
+    installTitle: '安装',
+    installSub: 'Keyfari 没有使用 Apple 开发者证书签名,所以第一次打开时会被 macOS 拦截。',
+    dmgTitle: '下载安装',
+    dmg1: '下载<a href="https://github.com/hodgekou/keyfari/releases/latest">最新的磁盘映像</a>,把 Keyfari 拖进"应用程序"。',
+    dmg2: '打开一次,macOS 会拒绝。',
+    dmg3: '前往<b>系统设置 &gt; 隐私与安全性</b>,点击<b>仍要打开</b>。',
+    dmg4: '按提示授予辅助功能权限。',
+    brewNote: '首次打开同样需要上面的放行步骤。每次更新后,macOS 会要求重新授予权限。',
+    foot1: 'Keyfari 是自由软件,采用 <a href="https://github.com/hodgekou/keyfari/blob/main/LICENSE">GPL-3.0</a> 许可证。',
+    foot2: '基于 Dexter Leng 的 <a href="https://github.com/nchudleigh/vimac">Vimac</a> 重写,与 Vimac 及其作者没有隶属关系。'
+  },
+  ja: {
+    title: 'Mac のあらゆる操作を<span>キーボードで</span>',
+    lead: 'ショートカットを押すと、ボタンやリンク、メニュー項目に短いラベルが付きます。ラベルを入力すればクリックできます。無料のオープンソースです。',
+    download: 'macOS 版をダウンロード',
+    source: 'ソースを見る',
+    requires: 'macOS 14 以降が必要です。Apple シリコンと Intel に対応。',
+    detectTitle: 'アプリが公開していない内容も読み取ります',
+    detectSub: 'キャンバスで描かれた画面、ゲーム、リモートデスクトップなど、内容をシステムに伝えないウインドウがあります。Keyfari は Mac 上で画面を読み取り、見つけたテキストにラベルを付けます。下のウインドウは架空のアプリの画像です。',
+    withoutTitle: 'テキスト検出なし。',
+    withoutText: '本物のツールバーだけにラベルが付きます。',
+    withTitle: 'テキスト検出あり。',
+    withText: '画像の中のボタンにもラベルが付きます。',
+    modesTitle: '3 つのモード、3 つのショートカット',
+    modesSub: 'どれも設定で変更できます。',
+    hintName: 'ヒント',
+    hintText: 'クリックできる要素すべてにラベルを付けます。最後の文字で Shift を押すと右クリック、Command でダブルクリック。',
+    searchName: '検索',
+    searchText: '要素のテキストの一部を入力して Return。中国語はピンインでも検索できます。',
+    scrollName: 'スクロール',
+    scrollText: 'H J K L でスクロール、D と U で半ページ、G G で先頭へ。Tab でスクロール領域を切り替えます。',
+    featuresTitle: '普段は邪魔をしません',
+    featuresSub: 'Keyfari はメニューバーに常駐し、呼び出すまで何もしません。',
+    f1: '<b>どの入力方式でも使えます。</b>キーは位置で読み取るため、日本語や中国語の入力方式の影響を受けません。',
+    f2: '<b>フォーカスを奪いません。</b>開いているメニューやポップオーバーはそのままで、ラベルも付きます。',
+    f3: '<b>プライバシーを守ります。</b>テレメトリも通信もありません。テキスト検出は Mac 上で行います。',
+    f4: '<b>ラベルが変わりません。</b>一度クリックした要素には次回も同じラベルが付きます。',
+    f5: '<b>自分好みに。</b>ショートカット、ラベルの文字、テーマ、スクロール速度、除外するアプリ。',
+    f6: '<b>3 つの言語。</b>英語、中国語、日本語。',
+    settingsTitle: '使いやすい設定ウインドウ',
+    settingsSub: 'テーマやサイズを変えると、プレビューにすぐ反映されます。',
+    installTitle: 'インストール',
+    installSub: 'Keyfari は Apple の Developer ID で署名されていないため、初回の起動時に macOS がブロックします。',
+    dmgTitle: 'ダウンロード',
+    dmg1: '<a href="https://github.com/hodgekou/keyfari/releases/latest">最新のディスクイメージ</a>を入手し、Keyfari を「アプリケーション」にドラッグします。',
+    dmg2: '一度開きます。macOS が拒否します。',
+    dmg3: '<b>システム設定 &gt; プライバシーとセキュリティ</b>で<b>このまま開く</b>を選びます。',
+    dmg4: '求められたらアクセシビリティを許可します。',
+    brewNote: '初回起動時の手順は同じです。アップデートのたびに、macOS が許可をもう一度求めます。',
+    foot1: 'Keyfari は <a href="https://github.com/hodgekou/keyfari/blob/main/LICENSE">GPL-3.0</a> ライセンスのフリーソフトウェアです。',
+    foot2: 'Dexter Leng 氏の <a href="https://github.com/nchudleigh/vimac">Vimac</a> を書き直したものです。Vimac およびその作者とは関係ありません。'
+  }
+};
+
+// Remember the English text so switching back needs no reload.
+const english = {};
+document.querySelectorAll('[data-i18n]').forEach(el => { english[el.dataset.i18n] = el.textContent; });
+document.querySelectorAll('[data-i18n-html]').forEach(el => { english[el.dataset.i18nHtml] = el.innerHTML; });
+
+function apply(lang) {
+  const table = translations[lang] || {};
+  document.documentElement.lang = lang === 'zh' ? 'zh-Hans' : lang;
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    el.textContent = table[el.dataset.i18n] ?? english[el.dataset.i18n];
+  });
+  document.querySelectorAll('[data-i18n-html]').forEach(el => {
+    el.innerHTML = table[el.dataset.i18nHtml] ?? english[el.dataset.i18nHtml];
+  });
+  document.querySelectorAll('.langs button').forEach(button => {
+    button.setAttribute('aria-pressed', String(button.dataset.lang === lang));
+  });
+}
+
+function preferred() {
+  try {
+    const saved = localStorage.getItem('lang');
+    if (saved) return saved;
+  } catch (error) { /* storage may be unavailable */ }
+  for (const language of navigator.languages || [navigator.language]) {
+    const code = language.toLowerCase();
+    if (code.startsWith('zh')) return 'zh';
+    if (code.startsWith('ja')) return 'ja';
+    if (code.startsWith('en')) return 'en';
+  }
+  return 'en';
+}
+
+document.querySelectorAll('.langs button').forEach(button => {
+  button.addEventListener('click', () => {
+    try { localStorage.setItem('lang', button.dataset.lang); } catch (error) { /* ignore */ }
+    apply(button.dataset.lang);
+  });
+});
+apply(preferred());
+</script>
+</body>
+</html>
