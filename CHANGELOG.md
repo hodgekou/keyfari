@@ -4,6 +4,13 @@ All notable changes to Keyfari are recorded here. The format follows [Keep a Cha
 
 ## [Unreleased]
 
+## [0.4.1] - 2026-11-22
+
+### Changed
+
+- Nothing in the app itself changed. The README and the landing page were rewritten to put installation and first use first, and to say what Keyfari offers next to Vimac and Homerow.
+- This is the first release that copies of 0.4.0 can install by themselves, and the first update between two releases signed with the same certificate, so macOS should keep the Accessibility and Screen Recording permissions across it.
+
 ## [0.4.0] - 2026-11-22
 
 ### Added
