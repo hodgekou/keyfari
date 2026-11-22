@@ -46,4 +46,20 @@ public enum ScreenGeometry {
             return visible.width * visible.height >= 0.8 * frame.width * frame.height
         }
     }
+
+    /// The area the pointer's arrow covers, given where its tip is. Coordinates grow downward.
+    public static func pointerShadow(tip: CGPoint) -> CGRect {
+        CGRect(x: tip.x - 1, y: tip.y - 1, width: 15, height: 21)
+    }
+
+    /// Where to centre a label of `size` that belongs at `center`, so the pointer does not cover it.
+    ///
+    /// A label under the arrow moves to the left of the arrow's tip, level with where it was:
+    /// the arrow extends right and down from its tip, so that side is always clear.
+    public static func labelCenter(_ center: CGPoint, size: CGSize, avoidingPointerAt tip: CGPoint?) -> CGPoint {
+        guard let tip else { return center }
+        let label = CGRect(x: center.x - size.width / 2, y: center.y - size.height / 2, width: size.width, height: size.height)
+        guard label.intersects(pointerShadow(tip: tip)) else { return center }
+        return CGPoint(x: tip.x - 3 - size.width / 2, y: center.y)
+    }
 }

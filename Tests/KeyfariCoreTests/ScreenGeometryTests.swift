@@ -40,4 +40,24 @@ import Testing
         #expect(!ScreenGeometry.isOnScreen(.zero, displays: displays))
         #expect(!ScreenGeometry.isOnScreen(CGRect(x: 0, y: 0, width: 10, height: 10), displays: []))
     }
+
+    @Test func aLabelUnderThePointerStepsToItsLeft() {
+        let size = CGSize(width: 24, height: 16)
+        let tip = CGPoint(x: 500, y: 300)
+        // Right under the arrow.
+        let moved = ScreenGeometry.labelCenter(CGPoint(x: 505, y: 308), size: size, avoidingPointerAt: tip)
+        #expect(moved == CGPoint(x: 485, y: 308))
+        let label = CGRect(x: moved.x - 12, y: moved.y - 8, width: 24, height: 16)
+        #expect(!label.intersects(ScreenGeometry.pointerShadow(tip: tip)))
+    }
+
+    @Test func aLabelClearOfThePointerStaysPut() {
+        let size = CGSize(width: 24, height: 16)
+        let center = CGPoint(x: 600, y: 300)
+        #expect(ScreenGeometry.labelCenter(center, size: size, avoidingPointerAt: CGPoint(x: 500, y: 300)) == center)
+        // To the left of the tip is clear already.
+        #expect(
+            ScreenGeometry.labelCenter(CGPoint(x: 480, y: 305), size: size, avoidingPointerAt: CGPoint(x: 500, y: 300)) == CGPoint(x: 480, y: 305))
+        #expect(ScreenGeometry.labelCenter(center, size: size, avoidingPointerAt: nil) == center)
+    }
 }
