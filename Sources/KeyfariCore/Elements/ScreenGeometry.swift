@@ -32,4 +32,18 @@ public enum ScreenGeometry {
         }
         return best?.index
     }
+
+    /// Whether `frame` shows on one of the displays: its middle is on a display and most of it is too.
+    ///
+    /// Things that slide off the edge when hidden, like the Dock, keep reporting a frame;
+    /// this tells the shown from the hidden.
+    public static func isOnScreen(_ frame: CGRect, displays: [CGRect]) -> Bool {
+        guard frame.width > 0, frame.height > 0 else { return false }
+        let middle = CGPoint(x: frame.midX, y: frame.midY)
+        return displays.contains { display in
+            guard display.contains(middle) else { return false }
+            let visible = display.intersection(frame)
+            return visible.width * visible.height >= 0.8 * frame.width * frame.height
+        }
+    }
 }

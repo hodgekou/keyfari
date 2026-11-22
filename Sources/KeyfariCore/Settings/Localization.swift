@@ -204,6 +204,8 @@ public enum Localizer {
         "Label all visible windows": Entry(chinese: "给所有可见窗口打标签", japanese: "見えているすべてのウインドウにラベルを付ける"),
         "Not only the focused one. Windows on other displays get longer labels": Entry(
             chinese: "不只是当前窗口。其他显示器上的窗口使用较长的标签", japanese: "フォーカスのあるウインドウ以外にも。ほかのディスプレイのウインドウには長めのラベルが付きます"),
+        "Label the Dock": Entry(chinese: "给 Dock 打标签", japanese: "Dock にラベルを付ける"),
+        "The icons in the Dock get labels while it shows": Entry(chinese: "程序坞显示时,里面的图标也有标签", japanese: "Dock が表示されているあいだ、アイコンにもラベルが付きます"),
         "Chain clicks": Entry(chinese: "连续点击", japanese: "連続クリック"),
         "Stay in the mode after a click, until Esc or a text field": Entry(
             chinese: "点击后不退出模式,直到按 Esc 或点到输入框", japanese: "クリック後もモードを続ける(Esc またはテキスト欄をクリックするまで)"),

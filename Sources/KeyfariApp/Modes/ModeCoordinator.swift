@@ -178,7 +178,7 @@ final class ModeCoordinator {
         case .hint:
             applyStyle(settings)
             let controller = HintModeController(
-                query: AXElementQuery(), vision: vision(settings), overlay: overlay, interceptor: interceptor, settings: settings,
+                query: elementQuery(settings), vision: vision(settings), overlay: overlay, interceptor: interceptor, settings: settings,
                 memory: store.labelMemory,
                 target: target, recordClick: recordClick, onShortcut: onShortcut, onExit: onExit
             )
@@ -187,7 +187,7 @@ final class ModeCoordinator {
         case .search:
             applyStyle(settings)
             let controller = SearchModeController(
-                query: AXElementQuery(), vision: vision(settings), overlay: overlay, interceptor: interceptor, settings: settings,
+                query: elementQuery(settings), vision: vision(settings), overlay: overlay, interceptor: interceptor, settings: settings,
                 target: target, recordClick: recordClick, onShortcut: onShortcut, onExit: onExit
             )
             started = controller.start()
@@ -221,6 +221,12 @@ final class ModeCoordinator {
         overlay.style.theme = settings.hintTheme.isAvailable ? settings.hintTheme : .vivid
         overlay.searchPlaceholder = tr("Type to search")
         overlay.matchCountText = { $0 == 1 ? tr("1 match") : tr("%d matches", $0) }
+    }
+
+    private func elementQuery(_ settings: Settings) -> AXElementQuery {
+        var query = AXElementQuery()
+        query.includesDock = settings.hintDock
+        return query
     }
 
     private func vision(_ settings: Settings) -> VisionAugmenter? {

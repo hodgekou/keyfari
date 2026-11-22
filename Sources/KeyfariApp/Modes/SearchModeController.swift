@@ -150,7 +150,7 @@ final class SearchModeController {
             }
             self.log.notice("Searching \(found.count) elements in \(application.localizedName ?? "?", privacy: .public)")
             self.appliedStrokes = []
-            self.focusedItems = found.map { Item(element: $0, bundleID: self.bundleID, window: nil) }
+            self.focusedItems = found.map { Item(element: $0, bundleID: BackgroundWindows.owner(of: $0, frontmost: self.bundleID), window: nil) }
             self.rebuild()
             self.detectText(pid: pid, existing: found)
         }

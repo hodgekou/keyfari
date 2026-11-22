@@ -27,4 +27,17 @@ import Testing
         let offscreen = CGRect(x: 5000, y: 5000, width: 10, height: 10)
         #expect(ScreenGeometry.indexOfScreen(containing: offscreen, screenFrames: screens) == nil)
     }
+
+    @Test func tellsWhatShowsFromWhatIsParkedBeyondTheEdge() {
+        let displays = [CGRect(x: 0, y: 0, width: 1920, height: 1080), CGRect(x: -1470, y: 124, width: 1470, height: 956)]
+        // A Dock icon at the bottom of the first display.
+        #expect(ScreenGeometry.isOnScreen(CGRect(x: 91, y: 1000, width: 59, height: 75), displays: displays))
+        // The same icon while the Dock is hidden below the edge.
+        #expect(!ScreenGeometry.isOnScreen(CGRect(x: 91, y: 1076, width: 59, height: 75), displays: displays))
+        // Half way out.
+        #expect(!ScreenGeometry.isOnScreen(CGRect(x: 91, y: 1040, width: 59, height: 75), displays: displays))
+        #expect(ScreenGeometry.isOnScreen(CGRect(x: -1400, y: 1000, width: 59, height: 75), displays: displays))
+        #expect(!ScreenGeometry.isOnScreen(.zero, displays: displays))
+        #expect(!ScreenGeometry.isOnScreen(CGRect(x: 0, y: 0, width: 10, height: 10), displays: []))
+    }
 }

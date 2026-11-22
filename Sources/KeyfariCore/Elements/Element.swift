@@ -9,6 +9,7 @@ public enum ElementSource: Sendable, Equatable {
     case menuBar
     case menuBarExtra
     case notification
+    case dock
     case vision
 }
 

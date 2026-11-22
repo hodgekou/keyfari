@@ -203,6 +203,8 @@ struct SettingsView: View {
                 "Label all visible windows", detail: "Not only the focused one. Windows on other displays get longer labels",
                 isOn: $store.settings.hintAllWindows, tint: tint)
             RowDivider()
+            ToggleRow("Label the Dock", detail: "The icons in the Dock get labels while it shows", isOn: $store.settings.hintDock, tint: tint)
+            RowDivider()
             ToggleRow(
                 "Chain clicks", detail: "Stay in the mode after a click, until Esc or a text field", isOn: $store.settings.chainClicks, tint: tint)
         }

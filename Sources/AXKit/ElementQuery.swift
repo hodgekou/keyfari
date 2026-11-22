@@ -20,6 +20,8 @@ public struct AXElementQuery: ElementQuerying {
     public var messagingTimeout: Float = 0.25
     /// How long the very first activation waits for the menu bar extras of other applications.
     public var extrasDeadline: Duration = .milliseconds(150)
+    /// Whether the icons in the Dock get labels too.
+    public var includesDock = true
 
     public init() {}
 
@@ -45,6 +47,9 @@ public struct AXElementQuery: ElementQuerying {
             }
         }
         elements.append(contentsOf: try Self.notificationElements())
+        if includesDock {
+            elements.append(contentsOf: Self.dockItems())
+        }
 
         // Only the first activation has nothing cached and waits, up to the deadline.
         while extras == nil, ContinuousClock.now - start < extrasDeadline {
@@ -103,6 +108,35 @@ public struct AXElementQuery: ElementQuerying {
                 source: source
             )
         }
+    }
+
+    // MARK: Dock
+
+    /// The icons in the Dock, while it is showing.
+    private static func dockItems() -> [ElementSnapshot] {
+        guard let dock = NSRunningApplication.runningApplications(withBundleIdentifier: "com.apple.dock").first else { return [] }
+        let application = AXElement.application(pid: dock.processIdentifier)
+        application.setMessagingTimeout(seconds: 0.1)
+        let displays = activeDisplayBounds()
+
+        var result: [ElementSnapshot] = []
+        for list in AXDecode.elements(try? application.value(of: kAXChildrenAttribute)) {
+            guard (try? list.role()) == "AXList" else { continue }
+            for item in AXDecode.elements(try? list.value(of: kAXChildrenAttribute)) {
+                let values = item.values(of: [
+                    kAXRoleAttribute, kAXSubroleAttribute, kAXPositionAttribute, kAXSizeAttribute, kAXTitleAttribute,
+                ])
+                guard let role = values[0] as? String, role == "AXDockItem",
+                    values[1] as? String != "AXSeparatorDockItem",
+                    let frame = AXDecode.frame(position: values[2], size: values[3]),
+                    // A hidden Dock keeps its items, parked beyond the edge of the screen.
+                    ScreenGeometry.isOnScreen(frame, displays: displays)
+                else { continue }
+                result.append(
+                    ElementSnapshot(role: role, frame: frame, actions: [kAXPressAction], searchText: AXDecode.searchText([values[4]]), source: .dock))
+            }
+        }
+        return result
     }
 
     // MARK: Notification Center
