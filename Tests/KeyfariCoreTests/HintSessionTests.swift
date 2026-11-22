@@ -69,4 +69,25 @@ import Testing
         var session = session()
         #expect(session.handle(KeyStroke(keyCode: d, modifiers: modifiers)) == .matched(index: 3, action: action))
     }
+
+    @Test func controlShiftOnTheLastLetterPicksTheElementUp() {
+        var session = session()
+        #expect(session.handle(KeyStroke(keyCode: s, modifiers: [.control, .shift])) == .pickedUp(index: 2))
+        // On a letter that only narrows, the modifiers mean nothing yet.
+        #expect(session.handle(KeyStroke(keyCode: a, modifiers: [.control, .shift])) == .updated(prefix: "A", visible: [0, 1]))
+        #expect(session.handle(KeyStroke(keyCode: s, modifiers: [.control, .shift])) == .pickedUp(index: 1))
+        // Shift alone is still a right click.
+        var other = self.session()
+        #expect(other.handle(KeyStroke(keyCode: s, modifiers: .shift)) == .matched(index: 2, action: .right))
+    }
+
+    @Test func afterPickingUpAnotherLabelCanBeTyped() {
+        var session = session()
+        _ = session.handle(KeyStroke(keyCode: a))
+        _ = session.handle(KeyStroke(keyCode: s, modifiers: [.control, .shift]))
+        #expect(session.prefix == "A")
+        session.clearPrefix()
+        #expect(session.prefix.isEmpty)
+        #expect(session.handle(KeyStroke(keyCode: d)) == .matched(index: 3, action: .left))
+    }
 }
