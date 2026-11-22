@@ -33,6 +33,7 @@ final class SearchModeController {
     private let settings: Settings
     private let target: @MainActor () -> ModeTarget?
     private let recordClick: @MainActor (String, Int, Bool) -> Void
+    private let rememberClick: @MainActor (ElementSnapshot, String, ClickAction) -> Void
     private let onShortcut: @MainActor (KeyStroke) -> Bool
     private let onExit: @MainActor () -> Void
 
@@ -65,6 +66,7 @@ final class SearchModeController {
         settings: Settings,
         target: @escaping @MainActor () -> ModeTarget?,
         recordClick: @escaping @MainActor (String, Int, Bool) -> Void,
+        rememberClick: @escaping @MainActor (ElementSnapshot, String, ClickAction) -> Void,
         onShortcut: @escaping @MainActor (KeyStroke) -> Bool,
         onExit: @escaping @MainActor () -> Void
     ) {
@@ -75,6 +77,7 @@ final class SearchModeController {
         self.settings = settings
         self.target = target
         self.recordClick = recordClick
+        self.rememberClick = rememberClick
         self.onShortcut = onShortcut
         self.onExit = onExit
     }
@@ -293,6 +296,7 @@ final class SearchModeController {
 
     private func finish(_ action: ClickAction, on item: Item, at point: CGPoint) {
         MouseSynthesizer.perform(action, at: point)
+        rememberClick(item.element, item.bundleID, action)
         playSuccessSound(clickCount: action.clickCount)
         recordClick(item.bundleID, action.clickCount, true)
 

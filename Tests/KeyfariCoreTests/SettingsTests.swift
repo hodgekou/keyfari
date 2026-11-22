@@ -131,6 +131,22 @@ import Testing
         #expect(settings.validated().halfPageKeys == "du")
     }
 
+    @Test func theRepeatShortcutIsOffByDefaultAndMustNotClash() throws {
+        var settings = Settings()
+        #expect(settings.repeatClickShortcut == nil)
+        let shortcut = Shortcut(keyCode: KeyCode.return, modifiers: [.control, .option])
+        settings.repeatClickShortcut = shortcut
+        let decoded = try JSONDecoder().decode(Settings.self, from: JSONEncoder().encode(settings))
+        #expect(decoded.validated().repeatClickShortcut == shortcut)
+
+        settings.nextSpaceShortcut = shortcut
+        #expect(settings.validated().nextSpaceShortcut == shortcut)
+        #expect(settings.validated().repeatClickShortcut == nil)
+        settings.nextSpaceShortcut = nil
+        settings.repeatClickShortcut = settings.scrollShortcut
+        #expect(settings.validated().repeatClickShortcut == nil)
+    }
+
     @Test func shortcutDisplayAndMatching() {
         let shortcut = Shortcut(keyCode: KeyCode.space, modifiers: [.command, .shift])
         #expect(shortcut.displayString == "⇧⌘Space")
