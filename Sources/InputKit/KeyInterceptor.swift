@@ -50,6 +50,8 @@ public final class KeyInterceptor {
     }
 
     private func handle(_ type: CGEventType, _ event: CGEvent) -> Bool {
+        // Replayed keys belong to the focused application, not the active mode.
+        guard !SyntheticEvent.isOurs(event) else { return false }
         let keyCode = UInt16(truncatingIfNeeded: event.getIntegerValueField(.keyboardEventKeycode))
 
         if type == .keyUp {

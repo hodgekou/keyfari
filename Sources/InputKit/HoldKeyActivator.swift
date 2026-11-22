@@ -92,6 +92,14 @@ public final class HoldKeyActivator {
     private func timerFired() {
         timer = nil
         guard machine.timerFired() == .activate else { return }
+        if isSuppressed() {
+            // The focused app may have changed while Space was being held. Replay the
+            // withheld key-down; its physical key-up can then pass through normally.
+            machine.reset()
+            if let withheld { SyntheticEvent.post(withheld) }
+            withheld = nil
+            return
+        }
         withheld = nil
         onActivate()
     }

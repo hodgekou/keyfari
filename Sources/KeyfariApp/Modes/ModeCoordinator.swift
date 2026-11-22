@@ -69,7 +69,10 @@ final class ModeCoordinator {
         guard AXPermission.isGranted else { return }
         registerShortcuts(settings)
 
-        let isSuppressed: @MainActor () -> Bool = { [weak self] in self?.active != nil }
+        let isSuppressed: @MainActor () -> Bool = { [weak self] in
+            guard let self else { return true }
+            return self.active != nil || self.eligibleApplication() == nil
+        }
 
         if settings.holdSpaceEnabled {
             let activator = HoldKeyActivator(delay: settings.holdDelay, isSuppressed: isSuppressed) { [weak self] in
@@ -162,6 +165,16 @@ final class ModeCoordinator {
 
     /// The frontmost application, unless it is this app or on the ignore list.
     private func currentTarget() -> ModeTarget? {
+        guard let application = eligibleApplication() else { return nil }
+        let ownPID = ProcessInfo.processInfo.processIdentifier
+        let otherPIDs = NSWorkspace.shared.runningApplications
+            .map(\.processIdentifier)
+            .filter { $0 != ownPID && $0 != application.processIdentifier }
+        return ModeTarget(application: application, otherPIDs: otherPIDs)
+    }
+
+    /// Whether a keyboard activation gesture may act on the current frontmost application.
+    private func eligibleApplication() -> NSRunningApplication? {
         let ownPID = ProcessInfo.processInfo.processIdentifier
         guard let application = NSWorkspace.shared.frontmostApplication,
             application.processIdentifier != ownPID
@@ -169,10 +182,7 @@ final class ModeCoordinator {
         if let bundleID = application.bundleIdentifier, store.effective.ignoredBundleIDs.contains(bundleID) {
             return nil
         }
-        let otherPIDs = NSWorkspace.shared.runningApplications
-            .map(\.processIdentifier)
-            .filter { $0 != ownPID && $0 != application.processIdentifier }
-        return ModeTarget(application: application, otherPIDs: otherPIDs)
+        return application
     }
 
     /// While a mode is active its event tap sees the shortcuts before the system does,
