@@ -97,4 +97,37 @@ import Testing
         #expect(UsageLedger.date(fromDayKey: "2026-11-07", calendar: calendar) == calendar.startOfDay(for: day(7)))
         #expect(UsageLedger.date(fromDayKey: "yesterday", calendar: calendar) == nil)
     }
+
+    @Test func activityIsLaidOutByWeekStartingOnTheFirstWeekday() {
+        // 22 November 2026 is a Sunday; with weeks starting on Monday it ends its week.
+        var monday = calendar
+        monday.firstWeekday = 2
+        var ledger = UsageLedger()
+        ledger.record(bundleID: "a", clicks: 3, isNewAction: true, on: day(22), calendar: monday)
+        ledger.record(bundleID: "a", clicks: 5, isNewAction: true, on: day(16), calendar: monday)
+        ledger.record(bundleID: "a", clicks: 1, isNewAction: true, on: day(9), calendar: monday)
+
+        let weeks = ledger.activity(weeks: 2, today: day(22), calendar: monday)
+        // The week of 9 November, then the week of 16 November.
+        #expect(weeks == [[1, 0, 0, 0, 0, 0, 0], [5, 0, 0, 0, 0, 0, 3]])
+    }
+
+    @Test func daysThatHaveNotComeAreLeftOut() {
+        var monday = calendar
+        monday.firstWeekday = 2
+        // 18 November 2026 is a Wednesday.
+        let weeks = ledger(activeOn: [18]).activity(weeks: 1, today: day(18), calendar: monday)
+        #expect(weeks == [[0, 0, 1, nil, nil, nil, nil]])
+        #expect(UsageLedger().activity(weeks: 0, today: day(18), calendar: monday).isEmpty)
+    }
+
+    @Test func activityLevelsAreQuartersOfTheBusiestDay() {
+        #expect(UsageLedger.activityLevel(clicks: 0, busiest: 40) == 0)
+        #expect(UsageLedger.activityLevel(clicks: 1, busiest: 40) == 1)
+        #expect(UsageLedger.activityLevel(clicks: 10, busiest: 40) == 1)
+        #expect(UsageLedger.activityLevel(clicks: 11, busiest: 40) == 2)
+        #expect(UsageLedger.activityLevel(clicks: 30, busiest: 40) == 3)
+        #expect(UsageLedger.activityLevel(clicks: 40, busiest: 40) == 4)
+        #expect(UsageLedger.activityLevel(clicks: 5, busiest: 0) == 0)
+    }
 }

@@ -86,6 +86,31 @@ public struct UsageLedger: Codable, Equatable, Sendable {
         return longest
     }
 
+    /// The clicks of each day of the last `weeks` weeks, for a calendar-style chart.
+    ///
+    /// One inner array per week, oldest first, each with seven entries that start on the
+    /// calendar's first weekday. A day that has not come yet is nil; a day without activity is 0.
+    public func activity(weeks: Int, today: Date, calendar: Calendar) -> [[Int?]] {
+        guard weeks > 0 else { return [] }
+        let start = calendar.startOfDay(for: today)
+        // How many days into its week today is, counted from the calendar's first weekday.
+        let offset = (calendar.component(.weekday, from: start) - calendar.firstWeekday + 7) % 7
+        guard let firstDay = calendar.date(byAdding: .day, value: -(offset + (weeks - 1) * 7), to: start) else { return [] }
+        return (0..<weeks).map { week in
+            (0..<7).map { day in
+                guard let date = calendar.date(byAdding: .day, value: week * 7 + day, to: firstDay), date <= start else { return nil }
+                return clicksByDay[Self.dayKey(date, calendar: calendar)] ?? 0
+            }
+        }
+    }
+
+    /// How strongly to colour a day with `clicks`, from 0 (nothing) to 4, relative to the busiest day shown.
+    public static func activityLevel(clicks: Int, busiest: Int) -> Int {
+        guard clicks > 0, busiest > 0 else { return 0 }
+        // Quarters of the busiest day shown.
+        return max(1, min(4, Int((Double(clicks) / Double(busiest) * 4).rounded(.up))))
+    }
+
     static func dayKey(_ date: Date, calendar: Calendar) -> String {
         let components = calendar.dateComponents([.year, .month, .day], from: date)
         return String(format: "%04d-%02d-%02d", components.year ?? 0, components.month ?? 0, components.day ?? 0)

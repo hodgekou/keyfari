@@ -19,6 +19,8 @@ enum SettingsSnapshot {
         let store = SettingsStore(defaults: defaults)
         // Two entries, one of them not installed, so both kinds of row are drawn.
         store.settings.ignoredBundleIDs = ["com.apple.Terminal", "com.example.missing"]
+        // Some activity, so the Stats pane has something to show.
+        store.usageStats.record(bundleID: "com.apple.Terminal", clicks: 7, isNewAction: true)
         // A remembered label and a chosen one, so both kinds of row are drawn.
         for (label, text) in [("S", "Save"), ("D", "New Tab")] {
             store.labelMemory.remember(label, for: ElementSnapshot(role: "AXButton", frame: .zero, searchText: text), bundleID: "com.apple.Terminal")

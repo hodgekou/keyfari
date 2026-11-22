@@ -33,6 +33,11 @@ final class UsageStatsStore {
     var currentStreak: Int { ledger.currentStreak(today: .now, calendar: .autoupdatingCurrent) }
     var longestStreak: Int { ledger.longestStreak(calendar: .autoupdatingCurrent) }
 
+    /// The clicks of each day of the last `weeks` weeks; see `UsageLedger.activity`.
+    func activity(weeks: Int) -> [[Int?]] {
+        ledger.activity(weeks: weeks, today: .now, calendar: .autoupdatingCurrent)
+    }
+
     var topApps: [AppClickStats] {
         ledger.appsByClicks.map { AppClickStats(bundleID: $0.bundleID, name: appName($0.bundleID), clicks: $0.clicks) }
     }
