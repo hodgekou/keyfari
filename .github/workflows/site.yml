@@ -17,12 +17,12 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  deploy:
-    name: Deploy to GitHub Pages
+  # Two jobs rather than one: the deployment looks the uploaded site up by name, and asked
+  # in the same breath as the upload finishes it is sometimes told there is none yet.
+  build:
+    name: Assemble the site
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v7
       - name: Assemble the site
@@ -35,6 +35,16 @@ jobs:
         with:
           name: github-pages-${{ github.run_attempt }}
           path: _site
+
+  deploy:
+    name: Deploy to GitHub Pages
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
       - id: deployment
         uses: actions/deploy-pages@v5
         with:
