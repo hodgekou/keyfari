@@ -14,7 +14,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var permissionTimer: Timer?
     private let store = SettingsStore()
     private lazy var modes = ModeCoordinator(store: store)
-    private lazy var updates = UpdateChecker(store: store)
+    private lazy var updates = AppUpdater(store: store)
     private var ignoreMenuItem: NSMenuItem?
     private var settingsMenuItem: NSMenuItem?
     private var quitMenuItem: NSMenuItem?
@@ -32,6 +32,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         NSApp.applicationIconImage = Brand.icon
         setUpStatusItem()
         updates.start()
+        store.onUpdateCheckChange = { [weak self] in self?.updates.settingsChanged() }
         showWelcomeOnFirstLaunch()
         #if DEBUG
         if CommandLine.arguments.contains("--open-welcome") {

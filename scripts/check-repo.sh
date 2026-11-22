@@ -48,9 +48,19 @@ for document in README.md CONTRIBUTING.md; do
   )
 done
 
+# The update feed, once there is one, is well-formed.
+if [ -f site/appcast.xml ] && ! xmllint --noout site/appcast.xml 2>/dev/null; then
+  fail "site/appcast.xml is not well-formed XML"
+fi
+
 # The bundle's version is the newest one in the changelog.
 plist_version="$(/usr/bin/sed -n '/CFBundleShortVersionString/{n;s/.*<string>\(.*\)<\/string>.*/\1/p;}' Resources/Info.plist)"
 changelog_version="$(sed -nE 's/^## \[([0-9]+\.[0-9]+\.[0-9]+)\].*/\1/p' CHANGELOG.md | head -n 1)"
+bundle_version="$(/usr/bin/sed -n '/CFBundleVersion/{n;s/.*<string>\(.*\)<\/string>.*/\1/p;}' Resources/Info.plist)"
+if [ "$bundle_version" != "$plist_version" ]; then
+  # The updater compares CFBundleVersion, so it has to say the same as the version people see.
+  fail "Resources/Info.plist has CFBundleVersion $bundle_version but CFBundleShortVersionString $plist_version"
+fi
 if [ "$plist_version" != "$changelog_version" ]; then
   fail "Resources/Info.plist says version $plist_version, but the newest version in CHANGELOG.md is $changelog_version"
 fi

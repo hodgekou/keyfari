@@ -38,7 +38,7 @@ Every pull request runs four jobs:
 - **No force unwraps**, no force `try`, no implicitly unwrapped optionals. The linter enforces this.
 - **Dependencies point one way**: `KeyfariApp` depends on the kits, the kits depend on `KeyfariCore`, and the kits do not depend on each other. Anything that can be decided without calling the system belongs in `KeyfariCore`, where it can be tested.
 - **Comments say why**, not what. Leave a comment where a reader would otherwise have to guess: a workaround, a constraint, a non-obvious choice.
-- **No third-party dependencies** so far. Raise an issue before adding one.
+- **One third-party dependency**: [Sparkle](https://sparkle-project.org), which installs updates. It ships as a prebuilt framework that the package manager downloads and `scripts/bundle.sh` puts into the app. Raise an issue before adding another.
 - **Every source file starts with** `// SPDX-License-Identifier: GPL-3.0-only`. Code adapted from Vimac keeps the note naming the original file and author.
 
 ## Adding or fixing a translation
@@ -75,7 +75,23 @@ iconutil -c icns /tmp/AppIcon.iconset -o Resources/AppIcon.icns
 1. Add a section for the new version to `CHANGELOG.md`, set the same version in `Resources/Info.plist`, and get both onto `main`. `scripts/check-repo.sh` fails when the two disagree.
 2. Tag that commit and push the tag: `git tag v0.2.0 && git push origin v0.2.0`.
 
-The `Release` workflow first checks that the tag has a section in the changelog, then builds a universal app, packs it into a disk image, publishes a GitHub release with that section as its notes, and points `Casks/keyfari.rb` at the new image.
+The `Release` workflow first checks that the tag has a section in the changelog, then builds a universal app, signs the update and adds it to the update feed, packs it into a disk image, publishes a GitHub release with that section as its notes, and points `Casks/keyfari.rb` at the new image.
+
+### The update key
+
+Installed copies only accept an update that is signed with the project's EdDSA key. The public half is `SUPublicEDKey` in `Resources/Info.plist`; the private half is the repository secret `SPARKLE_PRIVATE_KEY` and must never be committed. The workflow signs each disk image and `scripts/update-appcast.py` adds it to `site/appcast.xml`, the feed the app reads from the project's site.
+
+A build whose `Info.plist` has no public key cannot verify updates, so it only announces a new version and opens its download page.
+
+To set the key up once, as a maintainer:
+
+```sh
+swift build                                               # downloads Sparkle and its tools
+.build/artifacts/sparkle/Sparkle/bin/generate_keys        # creates the key in your keychain and prints the public half
+.build/artifacts/sparkle/Sparkle/bin/generate_keys -x sparkle-private-key.txt   # exports the private half
+```
+
+Put the public key into `Resources/Info.plist`, store the contents of the exported file as the secret `SPARKLE_PRIVATE_KEY`, and delete the file.
 
 ## Licence
 

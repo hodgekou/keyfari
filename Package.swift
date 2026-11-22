@@ -9,6 +9,10 @@ let package = Package(
     products: [
         .executable(name: "Keyfari", targets: ["KeyfariApp"])
     ],
+    dependencies: [
+        // In-app updates. The only third-party dependency; it ships as a prebuilt framework.
+        .package(url: "https://github.com/sparkle-project/Sparkle", from: "2.10.1")
+    ],
     targets: [
         // Pure logic. Depends on Foundation only so it can be tested without any permission.
         .target(name: "KeyfariCore"),
@@ -22,7 +26,10 @@ let package = Package(
         .target(name: "ScreenVision"),
         .executableTarget(
             name: "KeyfariApp",
-            dependencies: ["KeyfariCore", "AXKit", "InputKit", "OverlayKit", "ScreenVision"]
+            dependencies: [
+                "KeyfariCore", "AXKit", "InputKit", "OverlayKit", "ScreenVision",
+                .product(name: "Sparkle", package: "Sparkle"),
+            ]
         ),
         .testTarget(name: "KeyfariCoreTests", dependencies: ["KeyfariCore"]),
     ],
