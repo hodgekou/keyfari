@@ -16,7 +16,8 @@ struct HintPreview: View {
 
     var body: some View {
         var style = HintStyle()
-        style.theme = settings.hintTheme
+        let theme = settings.hintTheme.isAvailable ? settings.hintTheme : .vivid
+        style.theme = theme
         let labels = HintLabelGenerator.labels(count: Self.positions.count, alphabet: settings.hintAlphabet)
         let fontSize = min(settings.hintFontSize, 20)
 
@@ -47,24 +48,39 @@ struct HintPreview: View {
 
             ForEach(Array(zip(labels, Self.positions).enumerated()), id: \.offset) { _, pair in
                 let colors = style.colors(for: pair.0)
-                Text(pair.0)
-                    .font(.system(size: fontSize, weight: .bold))
-                    .foregroundStyle(Color(nsColor: colors.foreground))
-                    .padding(.horizontal, 4)
-                    .padding(.vertical, 1.5)
-                    .background(
-                        RoundedRectangle(cornerRadius: settings.hintCornerRadius, style: .continuous)
-                            .fill(Color(nsColor: colors.background))
-                    )
-                    .overlay(
-                        RoundedRectangle(cornerRadius: settings.hintCornerRadius, style: .continuous)
-                            .stroke(Color(nsColor: colors.border), lineWidth: 0.5)
-                    )
-                    .shadow(color: .black.opacity(0.25), radius: 2, y: 1)
+                sampleLabel(pair.0, colors: colors, fontSize: fontSize, theme: theme)
                     .position(pair.1)
             }
         }
         .frame(height: 108)
         .overlay(RoundedRectangle(cornerRadius: 12, style: .continuous).stroke(Color.primary.opacity(0.08)))
+    }
+
+    @ViewBuilder
+    private func sampleLabel(_ label: String, colors: HintStyle.Colors, fontSize: CGFloat, theme: HintTheme) -> some View {
+        if theme == .liquidGlass, #available(macOS 26.0, *) {
+            Text(label)
+                .font(.system(size: fontSize, weight: .bold))
+                .foregroundStyle(.primary)
+                .padding(.horizontal, 4)
+                .padding(.vertical, 1.5)
+                .glassEffect(.regular, in: RoundedRectangle(cornerRadius: settings.hintCornerRadius, style: .continuous))
+                .shadow(color: .black.opacity(0.25), radius: 2, y: 1)
+        } else {
+            Text(label)
+                .font(.system(size: fontSize, weight: .bold))
+                .foregroundStyle(Color(nsColor: colors.foreground))
+                .padding(.horizontal, 4)
+                .padding(.vertical, 1.5)
+                .background(
+                    RoundedRectangle(cornerRadius: settings.hintCornerRadius, style: .continuous)
+                        .fill(Color(nsColor: colors.background))
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: settings.hintCornerRadius, style: .continuous)
+                        .stroke(Color(nsColor: colors.border), lineWidth: 0.5)
+                )
+                .shadow(color: .black.opacity(0.25), radius: 2, y: 1)
+        }
     }
 }

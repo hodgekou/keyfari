@@ -137,13 +137,14 @@ struct SettingsView: View {
     @ViewBuilder
     private var hints: some View {
         let tint = SettingsPane.hints.tint
+        let selectedTheme = store.settings.hintTheme.isAvailable ? store.settings.hintTheme : .vivid
         HintPreview(settings: store.effective)
 
         Card("Appearance", symbol: "paintpalette.fill", tint: tint) {
             SettingRow("Theme") {
                 HStack(spacing: 8) {
-                    ForEach(HintTheme.allCases, id: \.self) { theme in
-                        ThemeSwatch(theme: theme, isSelected: store.settings.hintTheme == theme) {
+                    ForEach(HintTheme.available, id: \.self) { theme in
+                        ThemeSwatch(theme: theme, isSelected: selectedTheme == theme) {
                             store.settings.hintTheme = theme
                         }
                     }
