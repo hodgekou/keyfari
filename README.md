@@ -38,7 +38,7 @@ The regular labels appear at once; the detected ones follow in well under a seco
 - **Update check**: once a day Keyfari looks for a newer version and offers to open its download page. You can skip a version or switch the check off.
 - **Interface in English, Chinese and Japanese**, following the system language unless you choose one.
 
-Not yet: detection of icon-only buttons. Keyfari tells you about a new version but does not install it; download it from the releases page or use Homebrew.
+Icon-only buttons are detected only experimentally, from their shapes, when they line up like a toolbar; switch it on in the AI Detection pane. Keyfari tells you about a new version but does not install it; download it from the releases page or use Homebrew.
 
 More at [hodgekou.github.io/keyfari](https://hodgekou.github.io/keyfari/).
 

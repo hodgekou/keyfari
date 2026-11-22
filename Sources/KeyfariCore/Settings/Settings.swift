@@ -55,6 +55,8 @@ public struct Settings: Codable, Equatable, Sendable {
     /// Give an element the label it had the last time it was clicked.
     public var stableLabels = true
     public var visionMode = VisionMode.always
+    /// Also label shapes in the window's pixels that look like icon buttons. Experimental.
+    public var iconDetection = false
     public var language = AppLanguage.system
     /// Collect aggregate usage counts on this Mac only.
     public var usageStatisticsEnabled = true
@@ -100,6 +102,7 @@ public struct Settings: Codable, Equatable, Sendable {
         hintDock = try container.decodeIfPresent(Bool.self, forKey: .hintDock) ?? fallback.hintDock
         stableLabels = try container.decodeIfPresent(Bool.self, forKey: .stableLabels) ?? fallback.stableLabels
         visionMode = (try? container.decodeIfPresent(VisionMode.self, forKey: .visionMode)) ?? fallback.visionMode
+        iconDetection = try container.decodeIfPresent(Bool.self, forKey: .iconDetection) ?? fallback.iconDetection
         language = (try? container.decodeIfPresent(AppLanguage.self, forKey: .language)) ?? fallback.language
         usageStatisticsEnabled = try container.decodeIfPresent(Bool.self, forKey: .usageStatisticsEnabled) ?? fallback.usageStatisticsEnabled
         successSoundEnabled = try container.decodeIfPresent(Bool.self, forKey: .successSoundEnabled) ?? fallback.successSoundEnabled

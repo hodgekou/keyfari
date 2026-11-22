@@ -15,6 +15,8 @@ struct VisionAugmenter: Sendable {
     static let fallbackThreshold = 5
 
     let mode: VisionMode
+    /// Whether shapes that look like icon buttons get labels too.
+    var detectsIcons = false
 
     /// Extra elements for the focused window of `pid`, excluding anything `existing` already covers.
     /// Returns nothing when detection is off, not needed, not permitted, or fails.
@@ -31,9 +33,9 @@ struct VisionAugmenter: Sendable {
         guard let windowFrame = AXElementQuery.focusedWindowFrame(pid: pid) else { return [] }
 
         let started = ContinuousClock.now
-        let regions: [TextRegion]
+        let scan: ScreenTextDetector.Scan
         do {
-            regions = try await ScreenTextDetector.textRegions(pid: pid, windowFrame: windowFrame)
+            scan = try await ScreenTextDetector.scan(pid: pid, windowFrame: windowFrame, includesOutlines: detectsIcons)
         } catch is CancellationError {
             return []
         } catch {
@@ -41,16 +43,26 @@ struct VisionAugmenter: Sendable {
             return []
         }
 
+        let regions = scan.text
         let kept = VisionMerge.newRegions(regions.map(\.frame), existing: windowElements.map(\.clippedFrame))
+        // Whatever is text or already has a label is not an icon of its own.
+        let icons =
+            detectsIcons
+            ? IconCandidates.find(outlines: scan.outlines, occupied: windowElements.map(\.clippedFrame) + regions.map(\.frame))
+            : []
         let elapsed = ContinuousClock.now - started
-        log.notice("Vision found \(regions.count) text regions, kept \(kept.count), after \(elapsed.description, privacy: .public)")
-        return kept.map { index in
-            ElementSnapshot(
-                role: "VisionText",
-                frame: regions[index].frame,
-                searchText: regions[index].text,
-                source: .vision
-            )
-        }
+        log.notice(
+            "Vision found \(regions.count) text regions, kept \(kept.count), and \(icons.count) icons, after \(elapsed.description, privacy: .public)"
+        )
+        let iconElements = icons.map { ElementSnapshot(role: "VisionIcon", frame: $0, source: .vision) }
+        return iconElements
+            + kept.map { index in
+                ElementSnapshot(
+                    role: "VisionText",
+                    frame: regions[index].frame,
+                    searchText: regions[index].text,
+                    source: .vision
+                )
+            }
     }
 }
