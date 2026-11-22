@@ -128,7 +128,7 @@ struct WelcomeView: View {
             ToggleRow("Launch at login", detail: "Start Keyfari when you log in", isOn: $store.settings.launchAtLogin, tint: Self.tint)
             RowDivider()
             ToggleRow(
-                "Check for updates", detail: "Once a day, asks GitHub for the newest version. Nothing about you or this Mac is sent",
+                "Check for updates", detail: "Once a day, looks for a newer version. Nothing about you or this Mac is sent",
                 isOn: $store.settings.updateCheckEnabled, tint: Self.tint)
         }
         TimelineView(.periodic(from: .now, by: 1)) { _ in

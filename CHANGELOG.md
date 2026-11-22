@@ -4,6 +4,10 @@ All notable changes to Keyfari are recorded here. The format follows [Keep a Cha
 
 ## [Unreleased]
 
+### Removed
+
+- Remove the offer to open the download page for a new version. Every release installs updates itself now; a build without the update key no longer looks for updates.
+
 ## [0.3.0] - 2026-11-22
 
 ### Added

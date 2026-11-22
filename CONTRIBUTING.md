@@ -75,13 +75,13 @@ iconutil -c icns /tmp/AppIcon.iconset -o Resources/AppIcon.icns
 1. Add a section for the new version to `CHANGELOG.md`, set the same version in `Resources/Info.plist`, and get both onto `main`. `scripts/check-repo.sh` fails when the two disagree.
 2. Tag that commit and push the tag: `git tag v0.2.0 && git push origin v0.2.0`.
 
-The `Release` workflow first checks that the tag has a section in the changelog, then builds a universal app, signs the update and adds it to the update feed, packs it into a disk image, publishes a GitHub release with that section as its notes, and points `Casks/keyfari.rb` at the new image. After the workflow finishes, copy the updated cask from `main` to the same path in [the public Homebrew tap](https://github.com/hodgekou/homebrew-keyfari) so new installations use the latest disk image.
+The `Release` workflow first checks that the tag has a section in the changelog, then builds a universal app, signs the update and adds it to the update feed, packs it into a disk image, publishes a GitHub release with that section as its notes, and points `Casks/keyfari.rb` at the new image. Last, `scripts/sync-tap.sh` copies the cask to [the public Homebrew tap](https://github.com/hodgekou/homebrew-keyfari), so new installations get the latest disk image. That needs the repository secret `HOMEBREW_TAP_TOKEN`, a token that may write to the tap; without it the workflow says so and the cask has to be copied by hand.
 
 ### The update key
 
 Installed copies only accept an update that is signed with the project's EdDSA key. The public half is `SUPublicEDKey` in `Resources/Info.plist`; the private half is the repository secret `SPARKLE_PRIVATE_KEY` and must never be committed. The workflow runs `scripts/publish-feed.sh`, which signs the disk image, checks the signature against the public key, and adds the release to `site/appcast.xml`, the feed the app reads from the project's site. If a release went out while the key was missing or wrong, run the `Update feed` workflow by hand with the version to do that part again.
 
-A build whose `Info.plist` has no public key cannot verify updates, so it only announces a new version and opens its download page.
+A build whose `Info.plist` has no public key cannot verify updates, so it does not look for any.
 
 To set the key up once, as a maintainer:
 
