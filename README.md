@@ -18,7 +18,23 @@ brew install --cask hodgekou/keyfari/keyfari
 
 ## Open Keyfari for the first time
 
-If macOS says it can’t verify Keyfari, dismiss the alert. Open **System Settings → Privacy & Security**, scroll down to **Security**, and click **Open Anyway** beside the message naming Keyfari. Confirm when prompted. [See the steps with screenshots](https://hodgekou.github.io/keyfari/#first-launch).
+The first time you open Keyfari, macOS stops it and says that Apple could not verify it. This is expected. Apple charges developers a yearly fee to have their apps verified, and I have not paid it: Keyfari is free, and I would rather keep it that way. The warning says that Apple has not checked the app, not that anything was found in it.
+
+Keyfari is open source, so what it does is there for anyone to read, and it is safe to use. If you would rather not trust a download, you can [build it from the source yourself](CONTRIBUTING.md#getting-started).
+
+To open it:
+
+1. Double-click **Keyfari**. macOS shows the alert below. Click **Done**. Do not click **Move to Trash**.
+
+   <img src="site/first-launch/not-opened.png" width="298" alt="The alert “Keyfari.app” Not Opened, with the buttons Move to Trash and Done">
+
+2. Open **System Settings → Privacy & Security**, scroll down to **Security**, and click **Open Anyway** beside the message naming Keyfari.
+
+3. macOS asks once more. Click **Open Anyway**, the middle button, and confirm with your password or Touch ID. The blue button here is **Move to Trash**, so take care not to click it out of habit.
+
+   <img src="site/first-launch/confirm-open.png" width="298" alt="The alert Open “Keyfari.app”?, with the buttons Move to Trash, Open Anyway and Done">
+
+You only do this once. Later versions, which Keyfari installs itself, open without it. [The same steps with more screenshots](https://hodgekou.github.io/keyfari/#first-launch).
 
 The welcome guide will ask you to allow **Accessibility** so Keyfari can click and scroll in other apps. **Screen Recording** is optional. Enable it if you want Keyfari to recognise text inside images or windows where ordinary labels are missing.
 

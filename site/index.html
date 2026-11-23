@@ -230,14 +230,23 @@
     </section>
     <section id="first-launch">
       <h2 data-i18n="launchTitle">Opening Keyfari for the first time</h2>
-      <p data-i18n="launchIntro">Open Keyfari from Applications. If macOS shows “Keyfari Not Opened”, click Done and open System Settings.</p>
+      <p data-i18n="launchWhy">The first time you open Keyfari, macOS stops it and says that Apple could not verify it. This is expected. Apple charges developers a yearly fee to have their apps verified, and I have not paid it: Keyfari is free, and I would rather keep it that way. The warning says that Apple has not checked the app, not that anything was found in it.</p>
+      <p data-i18n-html="launchSafe">Keyfari is open source, so what it does is there for anyone to read, and it is safe to use. If you would rather not trust a download, you can <a href="https://github.com/hodgekou/keyfari/blob/main/CONTRIBUTING.md#getting-started">build it from the source yourself</a>.</p>
       <figure>
-        <figcaption data-i18n="launchSidebar">1. Select Privacy &amp; Security in the sidebar.</figcaption>
+        <figcaption data-i18n="launchIntro">1. Open Keyfari from Applications. macOS shows this alert. Click Done. Do not click Move to Trash.</figcaption>
+        <img src="first-launch/not-opened.png" width="298" height="322" alt="“Keyfari.app” Not Opened" loading="lazy">
+      </figure>
+      <figure>
+        <figcaption data-i18n="launchSidebar">2. Open System Settings and select Privacy &amp; Security in the sidebar.</figcaption>
         <img src="first-launch/privacy.png" width="212" height="110" alt="Privacy &amp; Security" loading="lazy">
       </figure>
       <figure>
-        <figcaption data-i18n="launchButton">2. Scroll down to Security. Find the message naming Keyfari and click Open Anyway. Confirm when prompted.</figcaption>
+        <figcaption data-i18n="launchButton">3. Scroll down to Security. Find the message naming Keyfari and click Open Anyway.</figcaption>
         <img src="first-launch/open-anyway.png" width="493" height="180" alt="Keyfari · Open Anyway" loading="lazy">
+      </figure>
+      <figure>
+        <figcaption data-i18n="launchConfirm">4. macOS asks once more. Click Open Anyway, the middle button, and confirm with your password or Touch ID. The blue button is Move to Trash, so take care not to click it out of habit. You only do this once.</figcaption>
+        <img src="first-launch/confirm-open.png" width="298" height="388" alt="Open “Keyfari.app”?" loading="lazy">
       </figure>
     </section>
   </main>
@@ -252,9 +261,12 @@
 const translations = {
   zh: {
     launchTitle: '首次打开 Keyfari',
-    launchIntro: '在「应用程序」里打开 Keyfari。若 macOS 提示无法打开，请点「完成」，然后打开「系统设置」。',
-    launchSidebar: '1. 在左侧栏选择「隐私与安全性」（Privacy & Security）。',
-    launchButton: '2. 向下滚动到「安全性」（Security），找到写有 Keyfari 的拦截提示，点击右侧的「仍要打开」（Open Anyway），再按系统提示确认。',
+    launchWhy: '第一次打开 Keyfari 时，macOS 会拦下它，并提示 Apple 无法验证这个应用。这是正常现象。Apple 向开发者收取年费才提供应用验证，而我没有付这笔钱：Keyfari 是免费的，我也希望它一直免费。这个提示的意思是 Apple 没有检查过这个应用，并不是在里面发现了什么问题。',
+    launchSafe: 'Keyfari 是开源的，它做了什么任何人都可以查看，可以放心使用。如果你不愿意信任下载的安装包，也可以<a href="https://github.com/hodgekou/keyfari/blob/main/CONTRIBUTING.md#getting-started">自己从源码编译打包</a>。',
+    launchIntro: '1. 在「应用程序」里打开 Keyfari。macOS 会显示下面这个提示。请点「完成」（Done），不要点「移到废纸篓」（Move to Trash）。',
+    launchSidebar: '2. 打开「系统设置」，在左侧栏选择「隐私与安全性」（Privacy & Security）。',
+    launchButton: '3. 向下滚动到「安全性」（Security），找到写有 Keyfari 的拦截提示，点击右侧的「仍要打开」（Open Anyway）。',
+    launchConfirm: '4. macOS 会再确认一次。请点中间的「仍要打开」（Open Anyway），再用密码或触控 ID 确认。这里蓝色的按钮是「移到废纸篓」，注意不要顺手点错。整个过程只需要做一次。',
     title: '用键盘点击 Mac 上的<span>任何东西</span>',
     lead: 'Keyfari 是 Vimac 和 Homerow 的免费开源替代品，也是更好的选择：所有功能免费、所有显示器同时显示标签、没有遥测。按下快捷键，输入按钮或链接旁的字母就能点击。你还可以给图片里的文字加上标签，或在调度中心用键盘选中窗口。',
     download: '下载 macOS 版',
@@ -302,9 +314,12 @@ const translations = {
   },
   ja: {
     launchTitle: 'Keyfari を初めて開くとき',
-    launchIntro: '「アプリケーション」から Keyfari を開きます。開けないという警告が表示されたら「完了」をクリックし、「システム設定」を開きます。',
-    launchSidebar: '1. サイドバーで「プライバシーとセキュリティ」（Privacy & Security）を選びます。',
-    launchButton: '2.「セキュリティ」まで下にスクロールし、Keyfari の警告の横にある「このまま開く」（Open Anyway）をクリックします。画面の指示に従って確認してください。',
+    launchWhy: 'Keyfari を初めて開くと、macOS がそれを止め、Apple がこのアプリを検証できなかったと表示します。これは想定どおりの動作です。Apple はアプリの検証に開発者から年会費を取っており、私はそれを支払っていません。Keyfari は無料で、これからも無料のままにしたいからです。この警告は Apple がアプリを確認していないという意味で、何か問題が見つかったという意味ではありません。',
+    launchSafe: 'Keyfari はオープンソースなので、何をしているかは誰でも確認でき、安心して使えます。ダウンロードしたものを信用したくない場合は、<a href="https://github.com/hodgekou/keyfari/blob/main/CONTRIBUTING.md#getting-started">ソースから自分でビルド</a>することもできます。',
+    launchIntro: '1.「アプリケーション」から Keyfari を開きます。macOS が下の警告を表示します。「完了」（Done）をクリックしてください。「ゴミ箱に入れる」（Move to Trash）はクリックしないでください。',
+    launchSidebar: '2.「システム設定」を開き、サイドバーで「プライバシーとセキュリティ」（Privacy & Security）を選びます。',
+    launchButton: '3.「セキュリティ」まで下にスクロールし、Keyfari の警告の横にある「このまま開く」（Open Anyway）をクリックします。',
+    launchConfirm: '4. macOS がもう一度確認します。中央の「このまま開く」（Open Anyway）をクリックし、パスワードまたは Touch ID で確認してください。青いボタンは「ゴミ箱に入れる」なので、うっかりクリックしないよう注意してください。この操作が必要なのは一度だけです。',
     title: 'Mac のあらゆる操作を<span>キーボードで</span>',
     lead: 'Keyfari は Vimac や Homerow に代わる、無料のオープンソースアプリで、より良い選択肢です。すべての機能が無料で、すべてのディスプレイに同時にラベルが付き、テレメトリもありません。ショートカットを押し、ラベルを入力するとボタンやリンクをクリックできます。画像内の文字にもラベルを付けられ、Mission Control ではキーボードでウインドウを選べます。',
     download: 'macOS 版をダウンロード',
