@@ -25,8 +25,17 @@ brew install --cask hodgekou/keyfari/keyfari
 ## 首次启动
 
 1. 从“应用程序”打开 Keyfari。如果 macOS 提示无法验证该应用，点“完成”。
-2. 打开“系统设置 → 隐私与安全性”，在“安全性”区域找到关于 Keyfari 的提示，点“仍要打开”。在确认窗口再次选择“仍要打开”，按提示验证身份。[查看图解](https://hodgekou.github.io/keyfari/#first-launch)
-3. 跟随欢迎指南授予“辅助功能”权限，以便 Keyfari 执行点击和滚动操作。如果需要为图片中的文字添加标签，请授予“屏幕录制”权限，并在 Keyfari 设置中开启文字识别。
+
+   <img src="site/first-launch/not-opened.png" width="298" alt="macOS 提示无法打开 Keyfari，窗口中有“移到废纸篓”和“完成”两个按钮">
+
+   [前往 GitHub Pages 查看首次启动的完整图文指南](https://hodgekou.github.io/keyfari/#first-launch)
+
+2. 打开“系统设置 → 隐私与安全性”，在“安全性”区域找到关于 Keyfari 的提示，点“仍要打开”。
+3. macOS 会再次询问是否打开 Keyfari。请点中间的 **“仍要打开”**，再用密码或 Touch ID 确认。蓝色按钮是 **“移到废纸篓”**，点它会把 Keyfari 移到废纸篓，请留意。
+
+   <img src="site/first-launch/confirm-open.png" width="298" alt="确认窗口中，“仍要打开”位于中间，蓝色按钮是“移到废纸篓”">
+
+4. 跟随欢迎指南授予“辅助功能”权限，以便 Keyfari 执行点击和滚动操作。如果需要为图片中的文字添加标签，请授予“屏幕录制”权限，并在 Keyfari 设置中开启文字识别。
 
 ## 在访达中试用
 

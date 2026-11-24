@@ -25,8 +25,17 @@ brew install --cask hodgekou/keyfari/keyfari
 ## First launch
 
 1. Open Keyfari from Applications. If macOS says it could not verify the app, click **Done**.
-2. In **System Settings → Privacy & Security → Security**, find the Keyfari message and click **Open Anyway**. Confirm with **Open Anyway** and authenticate when prompted. [Illustrated walkthrough](https://hodgekou.github.io/keyfari/#first-launch)
-3. Follow the Welcome Guide to grant **Accessibility** access for clicking and scrolling. For labels on text inside images, grant **Screen Recording** access and enable text detection in Keyfari’s settings.
+
+   <img src="site/first-launch/not-opened.png" width="298" alt="macOS alert: “Keyfari.app” Not Opened, with Move to Trash and Done buttons">
+
+   [Follow the first-launch guide with screenshots on GitHub Pages](https://hodgekou.github.io/keyfari/#first-launch)
+
+2. In **System Settings → Privacy & Security → Security**, find the Keyfari message and click **Open Anyway**.
+3. macOS asks once more. Click **Open Anyway**, the middle button, and confirm with your password or Touch ID. The blue button here is **Move to Trash**, so take care not to click it out of habit.
+
+   <img src="site/first-launch/confirm-open.png" width="298" alt="Confirmation dialog with Open Anyway in the middle and Move to Trash highlighted in blue">
+
+4. Follow the Welcome Guide to grant **Accessibility** access for clicking and scrolling. For labels on text inside images, grant **Screen Recording** access and enable text detection in Keyfari’s settings.
 
 ## Try it in Finder
 
