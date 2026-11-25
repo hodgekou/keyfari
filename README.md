@@ -2,6 +2,8 @@
 
 **English** · [简体中文](README.zh-CN.md) · [日本語](README.ja.md)
 
+> **The keyboard instead of the mouse.**
+
 Navigate your Mac with the keyboard. Press **⌘⇧Space** to show letter labels on buttons, links and menu items across all displays. Type a label to click its target.
 
 Keyfari is a free, open-source alternative to Vimac and Homerow. It also lets you find controls by name, scroll pages and select windows in Mission Control. Optional on-device text recognition extends labels to text inside images.
