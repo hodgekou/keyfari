@@ -6,6 +6,22 @@
     <description>Releases of Keyfari.</description>
     <language>en</language>
     <item>
+      <title>0.5.0</title>
+      <pubDate>Wed, 25 Nov 2026 01:37:23 +0000</pubDate>
+      <link>https://github.com/hodgekou/keyfari/releases/tag/v0.5.0</link>
+      <sparkle:version>0.5.0</sparkle:version>
+      <sparkle:shortVersionString>0.5.0</sparkle:shortVersionString>
+      <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
+      <description><![CDATA[
+<h3>Changed</h3>
+<ul>
+<li>Nothing in the app itself changed. The README now also comes in Chinese and Japanese, and it and the landing page show the two alerts macOS puts up when Keyfari is opened for the first time, say why they appear and how to get past them.</li>
+<li>This is the first release that updates the Homebrew tap by itself.</li>
+</ul>
+]]></description>
+      <enclosure url="https://github.com/hodgekou/keyfari/releases/download/v0.5.0/Keyfari-0.5.0.dmg" sparkle:edSignature="XJabWJL5O95kNmLlveMDFn0cWzx+rZ/rM6U6ApG/PIZec5M731Y3ghZ6LkWJe6hLPYI1VV8HmZlinTX67sp5DQ==" length="3564544" type="application/octet-stream"/>
+    </item>
+    <item>
       <title>0.4.1</title>
       <pubDate>Sun, 22 Nov 2026 10:57:50 +0000</pubDate>
       <link>https://github.com/hodgekou/keyfari/releases/tag/v0.4.1</link>
