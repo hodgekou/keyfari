@@ -4,6 +4,13 @@ All notable changes to Keyfari are recorded here. The format follows [Keep a Cha
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-11-25
+
+### Changed
+
+- Nothing in the app itself changed. The README now also comes in Chinese and Japanese, and it and the landing page show the two alerts macOS puts up when Keyfari is opened for the first time, say why they appear and how to get past them.
+- This is the first release that updates the Homebrew tap by itself.
+
 ## [0.4.1] - 2026-11-22
 
 ### Changed
