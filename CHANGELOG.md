@@ -4,6 +4,16 @@ All notable changes to Keyfari are recorded here. The format follows [Keep a Cha
 
 ## [Unreleased]
 
+## [0.5.1] - 2026-11-26
+
+### Changed
+
+- Labels on text and icons that applications do not expose no longer need to be switched on. Screen Recording access is all they need.
+
+### Fixed
+
+- More icons get labels in applications such as WeChat, including all the icons of its sidebar.
+
 ## [0.5.0] - 2026-11-25
 
 ### Changed

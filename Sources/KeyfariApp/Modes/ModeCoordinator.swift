@@ -195,7 +195,7 @@ final class ModeCoordinator {
         case .hint:
             applyStyle(settings)
             let controller = HintModeController(
-                query: elementQuery(settings), vision: vision(settings), overlay: overlay, interceptor: interceptor, settings: settings,
+                query: elementQuery(settings), vision: VisionAugmenter(), overlay: overlay, interceptor: interceptor, settings: settings,
                 memory: store.labelMemory,
                 target: target, recordClick: recordClick, rememberClick: rememberClick, onShortcut: onShortcut, onExit: onExit
             )
@@ -204,7 +204,7 @@ final class ModeCoordinator {
         case .search:
             applyStyle(settings)
             let controller = SearchModeController(
-                query: elementQuery(settings), vision: vision(settings), overlay: overlay, interceptor: interceptor, settings: settings,
+                query: elementQuery(settings), vision: VisionAugmenter(), overlay: overlay, interceptor: interceptor, settings: settings,
                 target: target, recordClick: recordClick, rememberClick: rememberClick, onShortcut: onShortcut, onExit: onExit
             )
             started = controller.start()
@@ -276,10 +276,6 @@ final class ModeCoordinator {
         query.includesDock = settings.hintDock
         query.usesEnhancedInterface = settings.compatibilityMode
         return query
-    }
-
-    private func vision(_ settings: Settings) -> VisionAugmenter? {
-        settings.visionMode == .off ? nil : VisionAugmenter(mode: settings.visionMode, detectsIcons: settings.iconDetection)
     }
 
     /// The frontmost application, unless it is this app or on the ignore list.

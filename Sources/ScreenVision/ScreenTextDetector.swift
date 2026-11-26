@@ -87,19 +87,25 @@ public enum ScreenTextDetector {
     /// which keeps the list short.
     static func outlines(in image: CGImage, windowFrame: CGRect) throws -> [CGRect] {
         let largestUseful: CGFloat = 64
+        // Split at mid grey, a coloured icon of middle brightness, such as WeChat's green one on
+        // a light sidebar, counts as light and is lost. A pivot taken from the image's own
+        // brightness separates it from the lighter ground, so dark-on-light is traced with both.
+        let passes: [(darkOnLight: Bool, pivot: NSNumber?)] = [(true, 0.5), (false, 0.5), (true, nil)]
         var result: [CGRect] = []
-        for darkOnLight in [true, false] {
+        for pass in passes {
             try Task.checkCancellation()
             let request = VNDetectContoursRequest()
             request.contrastAdjustment = 1.5
-            request.detectsDarkOnLight = darkOnLight
+            request.contrastPivot = pass.pivot
+            request.detectsDarkOnLight = pass.darkOnLight
             // The default shrinks the image so far that small icons blur into nothing.
             request.maximumImageDimension = 2048
             try VNImageRequestHandler(cgImage: image, options: [:]).perform([request])
             guard let observation = request.results?.first else { continue }
             for contour in observation.topLevelContours {
                 let box = frame(of: contour.normalizedPath.boundingBox, in: windowFrame)
-                if box.width <= largestUseful, box.height <= largestUseful, box.width >= 2, box.height >= 2 {
+                // Hairlines of one point are kept: the three bars of a menu icon are each that thin.
+                if box.width <= largestUseful, box.height <= largestUseful, max(box.width, box.height) >= 2, min(box.width, box.height) >= 1 {
                     result.append(box)
                 }
             }

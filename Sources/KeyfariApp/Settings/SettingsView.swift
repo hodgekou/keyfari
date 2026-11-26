@@ -81,7 +81,6 @@ struct SettingsView: View {
                 case .desktops:
                     desktops
                     missionControl
-                case .vision: vision
                 case .stats: stats
                 }
             }
@@ -382,38 +381,6 @@ struct SettingsView: View {
             Notice(
                 "With several displays, every display gets labels. Arrow keys and the system's shortcuts keep working.",
                 symbol: "info.circle.fill", tint: tint)
-        }
-    }
-
-    @ViewBuilder
-    private var vision: some View {
-        let tint = SettingsPane.vision.tint
-        Card("On-screen text detection", symbol: "text.viewfinder", tint: tint) {
-            SettingRow("Detect text") {
-                Picker("", selection: $store.settings.visionMode) {
-                    Text(tr("Off")).tag(VisionMode.off)
-                    Text(tr("When needed")).tag(VisionMode.fallback)
-                    Text(tr("Always")).tag(VisionMode.always)
-                }
-                .pickerStyle(.segmented)
-                .labelsHidden()
-                .frame(width: 250)
-            }
-            RowDivider()
-            Notice(
-                "Reads the window's pixels on this Mac to label text the application does not expose. Nothing is saved or sent anywhere.",
-                symbol: "lock.shield.fill",
-                tint: tint
-            )
-        }
-        Card("Icon buttons", symbol: "square.grid.3x3.square", tint: tint) {
-            ToggleRow(
-                "Detect icon buttons", detail: "Experimental. Labels small shapes that line up like a toolbar",
-                isOn: $store.settings.iconDetection, tint: tint)
-            RowDivider()
-            Notice(
-                "Works from shapes alone, without a model: it misses icons that stand alone and may label decoration. It needs text detection to be on.",
-                symbol: "flask.fill", tint: tint)
         }
     }
 

@@ -26,6 +26,25 @@ import Testing
         #expect(IconCandidates.find(outlines: row(count: 2), occupied: []).isEmpty)
     }
 
+    @Test func aPairAtTheFarEndOfASidebarContinuesItsColumn() {
+        // Four tabs at the top of a sidebar, and a phone and a menu icon far below them.
+        let tabs = (0..<4).map { CGRect(x: 20, y: 110 + CGFloat($0) * 48, width: 20, height: 20) }
+        let pair = [CGRect(x: 22, y: 547, width: 14, height: 20), CGRect(x: 21, y: 600, width: 17, height: 11)]
+        #expect(IconCandidates.find(outlines: tabs + pair, occupied: []) == tabs + pair)
+    }
+
+    @Test func aPairOutOfLineWithARunIsNotEnough() {
+        let tabs = (0..<4).map { CGRect(x: 20, y: 110 + CGFloat($0) * 48, width: 20, height: 20) }
+        let pair = [CGRect(x: 300, y: 547, width: 20, height: 20), CGRect(x: 300, y: 600, width: 20, height: 20)]
+        #expect(IconCandidates.find(outlines: tabs + pair, occupied: []) == tabs)
+    }
+
+    @Test func aLoneShapeInLineWithARunIsNotEnough() {
+        let tabs = (0..<4).map { CGRect(x: 20, y: 110 + CGFloat($0) * 48, width: 20, height: 20) }
+        let lone = CGRect(x: 20, y: 600, width: 20, height: 20)
+        #expect(IconCandidates.find(outlines: tabs + [lone], occupied: []) == tabs)
+    }
+
     @Test func shapesFarApartDoNotMakeARow() {
         let scattered = [0, 300, 600].map { CGRect(x: CGFloat($0), y: 10, width: 20, height: 20) }
         #expect(IconCandidates.find(outlines: scattered, occupied: []).isEmpty)

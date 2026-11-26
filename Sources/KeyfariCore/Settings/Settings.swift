@@ -1,12 +1,4 @@
 // SPDX-License-Identifier: GPL-3.0-only
-/// When on-screen text recognition adds labels.
-public enum VisionMode: String, Codable, Sendable, CaseIterable {
-    case off
-    /// Only when the accessibility tree of the window is nearly empty.
-    case fallback
-    case always
-}
-
 public enum HintTheme: String, Codable, Sendable, CaseIterable {
     /// Each label takes one of several bright colours.
     case vivid
@@ -31,20 +23,20 @@ public enum HintTheme: String, Codable, Sendable, CaseIterable {
 }
 
 /// What one application does differently from the general settings. Nil follows the general setting.
+///
+/// Overrides saved before 0.5.1 can also hold `visionMode` and `iconDetection`. Text and icon
+/// detection are no longer settings, so those keys are ignored and an override left with
+/// nothing else is dropped.
 public struct AppOverride: Codable, Equatable, Sendable {
-    public var visionMode: VisionMode?
-    public var iconDetection: Bool?
     public var compatibilityMode: Bool?
 
-    public init(visionMode: VisionMode? = nil, iconDetection: Bool? = nil, compatibilityMode: Bool? = nil) {
-        self.visionMode = visionMode
-        self.iconDetection = iconDetection
+    public init(compatibilityMode: Bool? = nil) {
         self.compatibilityMode = compatibilityMode
     }
 
     /// Whether it changes nothing, in which case it need not be kept.
     public var isEmpty: Bool {
-        visionMode == nil && iconDetection == nil && compatibilityMode == nil
+        compatibilityMode == nil
     }
 }
 
@@ -72,9 +64,6 @@ public struct Settings: Codable, Equatable, Sendable {
     public var hintDock = true
     /// Give an element the label it had the last time it was clicked.
     public var stableLabels = true
-    public var visionMode = VisionMode.always
-    /// Also label shapes in the window's pixels that look like icon buttons. Experimental.
-    public var iconDetection = false
     public var language = AppLanguage.system
     /// Tell applications that an assistive app is present, which some need before they expose
     /// their interface. It can disturb window managers, so it is off unless asked for.
@@ -130,8 +119,6 @@ public struct Settings: Codable, Equatable, Sendable {
         hintAllWindows = try container.decodeIfPresent(Bool.self, forKey: .hintAllWindows) ?? fallback.hintAllWindows
         hintDock = try container.decodeIfPresent(Bool.self, forKey: .hintDock) ?? fallback.hintDock
         stableLabels = try container.decodeIfPresent(Bool.self, forKey: .stableLabels) ?? fallback.stableLabels
-        visionMode = (try? container.decodeIfPresent(VisionMode.self, forKey: .visionMode)) ?? fallback.visionMode
-        iconDetection = try container.decodeIfPresent(Bool.self, forKey: .iconDetection) ?? fallback.iconDetection
         compatibilityMode = try container.decodeIfPresent(Bool.self, forKey: .compatibilityMode) ?? fallback.compatibilityMode
         appOverrides = (try? container.decodeIfPresent([String: AppOverride].self, forKey: .appOverrides)) ?? fallback.appOverrides
         language = (try? container.decodeIfPresent(AppLanguage.self, forKey: .language)) ?? fallback.language
@@ -166,8 +153,6 @@ public struct Settings: Codable, Equatable, Sendable {
     public func resolved(for bundleID: String?) -> Settings {
         guard let bundleID, let override = appOverrides[bundleID] else { return self }
         var result = self
-        if let visionMode = override.visionMode { result.visionMode = visionMode }
-        if let iconDetection = override.iconDetection { result.iconDetection = iconDetection }
         if let compatibilityMode = override.compatibilityMode { result.compatibilityMode = compatibilityMode }
         return result
     }

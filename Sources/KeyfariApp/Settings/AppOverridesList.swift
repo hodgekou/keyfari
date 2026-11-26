@@ -31,13 +31,6 @@ struct AppOverridesList: View {
                         .help(tr("Remove"))
                     }
                     HStack(spacing: 14) {
-                        choice("Detect text", selection: binding(application.bundleID, \.visionMode)) {
-                            Text(tr("Same as general")).tag(VisionMode?.none)
-                            Text(tr("Off")).tag(VisionMode?.some(.off))
-                            Text(tr("When needed")).tag(VisionMode?.some(.fallback))
-                            Text(tr("Always")).tag(VisionMode?.some(.always))
-                        }
-                        choice("Detect icon buttons", selection: binding(application.bundleID, \.iconDetection)) { onOff }
                         choice("Compatibility mode", selection: binding(application.bundleID, \.compatibilityMode)) { onOff }
                     }
                 }

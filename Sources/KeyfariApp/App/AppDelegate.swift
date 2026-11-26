@@ -60,7 +60,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     /// Loads the text recognition models in the background, so the first activation does not wait for them.
     private func warmUpTextDetection() {
-        guard store.effective.visionMode != .off else { return }
         let log = log
         Task.detached(priority: .utility) {
             let started = ContinuousClock.now
@@ -333,9 +332,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         log.notice("Accessibility permission granted")
         modes.start()
         installDebugTrigger()
-        if store.effective.visionMode != .off {
-            ScreenRecordingAccess.requestIfNeeded()
-        }
+        ScreenRecordingAccess.requestIfNeeded()
         warmUpTextDetection()
     }
 }

@@ -57,7 +57,6 @@ public struct Diagnostics: Sendable {
             "Screen Recording permission: \(hasScreenRecording ? "granted" : "not granted")",
             "Installs updates: \(installsUpdates ? "yes" : "no")",
             "Language: \(settings.language.rawValue)",
-            "Text detection: \(settings.visionMode.rawValue)",
             "Settings changed from their defaults: \(changed.isEmpty ? "none" : changed.joined(separator: ", "))",
         ].joined(separator: "\n")
     }
