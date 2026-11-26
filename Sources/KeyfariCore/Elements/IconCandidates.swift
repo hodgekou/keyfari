@@ -42,9 +42,20 @@ public enum IconCandidates {
             let middle = CGPoint(x: box.midX, y: box.midY)
             return !occupied.contains { $0.contains(middle) || $0.intersects(box.insetBy(dx: 1, dy: 1)) }
         }
+        let rows = free.indices.map { runLength(of: $0, in: free, horizontal: true, limits: limits) }
+        let columns = free.indices.map { runLength(of: $0, in: free, horizontal: false, limits: limits) }
+        // A sidebar often keeps a pair of icons at its far end, such as WeChat's phone and menu
+        // below its tabs. Too few to count alone, they count when they continue a full run.
+        func continuesRun(_ index: Int, horizontal: Bool) -> Bool {
+            let runs = horizontal ? rows : columns
+            return runs[index] >= 2
+                && free.indices.contains { other in
+                    runs[other] >= limits.minimumRun && inLine(free[index], free[other], horizontal: horizontal, limits: limits)
+                }
+        }
         let inRuns = free.indices.filter { index in
-            runLength(of: index, in: free, horizontal: true, limits: limits) >= limits.minimumRun
-                || runLength(of: index, in: free, horizontal: false, limits: limits) >= limits.minimumRun
+            rows[index] >= limits.minimumRun || columns[index] >= limits.minimumRun
+                || continuesRun(index, horizontal: true) || continuesRun(index, horizontal: false)
         }
         return inRuns.map { free[$0] }
             .sorted { lhs, rhs in
@@ -75,18 +86,22 @@ public enum IconCandidates {
         return result
     }
 
+    /// Whether two boxes sit on one row or column and are of a like size.
+    private static func inLine(_ box: CGRect, _ other: CGRect, horizontal: Bool, limits: Limits) -> Bool {
+        let across = horizontal ? abs(box.midY - other.midY) : abs(box.midX - other.midX)
+        let size = max(box.width, box.height)
+        let otherSize = max(other.width, other.height)
+        return across <= limits.alignment && otherSize <= size * 1.8 && size <= otherSize * 1.8
+    }
+
     /// How many boxes, `index` included, line up with it along a row or a column without a wide gap.
     private static func runLength(of index: Int, in boxes: [CGRect], horizontal: Bool, limits: Limits) -> Int {
         let box = boxes[index]
-        func across(_ rect: CGRect) -> CGFloat { horizontal ? rect.midY : rect.midX }
         func along(_ rect: CGRect) -> CGFloat { horizontal ? rect.midX : rect.midY }
         let size = max(box.width, box.height)
 
         // The ones in line with it and of a like size, ordered along the line.
-        let line = boxes.filter { other in
-            let otherSize = max(other.width, other.height)
-            return abs(across(other) - across(box)) <= limits.alignment && otherSize <= size * 1.8 && size <= otherSize * 1.8
-        }.sorted { along($0) < along($1) }
+        let line = boxes.filter { inLine(box, $0, horizontal: horizontal, limits: limits) }.sorted { along($0) < along($1) }
         guard let position = line.firstIndex(of: box) else { return 1 }
 
         // Walk outward in both directions for as long as the neighbours stay close.
