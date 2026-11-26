@@ -145,7 +145,7 @@ import Testing
         let firefox = settings.resolved(for: "org.mozilla.firefox")
         #expect(firefox.visionMode == .off)
         #expect(firefox.compatibilityMode)
-        #expect(!firefox.iconDetection)
+        #expect(firefox.iconDetection == settings.iconDetection)
         // Everything else is the general setting.
         #expect(firefox.hintAlphabet == settings.hintAlphabet)
 

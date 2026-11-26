@@ -73,8 +73,9 @@ public struct Settings: Codable, Equatable, Sendable {
     /// Give an element the label it had the last time it was clicked.
     public var stableLabels = true
     public var visionMode = VisionMode.always
-    /// Also label shapes in the window's pixels that look like icon buttons. Experimental.
-    public var iconDetection = false
+    /// Also label shapes in the window's pixels that look like icon buttons. Experimental, but on by
+    /// default: applications such as WeChat show nothing else of their icons.
+    public var iconDetection = true
     public var language = AppLanguage.system
     /// Tell applications that an assistive app is present, which some need before they expose
     /// their interface. It can disturb window managers, so it is off unless asked for.
