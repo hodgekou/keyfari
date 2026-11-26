@@ -4,6 +4,8 @@ All notable changes to Keyfari are recorded here. The format follows [Keep a Cha
 
 ## [Unreleased]
 
+## [0.5.1] - 2026-11-26
+
 ### Fixed
 
 - Icon detection finds more of the icons in a sidebar, such as WeChat's, whose window shows nothing to accessibility: coloured icons of middle brightness, icons drawn from hairlines such as a menu icon's three bars, and a pair of icons set apart at the far end of a row or column of others.
