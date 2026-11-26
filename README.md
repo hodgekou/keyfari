@@ -6,9 +6,9 @@
 
 Navigate your Mac with the keyboard. Press **⌘⇧Space** to show letter labels on buttons, links and menu items across all displays. Type a label to click its target.
 
-Keyfari is a free, open-source alternative to Vimac and Homerow. It also lets you find controls by name, scroll pages and select windows in Mission Control. Optional on-device text recognition extends labels to text inside images.
+Keyfari is a free, open-source alternative to Vimac and Homerow. It also lets you find controls by name, scroll pages and select windows in Mission Control. With Screen Recording access, labels also cover text inside images and icons that applications do not expose.
 
-| Standard labels in Preview | With text detection enabled |
+| Standard labels in Preview | With Screen Recording access |
 | --- | --- |
 | ![Labels on the Preview toolbar](docs/images/hints-without-text-detection.png) | ![Additional labels on text inside the image](docs/images/hints-with-text-detection.png) |
 
@@ -37,7 +37,7 @@ brew install --cask hodgekou/keyfari/keyfari
 
    <img src="site/first-launch/confirm-open.png" width="298" alt="Confirmation dialog with Open Anyway in the middle and Move to Trash highlighted in blue">
 
-4. Follow the Welcome Guide to grant **Accessibility** access for clicking and scrolling. For labels on text inside images, grant **Screen Recording** access and enable text detection in Keyfari’s settings.
+4. Follow the Welcome Guide to grant **Accessibility** access for clicking and scrolling. For labels on text inside images and on icons that applications do not expose, also grant **Screen Recording** access.
 
 ## Try it in Finder
 

@@ -139,13 +139,10 @@ import Testing
 
     @Test func anApplicationOverridesOnlyWhatItNames() {
         var settings = Settings()
-        settings.visionMode = .always
-        settings.appOverrides = ["org.mozilla.firefox": AppOverride(visionMode: .off, compatibilityMode: true)]
+        settings.appOverrides = ["org.mozilla.firefox": AppOverride(compatibilityMode: true)]
 
         let firefox = settings.resolved(for: "org.mozilla.firefox")
-        #expect(firefox.visionMode == .off)
         #expect(firefox.compatibilityMode)
-        #expect(firefox.iconDetection == settings.iconDetection)
         // Everything else is the general setting.
         #expect(firefox.hintAlphabet == settings.hintAlphabet)
 
@@ -156,11 +153,23 @@ import Testing
     @Test func overridesThatChangeNothingAreNotKept() throws {
         var settings = Settings()
         #expect(!settings.compatibilityMode)
-        settings.appOverrides = ["a": AppOverride(), "  ": AppOverride(iconDetection: true), "b": AppOverride(iconDetection: false)]
-        #expect(settings.validated().appOverrides == ["b": AppOverride(iconDetection: false)])
+        settings.appOverrides = ["a": AppOverride(), "  ": AppOverride(compatibilityMode: true), "b": AppOverride(compatibilityMode: false)]
+        #expect(settings.validated().appOverrides == ["b": AppOverride(compatibilityMode: false)])
 
         let decoded = try JSONDecoder().decode(Settings.self, from: JSONEncoder().encode(settings.validated()))
-        #expect(decoded.appOverrides == ["b": AppOverride(iconDetection: false)])
+        #expect(decoded.appOverrides == ["b": AppOverride(compatibilityMode: false)])
+    }
+
+    @Test func detectionChoicesSavedByEarlierVersionsAreIgnored() throws {
+        // Text and icon detection were settings up to 0.5.0, globally and per application.
+        let json = """
+            {"visionMode": "off", "iconDetection": false, "hintDock": false,
+             "appOverrides": {"com.tencent.xinWeChat": {"visionMode": "always", "iconDetection": true},
+                              "org.mozilla.firefox": {"visionMode": "off", "compatibilityMode": true}}}
+            """
+        let decoded = try JSONDecoder().decode(Settings.self, from: Data(json.utf8)).validated()
+        #expect(!decoded.hintDock)
+        #expect(decoded.appOverrides == ["org.mozilla.firefox": AppOverride(compatibilityMode: true)])
     }
 
     @Test func shortcutDisplayAndMatching() {

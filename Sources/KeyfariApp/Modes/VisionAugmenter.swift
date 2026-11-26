@@ -10,22 +10,16 @@ import os
 ///
 /// Recognition takes several hundred milliseconds, so it runs after the regular labels are
 /// already on screen and its results are added to them.
+///
+/// It always runs, and labels shapes that look like icon buttons too: applications such as
+/// WeChat show nothing of their window to accessibility, so their pixels are all there is.
 struct VisionAugmenter: Sendable {
-    /// Below this many window elements the accessibility tree is considered empty.
-    static let fallbackThreshold = 5
-
-    let mode: VisionMode
-    /// Whether shapes that look like icon buttons get labels too.
-    var detectsIcons = false
-
     /// Extra elements for the focused window of `pid`, excluding anything `existing` already covers.
-    /// Returns nothing when detection is off, not needed, not permitted, or fails.
+    /// Returns nothing when detection is not permitted or fails.
     func additionalElements(pid: pid_t, existing: [ElementSnapshot]) async -> [ElementSnapshot] {
-        guard mode != .off else { return [] }
         let log = Logger(subsystem: "app.keyfari.Keyfari", category: "vision")
 
         let windowElements = existing.filter { $0.source == .window }
-        if mode == .fallback, windowElements.count >= Self.fallbackThreshold { return [] }
         guard ScreenTextDetector.hasPermission else {
             log.notice("Skipping vision detection: no Screen Recording permission")
             return []
@@ -35,7 +29,7 @@ struct VisionAugmenter: Sendable {
         let started = ContinuousClock.now
         let scan: ScreenTextDetector.Scan
         do {
-            scan = try await ScreenTextDetector.scan(pid: pid, windowFrame: windowFrame, includesOutlines: detectsIcons)
+            scan = try await ScreenTextDetector.scan(pid: pid, windowFrame: windowFrame, includesOutlines: true)
         } catch is CancellationError {
             return []
         } catch {
@@ -46,10 +40,7 @@ struct VisionAugmenter: Sendable {
         let regions = scan.text
         let kept = VisionMerge.newRegions(regions.map(\.frame), existing: windowElements.map(\.clippedFrame))
         // Whatever is text or already has a label is not an icon of its own.
-        let icons =
-            detectsIcons
-            ? IconCandidates.find(outlines: scan.outlines, occupied: windowElements.map(\.clippedFrame) + regions.map(\.frame))
-            : []
+        let icons = IconCandidates.find(outlines: scan.outlines, occupied: windowElements.map(\.clippedFrame) + regions.map(\.frame))
         let elapsed = ContinuousClock.now - started
         log.notice(
             "Vision found \(regions.count) text regions, kept \(kept.count), and \(icons.count) icons, after \(elapsed.description, privacy: .public)"

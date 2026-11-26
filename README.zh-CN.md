@@ -6,9 +6,9 @@
 
 用键盘操作 Mac。按下 **⌘⇧Space（Command + Shift + 空格）**，所有显示器上的按钮、链接和菜单项旁都会出现字母标签。输入标签即可点击对应的项目。
 
-Keyfari 是 Vimac 和 Homerow 的免费开源替代工具。你还可以按名称查找控件、滚动页面，或在调度中心选择窗口。开启本地文字识别后，图片里的文字也能显示标签。
+Keyfari 是 Vimac 和 Homerow 的免费开源替代工具。你还可以按名称查找控件、滚动页面，或在调度中心选择窗口。授予屏幕录制权限后，图片里的文字和应用没有提供的图标也能显示标签。
 
-| “预览”中的默认标签 | 开启文字识别后 |
+| “预览”中的默认标签 | 授予屏幕录制权限后 |
 | --- | --- |
 | ![标签显示在“预览”的工具栏上](docs/images/hints-without-text-detection.png) | ![图片里的文字旁也出现了标签](docs/images/hints-with-text-detection.png) |
 
@@ -37,7 +37,7 @@ brew install --cask hodgekou/keyfari/keyfari
 
    <img src="site/first-launch/confirm-open.png" width="298" alt="确认窗口中，“仍要打开”位于中间，蓝色按钮是“移到废纸篓”">
 
-4. 跟随欢迎指南授予“辅助功能”权限，以便 Keyfari 执行点击和滚动操作。如果需要为图片中的文字添加标签，请授予“屏幕录制”权限，并在 Keyfari 设置中开启文字识别。
+4. 跟随欢迎指南授予“辅助功能”权限，以便 Keyfari 执行点击和滚动操作。如果需要为图片中的文字和图标添加标签，请再授予“屏幕录制”权限。
 
 ## 在访达中试用
 

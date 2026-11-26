@@ -67,7 +67,6 @@ public enum Localizer {
         "General": Entry(chinese: "通用", japanese: "一般"),
         "Hints": Entry(chinese: "标签", japanese: "ヒント"),
         "Scrolling": Entry(chinese: "滚动", japanese: "スクロール"),
-        "AI Detection": Entry(chinese: "AI 识别", japanese: "AI 検出"),
         "Stats": Entry(chinese: "统计", japanese: "統計"),
         "Desktops": Entry(chinese: "桌面", japanese: "デスクトップ"),
         "Desktops and Mission Control": Entry(chinese: "桌面切换与调度中心", japanese: "デスクトップと Mission Control"),
@@ -76,7 +75,6 @@ public enum Localizer {
         "How labels look and behave": Entry(chinese: "标签的外观与行为", japanese: "ラベルの外観と動作"),
         "Speed and direction": Entry(chinese: "速度与方向", japanese: "速度と方向"),
         "Activity counts that stay on this Mac": Entry(chinese: "仅保存在本机的使用统计", japanese: "この Mac にのみ保存される使用統計"),
-        "Find text that apps do not expose": Entry(chinese: "找出应用没有暴露的文字", japanese: "アプリが公開していないテキストを見つける"),
         "Keyboard navigation": Entry(chinese: "键盘导航", japanese: "キーボード操作"),
         "Keyfari Settings": Entry(chinese: "Keyfari 设置", japanese: "Keyfari 設定"),
 
@@ -303,22 +301,7 @@ public enum Localizer {
 
         // AI detection
         "On-screen text detection": Entry(chinese: "屏幕文字识别", japanese: "画面上のテキスト検出"),
-        "Detect text": Entry(chinese: "识别文字", japanese: "テキストを検出"),
         "Off": Entry(chinese: "关闭", japanese: "オフ"),
-        "When needed": Entry(chinese: "需要时", japanese: "必要なとき"),
-        "Always": Entry(chinese: "始终", japanese: "常に"),
-        "Reads the window's pixels on this Mac to label text the application does not expose. Nothing is saved or sent anywhere.": Entry(
-            chinese: "在本机读取窗口画面,给应用没有暴露的文字打标签。不保存,也不发送任何内容。",
-            japanese: "この Mac 上でウインドウの画面を読み取り、アプリが公開していないテキストにラベルを付けます。保存や送信は一切行いません。"
-        ),
-        "Icon buttons": Entry(chinese: "图标按钮", japanese: "アイコンボタン"),
-        "Detect icon buttons": Entry(chinese: "识别图标按钮", japanese: "アイコンボタンを検出"),
-        "Experimental. Labels small shapes that line up like a toolbar": Entry(
-            chinese: "实验性功能。给像工具栏那样排成一排的小图形打标签", japanese: "実験的な機能。ツールバーのように並んだ小さな図形にラベルを付けます"),
-        "Works from shapes alone, without a model: it misses icons that stand alone and may label decoration. It needs text detection to be on.":
-            Entry(
-                chinese: "只根据图形的形状判断,不使用模型:单独的图标识别不到,也可能把装饰图形当成按钮。需要先开启文字识别。",
-                japanese: "モデルを使わず、図形の形だけで判断します。単独のアイコンは検出できず、装飾をボタンと見なすこともあります。テキスト検出がオンである必要があります。"),
         "Screen Recording permission": Entry(chinese: "屏幕录制权限", japanese: "画面収録の許可"),
         "Turn it on in System Settings, then restart Keyfari": Entry(
             chinese: "在系统设置里打开开关,然后重启 Keyfari", japanese: "システム設定でオンにしてから、Keyfari を再起動してください"),
