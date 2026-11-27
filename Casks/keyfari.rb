@@ -13,13 +13,20 @@ cask "keyfari" do
 
   app "Keyfari.app"
 
+  # Keyfari is not signed with an Apple Developer ID, so Gatekeeper would block the first launch.
+  # Homebrew has already checked the download against the sha256 above.
+  postflight_steps do
+    run "/usr/bin/xattr",
+        args:           ["-dr", "com.apple.quarantine", "{{appdir}}/Keyfari.app"],
+        writable_paths: ["Keyfari.app"],
+        writable_base:  :appdir
+  end
+
   zap trash: "~/Library/Preferences/app.keyfari.Keyfari.plist"
 
   caveats <<~EOS
-    Keyfari is not signed with an Apple Developer ID. The first time you open it,
-    macOS blocks it: go to System Settings > Privacy & Security and choose Open Anyway.
-
-    It needs the Accessibility permission, and Screen Recording for text detection.
+    Keyfari needs the Accessibility permission, and Screen Recording for labels on text
+    and icons that applications do not expose.
     When upgrading from 0.3.0 or earlier, macOS may ask for these permissions once more.
   EOS
 end

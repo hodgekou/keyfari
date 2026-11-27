@@ -16,7 +16,7 @@ Keyfari は Vimac や Homerow の代わりに使える、無料のオープン�
 
 Apple シリコンまたは Intel プロセッサ搭載の Mac で、**macOS 14 Sonoma 以降**が必要です。
 
-**Homebrew を使う場合**
+**Homebrew を使う場合（推奨）** — macOS のセキュリティ警告なしで、そのまま開けます。
 
 ```sh
 brew install --cask hodgekou/keyfari/keyfari
@@ -25,6 +25,14 @@ brew install --cask hodgekou/keyfari/keyfari
 **直接ダウンロードする場合** — [最新リリース](https://github.com/hodgekou/keyfari/releases/latest)の **Assets** から `.dmg` ファイルをダウンロードします。ファイルを開き、**Keyfari** を「アプリケーション」フォルダにドラッグします。
 
 ## 初回起動
+
+Homebrew でインストールした場合、Keyfari はそのまま開けます。手順 4 に進んでください。
+
+ディスクイメージは Apple の Developer ID で署名されていないため、初回は macOS がブロックします。手順 1〜3 に従うか、ターミナルを使う場合は代わりに次のコマンドを一度実行してから Keyfari を開いてください。
+
+```sh
+xattr -dr com.apple.quarantine /Applications/Keyfari.app
+```
 
 1. 「アプリケーション」から Keyfari を開きます。macOS がアプリを検証できないという警告を表示したら、「完了」をクリックします。
 

@@ -19,13 +19,13 @@ cat <<NOTES
 
 ## Install
 
-Download \`Keyfari-$version.dmg\`, open it and drag Keyfari to Applications.
-
-Keyfari is not signed with an Apple Developer ID, so macOS blocks it the first time. Open it once, then go to **System Settings > Privacy & Security** and choose **Open Anyway**. After that, grant the Accessibility permission when asked. [First-launch screenshots](https://hodgekou.github.io/keyfari/#first-launch)
-
-With Homebrew:
+With Homebrew, Keyfari opens straight away:
 
 \`\`\`sh
 brew install --cask hodgekou/keyfari/keyfari
 \`\`\`
+
+Or download \`Keyfari-$version.dmg\`, open it and drag Keyfari to Applications. It is not signed with an Apple Developer ID, so macOS blocks it the first time. Open it once, then go to **System Settings > Privacy & Security** and choose **Open Anyway**. [First-launch screenshots](https://hodgekou.github.io/keyfari/#first-launch) In Terminal, \`xattr -dr com.apple.quarantine /Applications/Keyfari.app\` does the same.
+
+Grant the Accessibility permission when asked.
 NOTES
