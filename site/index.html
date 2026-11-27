@@ -210,8 +210,13 @@
 
     <section>
       <h2 data-i18n="installTitle">Install</h2>
-      <p class="sub" data-i18n="installSub">Keyfari is not signed with an Apple Developer ID, so macOS blocks it the first time you open it.</p>
+      <p class="sub" data-i18n="installSub">Installed with Homebrew, Keyfari opens straight away. The disk image is not signed with an Apple Developer ID, so macOS blocks it the first time you open it.</p>
       <div class="install">
+        <div class="card">
+          <h3 data-i18n="brewTitle">Homebrew (recommended)</h3>
+          <pre><code>brew install --cask hodgekou/keyfari/keyfari</code></pre>
+          <p style="margin-top:12px" data-i18n="brewNote">Keyfari opens straight away. Grant the Accessibility permission when asked.</p>
+        </div>
         <div class="card">
           <h3 data-i18n="dmgTitle">Download</h3>
           <ol>
@@ -220,16 +225,14 @@
             <li data-i18n-html="dmg3">Go to <b>System Settings &gt; Privacy &amp; Security</b> and choose <b>Open Anyway</b>.</li>
             <li data-i18n="dmg4">Grant the Accessibility permission when asked.</li>
           </ol>
-        </div>
-        <div class="card">
-          <h3>Homebrew</h3>
-          <pre><code>brew install --cask hodgekou/keyfari/keyfari</code></pre>
-          <p style="margin-top:12px" data-i18n="brewNote">The same first-launch step applies.</p>
+          <p style="margin-top:12px" data-i18n="dmgTerminal">Prefer Terminal? Instead of steps 2 and 3, run this once:</p>
+          <pre><code>xattr -dr com.apple.quarantine /Applications/Keyfari.app</code></pre>
         </div>
       </div>
     </section>
     <section id="first-launch">
       <h2 data-i18n="launchTitle">Opening Keyfari for the first time</h2>
+      <p data-i18n="launchBrew">If you installed Keyfari with Homebrew, you can skip this section.</p>
       <p data-i18n="launchWhy">The first time you open Keyfari, macOS stops it and says that Apple could not verify it. This is expected. Apple charges developers a yearly fee to have their apps verified, and I have not paid it: Keyfari is free, and I would rather keep it that way. The warning says that Apple has not checked the app, not that anything was found in it.</p>
       <p data-i18n-html="launchSafe">Keyfari is open source, so what it does is there for anyone to read, and it is safe to use. If you would rather not trust a download, you can <a href="https://github.com/hodgekou/keyfari/blob/main/CONTRIBUTING.md#getting-started">build it from the source yourself</a>.</p>
       <figure>
@@ -261,6 +264,7 @@
 const translations = {
   zh: {
     launchTitle: '首次打开 Keyfari',
+    launchBrew: '如果是通过 Homebrew 安装的，可以跳过这一节。',
     launchWhy: '第一次打开 Keyfari 时，macOS 会拦下它，并提示 Apple 无法验证这个应用。这是正常现象。Apple 向开发者收取年费才提供应用验证，而我没有付这笔钱：Keyfari 是免费的，我也希望它一直免费。这个提示的意思是 Apple 没有检查过这个应用，并不是在里面发现了什么问题。',
     launchSafe: 'Keyfari 是开源的，它做了什么任何人都可以查看，可以放心使用。如果你不愿意信任下载的安装包，也可以<a href="https://github.com/hodgekou/keyfari/blob/main/CONTRIBUTING.md#getting-started">自己从源码编译打包</a>。',
     launchIntro: '1. 在「应用程序」里打开 Keyfari。macOS 会显示下面这个提示。请点「完成」（Done），不要点「移到废纸篓」（Move to Trash）。',
@@ -303,17 +307,20 @@ const translations = {
     settingsTitle: '好用的设置窗口',
     settingsSub: '修改主题或字号,预览立刻显示效果。',
     installTitle: '安装',
-    installSub: 'Keyfari 没有使用 Apple 开发者证书签名,所以第一次打开时会被 macOS 拦截。',
+    installSub: '通过 Homebrew 安装可以直接打开。直接下载的磁盘映像没有使用 Apple 开发者证书签名,第一次打开时会被 macOS 拦截。',
     dmgTitle: '下载安装',
     dmg1: '下载<a href="https://github.com/hodgekou/keyfari/releases/latest">最新的磁盘映像</a>,把 Keyfari 拖进"应用程序"。',
     dmg2: '打开一次,macOS 会拒绝。',
     dmg3: '前往<b>系统设置 &gt; 隐私与安全性</b>,点击<b>仍要打开</b>。',
     dmg4: '按提示授予辅助功能权限。',
-    brewNote: '首次打开同样需要上面的放行步骤。',
+    brewTitle: 'Homebrew（推荐）',
+    brewNote: '安装后可以直接打开,按提示授予辅助功能权限即可。',
+    dmgTerminal: '习惯用终端?可以改为运行一次下面的命令,代替第 2、3 步:',
     foot1: 'Keyfari 是自由软件,采用 <a href="https://github.com/hodgekou/keyfari/blob/main/LICENSE">GPL-3.0</a> 许可证。',
   },
   ja: {
     launchTitle: 'Keyfari を初めて開くとき',
+    launchBrew: 'Homebrew でインストールした場合、このセクションは読み飛ばしてかまいません。',
     launchWhy: 'Keyfari を初めて開くと、macOS がそれを止め、Apple がこのアプリを検証できなかったと表示します。これは想定どおりの動作です。Apple はアプリの検証に開発者から年会費を取っており、私はそれを支払っていません。Keyfari は無料で、これからも無料のままにしたいからです。この警告は Apple がアプリを確認していないという意味で、何か問題が見つかったという意味ではありません。',
     launchSafe: 'Keyfari はオープンソースなので、何をしているかは誰でも確認でき、安心して使えます。ダウンロードしたものを信用したくない場合は、<a href="https://github.com/hodgekou/keyfari/blob/main/CONTRIBUTING.md#getting-started">ソースから自分でビルド</a>することもできます。',
     launchIntro: '1.「アプリケーション」から Keyfari を開きます。macOS が下の警告を表示します。「完了」（Done）をクリックしてください。「ゴミ箱に入れる」（Move to Trash）はクリックしないでください。',
@@ -356,13 +363,15 @@ const translations = {
     settingsTitle: '使いやすい設定ウインドウ',
     settingsSub: 'テーマやサイズを変えると、プレビューにすぐ反映されます。',
     installTitle: 'インストール',
-    installSub: 'Keyfari は Apple の Developer ID で署名されていないため、初回の起動時に macOS がブロックします。',
+    installSub: 'Homebrew でインストールした場合はそのまま開けます。ディスクイメージは Apple の Developer ID で署名されていないため、初回の起動時に macOS がブロックします。',
     dmgTitle: 'ダウンロード',
     dmg1: '<a href="https://github.com/hodgekou/keyfari/releases/latest">最新のディスクイメージ</a>を入手し、Keyfari を「アプリケーション」にドラッグします。',
     dmg2: '一度開きます。macOS が拒否します。',
     dmg3: '<b>システム設定 &gt; プライバシーとセキュリティ</b>で<b>このまま開く</b>を選びます。',
     dmg4: '求められたらアクセシビリティを許可します。',
-    brewNote: '初回起動時の手順は同じです。',
+    brewTitle: 'Homebrew（推奨）',
+    brewNote: 'そのまま開けます。求められたらアクセシビリティを許可します。',
+    dmgTerminal: 'ターミナルを使う場合は、手順 2 と 3 の代わりに次のコマンドを一度実行します。',
     foot1: 'Keyfari は <a href="https://github.com/hodgekou/keyfari/blob/main/LICENSE">GPL-3.0</a> ライセンスのフリーソフトウェアです。',
   }
 };

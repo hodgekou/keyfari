@@ -4,6 +4,10 @@ All notable changes to Keyfari are recorded here. The format follows [Keep a Cha
 
 ## [Unreleased]
 
+### Changed
+
+- Installing with Homebrew no longer needs the first-launch steps: the cask removes the quarantine flag, so macOS opens Keyfari straight away. For the disk image, the README and the landing page also give a Terminal command that does the same as Open Anyway.
+
 ## [0.5.1] - 2026-11-26
 
 ### Changed
