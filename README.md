@@ -16,7 +16,17 @@ Keyfari is a free, open-source alternative to Vimac and Homerow. It also lets yo
 
 Requires **macOS 14 Sonoma or later** on Apple silicon or Intel.
 
-**Homebrew (recommended)** — Keyfari opens straight away, without the macOS security prompts.
+**One command (recommended)**
+
+Paste this command into Terminal and press Return.
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/hodgekou/keyfari/main/install.sh | bash
+```
+
+The installer downloads the release, checks its SHA-256 checksum and the app’s code signature, installs Keyfari in Applications, and opens it. To update, quit Keyfari and run the same command again.
+
+**Homebrew**
 
 ```sh
 brew install --cask hodgekou/keyfari/keyfari
@@ -26,7 +36,7 @@ brew install --cask hodgekou/keyfari/keyfari
 
 ## First launch
 
-If you installed with Homebrew, Keyfari opens straight away. Skip to step 4.
+If you used the one-command installer or Homebrew, skip to step 4.
 
 The disk image is not signed with an Apple Developer ID, so macOS blocks it the first time. Follow steps 1 to 3, or, if you prefer Terminal, run this once instead and then open Keyfari:
 

@@ -16,7 +16,17 @@ Keyfari 是 Vimac 和 Homerow 的免费开源替代工具。你还可以按名�
 
 支持搭载 Apple 芯片或 Intel 处理器的 Mac，需要 **macOS 14 Sonoma 或更高版本**。
 
-**通过 Homebrew 安装（推荐）** — 装好后可以直接打开，不会遇到 macOS 的安全拦截。
+**一行命令安装（推荐）**
+
+打开“终端”，粘贴以下命令并按回车。
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/hodgekou/keyfari/main/install.sh | bash
+```
+
+脚本会下载发行版，校验安装包的 SHA-256 和应用的代码签名，再将 Keyfari 安装到“应用程序”文件夹并打开。以后要更新时，先退出 Keyfari，再运行同一条命令即可。
+
+**通过 Homebrew 安装**
 
 ```sh
 brew install --cask hodgekou/keyfari/keyfari
@@ -26,7 +36,7 @@ brew install --cask hodgekou/keyfari/keyfari
 
 ## 首次启动
 
-如果通过 Homebrew 安装，Keyfari 可以直接打开，跳到第 4 步即可。
+如果使用一行命令或 Homebrew 安装，请直接跳到第 4 步。
 
 直接下载的磁盘映像没有使用 Apple 开发者证书签名，第一次打开时会被 macOS 拦截。请按第 1 到 3 步放行；习惯用终端的话，也可以改为运行一次下面的命令，然后打开 Keyfari：
 
